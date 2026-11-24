@@ -13,7 +13,8 @@
  * @subtask ST-ADM01-000-BE-01
  */
 
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
 
 /**
  * Nest module of the database library.
@@ -28,5 +29,6 @@ import { Module } from '@nestjs/common';
  *   contracts: none
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
-@Module({})
+@Global()
+@Module({ providers: [PrismaService], exports: [PrismaService] })
 export class DatabaseModule {}

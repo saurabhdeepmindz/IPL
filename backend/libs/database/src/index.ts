@@ -14,3 +14,8 @@
  */
 
 export * from './module';
+export * from './prisma.service';
+export * from './company-context';
+export * from './extensions/company-filter.extension';
+export * from './generated/enums';
+export { Prisma } from './generated/client';

@@ -6,3 +6,6 @@ dist/
 storage/*
 !storage/.gitkeep
 coverage/
+
+# Prisma client generated from prisma/schema.prisma
+libs/database/src/generated/

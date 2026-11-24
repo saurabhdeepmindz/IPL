@@ -16,17 +16,29 @@
     "lint:headers": "node scripts/check-headers.js",
     "format": "prettier --write \"{apps,libs,config,scripts}/**/*.{ts,js}\"",
     "test": "jest",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "jest --testRegex \".e2e-spec.ts$\""
+    "test:e2e": "jest --testRegex \".e2e-spec.ts$\"",
+    "cp": "nest start control-panel --",
+    "seed:all": "nest start control-panel -- seed:all"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-express": "^11.0.0",
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "dotenv": "^18.0.10",
+    "ioredis": "^6.1.0",
+    "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -38,10 +50,12 @@
     "@types/express": "^5",
     "@types/jest": "^29.5.14",
     "@types/node": "^22",
+    "@types/pg": "^8.23.1",
     "@types/supertest": "^6.0.2",
     "eslint": "^9",
     "jest": "^29.7.0",
     "prettier": "^3",
+    "prisma": "7.10.1",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
@@ -76,6 +90,10 @@
       "^@libs/([^/]+)$": "<rootDir>/libs/$1/src",
       "^@libs/([^/]+)/(.*)$": "<rootDir>/libs/$1/src/$2",
       "^@app/([^/]+)/(.*)$": "<rootDir>/apps/$1/src/$2"
-    }
+    },
+    "setupFiles": [
+      "<rootDir>/tests/setup-env.ts"
+    ],
+    "maxWorkers": 1
   }
 }

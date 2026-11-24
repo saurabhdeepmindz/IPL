@@ -3,14 +3,16 @@
  * @module  RolesAndPermissionsModule
  *
  * @description
- * Public exports of the roles-and-permissions library.
+ * Exports of the roles-and-permissions library. In plain words: one import line.
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
  * @since   2026-11-25
  *
  * @epic    EPIC-ADM-01
- * @subtask ST-ADM01-000-BE-01
+ * @story   US-ADM01-017
+ * @subtask ST-ADM01-000-BE-08
  */
 
 export * from './module';
+export * from './repositories/role-permission';

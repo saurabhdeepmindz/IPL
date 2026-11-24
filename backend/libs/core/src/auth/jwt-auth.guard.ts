@@ -1,0 +1,73 @@
+/**
+ * @file    jwt-auth.guard.ts
+ * @module  CoreModule
+ *
+ * @description
+ * Reads the access token and puts the session user on the request. In plain words: a request with no token or a bad token gets 401; a good one carries the user and its company through the rest of the request.
+ *
+ * @author  Deepmindz AMS team
+ * @version 0.1.0
+ * @since   2026-11-25
+ *
+ * @epic    EPIC-ADM-01
+ * @story   US-ADM01-017
+ * @subtask ST-ADM01-000-BE-06
+ */
+
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import type { Request } from 'express';
+import { UnauthenticatedAppException } from '@libs/common';
+import { CompanyContext } from '@libs/database';
+import { SessionUserFactory } from './session-user.factory';
+import { AccessClaims, SessionUserShape } from './session-user.shape';
+
+/** A request that carries the session user. */
+export type AuthedRequest = Request & { user?: SessionUserShape };
+
+/**
+ * JWT authentication guard.
+ *
+ * In plain words: checks the "Authorization: Bearer ..." header.
+ *
+ * @rtm
+ *   epics:     EPIC-ADM-01
+ *   stories:   US-ADM01-017
+ *   workflows: AD-03
+ *   frd:       FR-043.2
+ *   contracts: none
+ *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
+ */
+@Injectable()
+export class JwtAuthGuard implements CanActivate {
+  constructor(
+    private readonly jwt: JwtService,
+    private readonly factory: SessionUserFactory,
+  ) {}
+
+  /**
+   * Decide whether the request may go on.
+   *
+   * In plain words: verifies the token, sets request.user and the session company.
+   *
+   * @param context The request context
+   * @returns true when the token is good
+   * @throws UnauthenticatedAppException (401) when the token is missing or not valid
+   * @dependencies JwtService.verifyAsync, SessionUserFactory.fromClaims, CompanyContext.enter
+   */
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const req = context.switchToHttp().getRequest<AuthedRequest>();
+    const header = req.headers.authorization ?? '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+    if (!token) throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Sign in to continue');
+    try {
+      const claims = await this.jwt.verifyAsync<AccessClaims>(token);
+      if (!claims.company) throw new Error('not an access token');
+      req.user = this.factory.fromClaims(claims);
+      CompanyContext.enter(req.user.companyCode);
+      return true;
+    } catch {
+      throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Your session is not valid. Sign in again');
+    }
+  }
+}

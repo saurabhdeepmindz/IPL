@@ -1,0 +1,325 @@
+// AMS data model. Prisma is the only ORM and migration tool (Project Foundation v0.1, section 4).
+// Every model and field carries a /// comment (Standard v0.3, section 8).
+// @subtask ST-ADM01-000-BE-02
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../libs/database/src/generated"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===== Module: Organisation (read only in EPIC-ADM-01) =====
+
+/// A company of the group that uses AMS. Read only here; the master screens come with EPIC-ADM-02.
+/// @epic EPIC-ADM-01
+model Company {
+  /// Internal key
+  id        String   @id @default(uuid()) @db.Uuid
+  /// Short code used in the URL and the session, for example IPL
+  code      String   @unique @db.VarChar(10)
+  /// Full name of the company
+  name      String   @db.VarChar(150)
+  /// False hides the company from every list
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userRoles UserCompanyRole[]
+
+  @@map("companies")
+}
+
+/// A department of the organisation. Read only here.
+/// @epic EPIC-ADM-01
+model Department {
+  /// Internal key
+  id        String   @id @default(uuid()) @db.Uuid
+  /// Short code
+  code      String   @unique @db.VarChar(20)
+  /// Name shown on screens
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users User[]
+
+  @@map("departments")
+}
+
+/// A job title. Read only here.
+/// @epic EPIC-ADM-01
+model Designation {
+  /// Internal key
+  id        String   @id @default(uuid()) @db.Uuid
+  /// Short code
+  code      String   @unique @db.VarChar(20)
+  /// Name shown on screens
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users User[]
+
+  @@map("designations")
+}
+
+// ===== Module: Users =====
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+enum AuthType {
+  SSO
+  LOCAL
+}
+
+/// A person who can sign in to AMS. Never deleted, only deactivated.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-003, US-ADM01-005, US-ADM01-007
+/// @frd FR-042.1, FR-042.2
+model User {
+  /// Internal key. Never shown and never changes (the employee code can change until first sign-in, decision OP-01)
+  id                 String     @id @default(uuid()) @db.Uuid
+  /// Five digits. Unique. Editable only until the first sign-in
+  employeeCode       String     @unique @map("employee_code") @db.VarChar(5)
+  /// Name as in the HR records
+  fullName           String     @map("full_name") @db.VarChar(100)
+  /// Every notification goes to this address
+  email              String     @unique @db.VarChar(254)
+  /// Mobile number, optional
+  mobile             String?    @db.VarChar(20)
+  /// Department of the person
+  departmentId       String?    @map("department_id") @db.Uuid
+  /// Job title of the person
+  designationId      String?    @map("designation_id") @db.Uuid
+  /// The person this user reports to
+  reportingManagerId String?    @map("reporting_manager_id") @db.Uuid
+  /// How the user signs in: SSO or a local password
+  authType           AuthType   @default(SSO) @map("auth_type")
+  /// Local sign-in only; salted hash, never returned by any API
+  passwordHash       String?    @map("password_hash") @db.VarChar(255)
+  /// True until the user sets a new password after a one-time password
+  mustChangePassword Boolean    @default(false) @map("must_change_password")
+  /// ACTIVE, INACTIVE (deactivated) or LOCKED (too many failed sign-ins)
+  status             UserStatus @default(ACTIVE)
+  /// Wrong passwords in a row; reset on success
+  failedAttempts     Int        @default(0) @map("failed_attempts")
+  /// While in the future the user cannot sign in
+  lockedUntil        DateTime?  @map("locked_until")
+  /// Empty until the first sign-in; set by the sign-in service
+  firstSignInAt      DateTime?  @map("first_sign_in_at")
+  /// When the user was deactivated
+  deactivatedAt      DateTime?  @map("deactivated_at")
+  /// Reason code of the deactivation
+  deactivationReason String?    @map("deactivation_reason") @db.VarChar(20)
+  /// Free note of the deactivation
+  deactivationNote   String?    @map("deactivation_note") @db.VarChar(500)
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+
+  department       Department?       @relation(fields: [departmentId], references: [id])
+  designation      Designation?      @relation(fields: [designationId], references: [id])
+  reportingManager User?             @relation("ReportsTo", fields: [reportingManagerId], references: [id])
+  reports          User[]            @relation("ReportsTo")
+  companyRoles     UserCompanyRole[]
+  oneTimePasswords OneTimePassword[]
+
+  @@index([status])
+  @@map("users")
+}
+
+/// A one-time password sent to a local-sign-in user. Only the latest one is valid.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-008
+model OneTimePassword {
+  /// Internal key
+  id       String    @id @default(uuid()) @db.Uuid
+  /// The user who received it
+  userId   String    @map("user_id") @db.Uuid
+  /// Hash of the password; the password itself is never stored
+  hash     String    @db.VarChar(255)
+  /// When it was issued
+  issuedAt DateTime  @default(now()) @map("issued_at")
+  /// When it was used; empty while unused
+  usedAt   DateTime? @map("used_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, issuedAt])
+  @@map("one_time_passwords")
+}
+
+// ===== Module: Roles and permissions =====
+
+enum RoleType {
+  STANDARD
+  CUSTOM
+}
+
+enum RoleStatus {
+  ACTIVE
+  DRAFT
+  INACTIVE
+}
+
+enum DataScope {
+  OWN
+  DEPARTMENT
+  COMPANY
+}
+
+/// A named set of rights. The six standard roles are seeded and cannot be deleted.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-010, US-ADM01-011
+model Role {
+  /// Internal key
+  id           String     @id @default(uuid()) @db.Uuid
+  /// Short stable code, for example INITIATOR
+  code         String     @unique @db.VarChar(30)
+  /// Name shown on screens
+  name         String     @unique @db.VarChar(40)
+  /// What the role is for
+  description  String     @db.VarChar(500)
+  /// STANDARD roles are seeded; CUSTOM roles are made by the Administrator
+  type         RoleType   @default(CUSTOM)
+  /// Only ACTIVE roles give rights
+  status       RoleStatus @default(DRAFT)
+  /// True for the Administrator role: its protected rights cannot be removed
+  isLocked     Boolean    @default(false) @map("is_locked")
+  /// Order in which the landing page is chosen when a user holds several roles
+  landingOrder Int        @default(99) @map("landing_order") @db.SmallInt
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  permissions RolePermission[]
+  userRoles   UserCompanyRole[]
+
+  @@map("roles")
+}
+
+/// One right that a role can hold, named <area>.<action>, for example users.manage.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-014
+model Permission {
+  /// Internal key
+  id          String   @id @default(uuid()) @db.Uuid
+  /// The permission key used in @RequirePermission
+  code        String   @unique @db.VarChar(60)
+  /// Screen or area the right belongs to
+  area        String   @db.VarChar(40)
+  /// What the right allows, in plain words
+  description String   @db.VarChar(300)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+/// One cell of the permission matrix: what a role may do, and how far.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-014
+model RolePermission {
+  /// The role
+  roleId       String     @map("role_id") @db.Uuid
+  /// The permission
+  permissionId String     @map("permission_id") @db.Uuid
+  /// True when the role holds the right
+  allowed      Boolean    @default(false)
+  /// How much data the right covers; empty means not scoped
+  scope        DataScope?
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+/// A role given to a user in one company, for a period of dates.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-012
+model UserCompanyRole {
+  /// Internal key
+  id          String    @id @default(uuid()) @db.Uuid
+  /// The user
+  userId      String    @map("user_id") @db.Uuid
+  /// The role
+  roleId      String    @map("role_id") @db.Uuid
+  /// Company code. This is the company-specific column that the company filter uses
+  companyCode String    @map("company_code") @db.VarChar(10)
+  /// First day the role counts
+  validFrom   DateTime  @map("valid_from") @db.Date
+  /// Last day the role counts; empty means no end
+  validTo     DateTime? @map("valid_to") @db.Date
+  /// Employee code of the Administrator who gave the role
+  assignedBy  String    @map("assigned_by") @db.VarChar(5)
+  /// When it was given
+  assignedOn  DateTime  @default(now()) @map("assigned_on")
+
+  user    User    @relation(fields: [userId], references: [id])
+  role    Role    @relation(fields: [roleId], references: [id])
+  company Company @relation(fields: [companyCode], references: [code])
+
+  @@index([userId, companyCode])
+  @@map("user_company_roles")
+}
+
+/// One saved version of the permission matrix. Its id is the matrixVersion of the matrix API.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-014
+model PermissionMatrixVersion {
+  /// Internal key and the matrixVersion
+  id      String   @id @default(uuid()) @db.Uuid
+  /// Employee code of the person who saved it
+  savedBy String   @map("saved_by") @db.VarChar(5)
+  /// When it was saved
+  savedAt DateTime @default(now()) @map("saved_at")
+  /// Reason entered at saving
+  reason  String?  @db.VarChar(500)
+
+  @@map("permission_matrix_versions")
+}
+
+// ===== Module: Audit =====
+
+/// One audit or security-log row. No password, token or one-time password ever reaches it.
+/// @epic EPIC-ADM-01
+/// @story US-ADM01-017
+model AuditLog {
+  /// Internal key
+  id            String   @id @default(uuid()) @db.Uuid
+  /// Key (UUID) of the user who acted, or the word system for a job
+  actor         String   @db.VarChar(64)
+  /// Company of the actor at that time
+  companyCode   String?  @map("company_code") @db.VarChar(10)
+  /// CHANGE for a data change, REFUSAL for a refused call
+  kind          String   @db.VarChar(10)
+  /// Kind of record changed, for example User
+  entity        String?  @db.VarChar(40)
+  /// Key of the record changed
+  entityKey     String?  @map("entity_key") @db.VarChar(64)
+  /// Values before the change
+  before        Json?
+  /// Values after the change
+  after         Json?
+  /// Reason entered by the actor
+  reason        String?  @db.VarChar(500)
+  /// For a refusal: the permission key that was missing
+  permissionKey String?  @map("permission_key") @db.VarChar(60)
+  /// For a refusal: the error code returned
+  code          String?  @db.VarChar(40)
+  /// When it happened
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([entity, entityKey])
+  @@index([actor, createdAt])
+  @@map("audit_log")
+}

@@ -14,10 +14,15 @@
  */
 
 import { Module } from '@nestjs/common';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { AllFieldsValidationPipe, GlobalExceptionFilter } from '@libs/common';
 import { ConfigModule } from '@nestjs/config';
 import { configurations } from '@config';
 import { validateEnv } from '@config/env.validation';
+import { DatabaseModule } from '@libs/database';
+import { DevAuthModule } from './dev-auth/dev-auth.module';
 import { HealthController } from './controllers/health.controller';
+
 
 /**
  * Root module of ams-apis.
@@ -33,7 +38,11 @@ import { HealthController } from './controllers/health.controller';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv })],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, DevAuthModule.register()],
   controllers: [HealthController],
+  providers: [
+    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+    { provide: APP_PIPE, useClass: AllFieldsValidationPipe },
+  ],
 })
 export class AmsApisModule {}

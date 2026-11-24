@@ -14,3 +14,8 @@
  */
 
 export * from './module';
+export * from './errors';
+export * from './filters/global-exception.filter';
+export * from './pipes/validation.pipe';
+export * from './response/api-response';
+export * from './pagination/paging';

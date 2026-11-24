@@ -41,4 +41,14 @@ describe('Health route (ST-ADM01-000-BE-01)', () => {
     expect(res.body.status).toBe('ok');
     expect(typeof res.body.time).toBe('string');
   });
+
+  /**
+   * @subtask ST-ADM01-000-BE-04
+   * In plain words: an unknown address answers 404 in the standard failure body, so the global filter is registered.
+   */
+  it('answers an unknown route with the standard failure body', async () => {
+    const res = await request(app.getHttpServer()).get('/api/v1/nothing-here').expect(404);
+    expect(res.body.error.code).toBe('NOT_FOUND');
+    expect(res.body.error.fields).toEqual([]);
+  });
 });

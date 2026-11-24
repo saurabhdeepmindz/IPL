@@ -58,12 +58,15 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5",
     "@vitest/browser-playwright": "^4",
     "@vitest/coverage-v8": "^4",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "eslint-plugin-storybook": "^10.6.7",
+    "http-server": "^14.1.1",
     "husky": "^9.1.7",
+    "jsdom": "^26",
     "lint-staged": "^17.6.0",
     "playwright": "^1.65.0",
     "prettier": "^3.9.10",
@@ -72,9 +75,7 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",
-    "vitest": "^4",
-    "jsdom": "^26",
-    "@vitejs/plugin-react": "^5"
+    "vitest": "^4"
   },
   "engines": {
     "node": ">=20.9.0"

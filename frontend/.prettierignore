@@ -6,3 +6,5 @@ build
 coverage
 *.min.js
 public
+storybook-static
+test-results

@@ -28,6 +28,8 @@ const eslintConfig = defineConfig([
     'coverage/**',
     'next-env.d.ts',
     'docs/mockups/assets/**',
+    'storybook-static/**',
+    'test-results/**',
   ]),
   ...storybook.configs['flat/recommended'],
   {

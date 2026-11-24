@@ -1,0 +1,167 @@
+[
+ {
+  "id": "API-USR-01",
+  "method": "GET",
+  "path": "/api/v1/users",
+  "errorStatuses": [
+   "401",
+   "403",
+   "422"
+  ]
+ },
+ {
+  "id": "API-USR-02",
+  "method": "POST",
+  "path": "/api/v1/users",
+  "errorStatuses": [
+   "409",
+   "422",
+   "403"
+  ]
+ },
+ {
+  "id": "API-USR-03",
+  "method": "GET",
+  "path": "/api/v1/users/{employeeCode}",
+  "errorStatuses": [
+   "404",
+   "403"
+  ]
+ },
+ {
+  "id": "API-USR-04",
+  "method": "PUT",
+  "path": "/api/v1/users/{employeeCode}",
+  "errorStatuses": [
+   "422",
+   "409",
+   "404"
+  ]
+ },
+ {
+  "id": "API-USR-05",
+  "method": "POST",
+  "path": "/api/v1/users/{employeeCode}/deactivate",
+  "errorStatuses": [
+   "409",
+   "404",
+   "422"
+  ]
+ },
+ {
+  "id": "API-USR-06",
+  "method": "POST",
+  "path": "/api/v1/users/{employeeCode}/unlock",
+  "errorStatuses": [
+   "409",
+   "404"
+  ]
+ },
+ {
+  "id": "API-USR-07",
+  "method": "POST",
+  "path": "/api/v1/users/{employeeCode}/reset-password",
+  "errorStatuses": [
+   "422",
+   "404"
+  ]
+ },
+ {
+  "id": "API-USR-08",
+  "method": "POST",
+  "path": "/api/v1/users/{employeeCode}/one-time-password",
+  "errorStatuses": [
+   "422",
+   "404"
+  ]
+ },
+ {
+  "id": "API-USR-09",
+  "method": "(internal call)",
+  "path": "UsersService.bulkCreate(rows)",
+  "errorStatuses": [
+   "422"
+  ]
+ },
+ {
+  "id": "API-ROL-01",
+  "method": "GET",
+  "path": "/api/v1/roles",
+  "errorStatuses": [
+   "403"
+  ]
+ },
+ {
+  "id": "API-ROL-02",
+  "method": "POST",
+  "path": "/api/v1/roles",
+  "errorStatuses": [
+   "409",
+   "422",
+   "403"
+  ]
+ },
+ {
+  "id": "API-ROL-03",
+  "method": "PUT",
+  "path": "/api/v1/roles/{roleId}",
+  "errorStatuses": [
+   "403",
+   "409",
+   "404"
+  ]
+ },
+ {
+  "id": "API-ROL-04",
+  "method": "POST",
+  "path": "/api/v1/roles/{roleId}/deactivate",
+  "errorStatuses": [
+   "409",
+   "403"
+  ]
+ },
+ {
+  "id": "API-ROL-05",
+  "method": "GET",
+  "path": "/api/v1/roles/{roleId}",
+  "errorStatuses": [
+   "404"
+  ]
+ },
+ {
+  "id": "API-ROL-06",
+  "method": "POST",
+  "path": "/api/v1/roles/{roleId}/users",
+  "errorStatuses": [
+   "404",
+   "422"
+  ]
+ },
+ {
+  "id": "API-PRM-01",
+  "method": "GET",
+  "path": "/api/v1/roles/permissions/matrix",
+  "errorStatuses": [
+   "403"
+  ]
+ },
+ {
+  "id": "API-PRM-02",
+  "method": "POST",
+  "path": "/api/v1/roles/permissions/review",
+  "errorStatuses": [
+   "403",
+   "422"
+  ]
+ },
+ {
+  "id": "API-PRM-03",
+  "method": "PUT",
+  "path": "/api/v1/roles/permissions",
+  "errorStatuses": [
+   "409",
+   "422",
+   "403"
+  ]
+ }
+]

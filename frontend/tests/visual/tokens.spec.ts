@@ -44,6 +44,11 @@ const COMPONENT_STORIES = [
   { title: 'components-card', name: 'color-variants' },
   { title: 'components-alert', name: 'all-variants' },
   { title: 'components-alert', name: 'with-heading' },
+  { title: 'components-switch', name: 'default' },
+  { title: 'components-switch', name: 'locked' },
+  { title: 'components-select', name: 'default' },
+  { title: 'components-select', name: 'with-error' },
+  { title: 'components-tabs', name: 'default' },
 ];
 
 const ALL_STORIES = [...TOKEN_STORIES, ...COMPONENT_STORIES];

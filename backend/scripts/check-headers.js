@@ -20,7 +20,7 @@ const bad = [];
 
 function walk(dir) {
   for (const name of readdirSync(dir)) {
-    if (name === 'node_modules' || name === 'dist') continue;
+    if (name === 'node_modules' || name === 'dist' || name === 'generated') continue;
     const full = join(dir, name);
     if (statSync(full).isDirectory()) walk(full);
     else if (name.endsWith('.ts') && !name.endsWith('.d.ts')) check(full);
