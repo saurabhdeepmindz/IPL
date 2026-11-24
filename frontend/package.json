@@ -1,0 +1,91 @@
+{
+  "name": "ams-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . && node scripts/check-headers.mjs",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "next typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:coverage": "vitest run --project unit --coverage",
+    "prepare": "husky",
+    "tokens:build": "tsx scripts/build-tokens.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test:visual": "playwright test tests/visual/",
+    "lint:headers": "node scripts/check-headers.mjs",
+    "test:stories": "vitest run --project storybook",
+    "test:tokens": "test-storybook"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.2",
+    "@tanstack/react-query": "^5.106.0",
+    "@tanstack/react-query-devtools": "^5.106.0",
+    "axios": "^1.21.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.69.0",
+    "next": "16.4.5",
+    "next-themes": "^0.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "^7.91.0",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.7",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@playwright/test": "^1.65.0",
+    "@storybook/addon-a11y": "^10.6.7",
+    "@storybook/addon-docs": "^10.6.7",
+    "@storybook/addon-mcp": "^10.6.7",
+    "@storybook/addon-vitest": "^10.6.7",
+    "@storybook/nextjs-vite": "^10.6.7",
+    "@storybook/react": "^10.6.7",
+    "@storybook/test-runner": "^0.26.0",
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "@tailwindcss/turbopack": "^4",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitest/browser-playwright": "^4",
+    "@vitest/coverage-v8": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "eslint-plugin-storybook": "^10.6.7",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "playwright": "^1.65.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "storybook": "^10.6.7",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^4",
+    "jsdom": "^26",
+    "@vitejs/plugin-react": "^5"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

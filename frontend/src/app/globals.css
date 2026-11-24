@@ -1,0 +1,101 @@
+/*
+ * Styling strategy
+ * ─────────────────────────────────────────────────────────────────────────────
+ * CSS Load Order (critical for token overrides):
+ *   1. UX4G CSS          — loaded via <link> in app/layout.tsx (CDN)
+ *   2. brand-tokens.css  — imported in app/layout.tsx without a cascade layer,
+ *                          overrides UX4G's :root variables
+ *                          and hardcoded component colors under [data-theme="brand"]
+ *   3. Tailwind CSS v4   — theme + utilities, references the CSS variables above
+ *   4. App custom styles — this file's :root and component rules
+ *
+ * • UX4G (Govt. of India design system, Bootstrap-based) owns ALL components:
+ *   buttons, forms, cards, alerts, badges, navbars, modals, typography, grid.
+ * • Tailwind CSS v4 is used ONLY for layout/spacing utilities and is
+ *   prefixed with `tw:` so it never collides with UX4G/Bootstrap class names
+ *   (e.g. `.container`, `.border`, `.shadow`, `.rounded`).
+ * • Tailwind Preflight is intentionally NOT imported — UX4G provides the reset.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme) prefix(tw);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw);
+
+@custom-variant dark (&:where([data-bs-theme='dark'], [data-bs-theme='dark'] *));
+
+/* Map UX4G / brand CSS variables into the Tailwind theme so utilities stay on-brand */
+@theme inline {
+  /* Colors — resolve from --bs-* (overridden by brand-tokens.css when active) */
+  --color-primary: var(--bs-primary);
+  --color-secondary: var(--bs-secondary);
+  --color-success: var(--bs-success);
+  --color-danger: var(--bs-danger);
+  --color-warning: var(--bs-warning);
+  --color-info: var(--bs-info);
+  --color-body: var(--bs-body-bg);
+  --color-body-text: var(--bs-body-color);
+
+  /* Brand spacing tokens */
+  --spacing-brand-none: var(--brand-spacing-none, 0px);
+  --spacing-brand-xxs: var(--brand-spacing-xxs, 2px);
+  --spacing-brand-xs: var(--brand-spacing-xs, 4px);
+  --spacing-brand-sm: var(--brand-spacing-sm, 8px);
+  --spacing-brand-md: var(--brand-spacing-md, 12px);
+  --spacing-brand-lg: var(--brand-spacing-lg, 16px);
+  --spacing-brand-xl: var(--brand-spacing-xl, 20px);
+  --spacing-brand-2xl: var(--brand-spacing-2xl, 24px);
+  --spacing-brand-3xl: var(--brand-spacing-3xl, 32px);
+  --spacing-brand-4xl: var(--brand-spacing-4xl, 40px);
+  --spacing-brand-5xl: var(--brand-spacing-5xl, 48px);
+  --spacing-brand-6xl: var(--brand-spacing-6xl, 56px);
+  --spacing-brand-7xl: var(--brand-spacing-7xl, 64px);
+  --spacing-brand-8xl: var(--brand-spacing-8xl, 72px);
+  --spacing-brand-9xl: var(--brand-spacing-9xl, 80px);
+
+  /* Brand border radius tokens */
+  --radius-brand-none: var(--bs-border-radius, 0px);
+  --radius-brand-sm: var(--bs-border-radius-sm, 6px);
+  --radius-brand-md: var(--bs-border-radius, 8px);
+  --radius-brand-lg: var(--bs-border-radius-lg, 12px);
+  --radius-brand-xl: var(--bs-border-radius-xl, 16px);
+  --radius-brand-2xl: var(--bs-border-radius-2xl, 20px);
+  --radius-brand-pill: var(--bs-border-radius-pill, 999px);
+
+  /* Brand shadow tokens */
+  --shadow-brand-xs: var(--brand-shadow-xs);
+  --shadow-brand-s: var(--brand-shadow-s);
+  --shadow-brand-md: var(--brand-shadow-md);
+  --shadow-brand-lg: var(--brand-shadow-lg);
+  --shadow-brand-xl: var(--brand-shadow-xl);
+  --shadow-brand-2xl: var(--brand-shadow-2xl);
+}
+
+:root {
+  --header-height: 4rem;
+  --container-max-width: 1320px;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Visible focus ring for keyboard users (GIGW / WCAG 2.1 AA) */
+:focus-visible {
+  outline: 3px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 1080;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}

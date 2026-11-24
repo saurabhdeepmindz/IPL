@@ -1,0 +1,111 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2022",
+    "declaration": true,
+    "removeComments": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@config": [
+        "config"
+      ],
+      "@config/*": [
+        "config/*"
+      ],
+      "@libs/common": [
+        "libs/common/src"
+      ],
+      "@libs/core": [
+        "libs/core/src"
+      ],
+      "@libs/database": [
+        "libs/database/src"
+      ],
+      "@libs/infrastructure": [
+        "libs/infrastructure/src"
+      ],
+      "@libs/dmz": [
+        "libs/dmz/src"
+      ],
+      "@libs/mailman": [
+        "libs/mailman/src"
+      ],
+      "@libs/queues": [
+        "libs/queues/src"
+      ],
+      "@libs/audit": [
+        "libs/audit/src"
+      ],
+      "@libs/organisation": [
+        "libs/organisation/src"
+      ],
+      "@libs/users": [
+        "libs/users/src"
+      ],
+      "@libs/roles-and-permissions": [
+        "libs/roles-and-permissions/src"
+      ],
+      "@libs/common/*": [
+        "libs/common/src/*"
+      ],
+      "@libs/core/*": [
+        "libs/core/src/*"
+      ],
+      "@libs/database/*": [
+        "libs/database/src/*"
+      ],
+      "@libs/infrastructure/*": [
+        "libs/infrastructure/src/*"
+      ],
+      "@libs/dmz/*": [
+        "libs/dmz/src/*"
+      ],
+      "@libs/mailman/*": [
+        "libs/mailman/src/*"
+      ],
+      "@libs/queues/*": [
+        "libs/queues/src/*"
+      ],
+      "@libs/audit/*": [
+        "libs/audit/src/*"
+      ],
+      "@libs/organisation/*": [
+        "libs/organisation/src/*"
+      ],
+      "@libs/users/*": [
+        "libs/users/src/*"
+      ],
+      "@libs/roles-and-permissions/*": [
+        "libs/roles-and-permissions/src/*"
+      ],
+      "@app/ams-apis/*": [
+        "apps/ams-apis/src/*"
+      ],
+      "@app/file-services/*": [
+        "apps/file-services/src/*"
+      ],
+      "@app/background-worker/*": [
+        "apps/background-worker/src/*"
+      ],
+      "@app/scheduler-job/*": [
+        "apps/scheduler-job/src/*"
+      ],
+      "@app/control-panel/*": [
+        "apps/control-panel/src/*"
+      ]
+    }
+  }
+}
