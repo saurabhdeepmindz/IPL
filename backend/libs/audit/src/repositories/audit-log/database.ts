@@ -38,8 +38,8 @@ export class AuditLogDatabaseRepository extends AuditLogRepository {
   }
 
   /** {@inheritDoc AuditLogRepository.add} */
-  async add(row: AuditRow): Promise<void> {
-    await this.prisma.raw.auditLog.create({
+  async add(row: AuditRow): Promise<string> {
+    const created = await this.prisma.raw.auditLog.create({
       data: {
         actor: row.actor,
         companyCode: row.companyCode ?? null,
@@ -53,5 +53,6 @@ export class AuditLogDatabaseRepository extends AuditLogRepository {
         code: row.code ?? null,
       },
     });
+    return created.id;
   }
 }

@@ -9,19 +9,19 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @story          US-ADM01-010
- * @subtask        ST-ADM01-010-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.8 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+ * @story          US-ADM01-010, US-ADM01-014
+ * @subtask        ST-ADM01-010-BE-04, ST-ADM01-014-BE-03
+ * @lld            LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role-permission/database.ts
- * @lld-synced     v0.8
+ * @lld-synced     v0.10
  * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
 import { BadRequestAppException } from '@libs/common';
 import { PrismaService } from '@libs/database';
-import { PermissionCell, RolePermissionRepository } from './contract';
+import { MatrixData, PermissionCell, RolePermissionRepository } from './contract';
 
 /**
  * Prisma role-permission repository.
@@ -34,7 +34,7 @@ import { PermissionCell, RolePermissionRepository } from './contract';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03, API-PRM-01, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.8 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.10 §6.4
  */
 @Injectable()
 export class RolePermissionDatabaseRepository extends RolePermissionRepository {
@@ -60,7 +60,7 @@ export class RolePermissionDatabaseRepository extends RolePermissionRepository {
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US010-02, AC-US010-04
- * @lld       LLD-EPIC-ADM-01 v0.8 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.10 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db rolePermission.upsert
@@ -97,7 +97,7 @@ export class RolePermissionDatabaseRepository extends RolePermissionRepository {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US010-02
- * @lld       LLD-EPIC-ADM-01 v0.8 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.10 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db rolePermission.findMany, createMany
@@ -114,5 +114,34 @@ export class RolePermissionDatabaseRepository extends RolePermissionRepository {
         await tx.rolePermission.upsert({ where: { roleId_permissionId: { roleId: targetRoleId, permissionId: c.permissionId } }, update: data, create: { roleId: targetRoleId, permissionId: c.permissionId, ...data } });
       }
     });
+  }
+
+  /**
+   * Reads the whole matrix.
+   *
+   * In plain words: every permission with its module and label, and every cell of every role.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-014
+ * @subtask   ST-ADM01-014-BE-03
+ * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.6
+ * @workflow  AD-03
+ * @screen    ADM-03
+ * @contract  API-PRM-01
+ * @ac        AC-US014-01
+ * @lld       LLD-EPIC-ADM-01 v0.10 §6.6
+ * @status    built
+   *
+   * @dependencies PrismaService.db permission.findMany, rolePermission.findMany
+   *
+   * @returns The permissions and the cells
+   */
+  async readMatrix(): Promise<MatrixData> {
+    const permissions = await this.prisma.db.permission.findMany({ orderBy: [{ area: 'asc' }, { code: 'asc' }] });
+    const rows = await this.prisma.db.rolePermission.findMany({ include: { permission: true } });
+    return {
+      permissions: permissions.map((p) => ({ key: p.code, module: p.area, label: p.description })),
+      cells: rows.map((r) => ({ roleId: r.roleId, key: r.permission.code, allowed: r.allowed, scope: r.scope })),
+    };
   }
 }

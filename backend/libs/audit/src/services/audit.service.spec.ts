@@ -48,6 +48,19 @@ describe('ST-ADM01-000-BE-03 AuditService', () => {
     expect(rows[0]).toMatchObject({ kind: 'CHANGE', entity: 'User', entityKey: 'k1', reason: 'typo', before: { fullName: 'Old' }, after: { fullName: 'New' } });
   });
 
+  /**
+   * @story   US-ADM01-014
+   * @ac      AC-US014-03
+   * @subtask ST-ADM01-014-BE-03
+   * In plain words: supporting test. A change returns the id of the audit row it wrote, so a caller can hand it back (auditId).
+   */
+  it('a change returns the id of the row it wrote', async () => {
+    const id = await audit.recordChange({ actor: `t-${stamp}-d`, entity: 'User', entityKey: 'k3', reason: 'id check' });
+    expect(id).toMatch(/^[0-9a-f-]{36}$/);
+    const row = await prisma.raw.auditLog.findUnique({ where: { id } });
+    expect(row).toMatchObject({ actor: `t-${stamp}-d`, reason: 'id check' });
+  });
+
   it('a refusal writes one row with user, company, permission key and code', async () => {
     await audit.recordRefusal({ userId: `t-${stamp}-b`, companyCode: 'IPL', permissionKey: 'users.manage', code: 'FORBIDDEN' });
     const rows = await prisma.raw.auditLog.findMany({ where: { actor: `t-${stamp}-b` } });

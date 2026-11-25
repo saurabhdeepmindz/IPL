@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.8 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+ * @lld            LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/test/roles.e2e-spec.ts
- * @lld-synced     v0.8
+ * @lld-synced     v0.10
  * @status         built
  */
 
@@ -107,14 +107,15 @@ describe('ST-ADM01-010-BE-01 role routes (C01 to C04)', () => {
    * @ac        AC-US010-04
    * @contract  API-ROL-03
    * @subtask   ST-ADM01-010-BE-01
-   * In plain words: change answers 200; 404 for no such role (also for an id that is not a UUID); 403 ROLE_LOCKED for a locked role.
+   * In plain words: change answers 200; 404 for no such role; 403 ROLE_LOCKED for a locked role; `PUT /roles/permissions` goes to the matrix route, not to a role.
    */
   it('changes a role and answers 404 and 403 as documented', async () => {
     const changed = await http().put(`/api/v1/roles/${holderRoleId}`).set(auth()).send({ name: `Holder ${stamp}`, description: 'changed', status: 'ACTIVE', reason: 'e2e' }).expect(200);
     expect(changed.body.data.description).toBe('changed');
     const missing = await http().put('/api/v1/roles/00000000-0000-4000-8000-000000000000').set(auth()).send({ name: 'Nope', description: 'n', status: 'ACTIVE', reason: 'e2e' }).expect(404);
     expect(missing.body.error.code).toBe('ROLE_NOT_FOUND');
-    await http().put('/api/v1/roles/permissions').set(auth()).send({ name: 'Nope', description: 'n', status: 'ACTIVE', reason: 'e2e' }).expect(404);
+    // `PUT /roles/permissions` is the matrix route (US-ADM01-014, listed first), so a role body is refused by the matrix validation, not read as a role id.
+    await http().put('/api/v1/roles/permissions').set(auth()).send({ name: 'Nope', description: 'n', status: 'ACTIVE', reason: 'e2e' }).expect(422);
     const locked = await http().put(`/api/v1/roles/${lockedRoleId}`).set(auth()).send({ name: `Locked ${stamp}`, description: 'l', status: 'DRAFT', reason: 'e2e' }).expect(403);
     expect(locked.body.error.code).toBe('ROLE_LOCKED');
   });

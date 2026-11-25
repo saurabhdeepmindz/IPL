@@ -9,16 +9,37 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @story          US-ADM01-010
- * @subtask        ST-ADM01-010-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.8 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+ * @story          US-ADM01-010, US-ADM01-014
+ * @subtask        ST-ADM01-010-BE-04, ST-ADM01-014-BE-03
+ * @lld            LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role-permission/contract.ts
- * @lld-synced     v0.8
+ * @lld-synced     v0.10
  * @status         built
  */
 
 import { DataScope } from '@libs/database';
+
+/** One permission as the matrix lists it. */
+export interface PermissionInfo {
+  key: string;
+  module: string;
+  label: string;
+}
+
+/** One cell of one role, for the whole-matrix read. */
+export interface MatrixCell {
+  roleId: string;
+  key: string;
+  allowed: boolean;
+  scope: DataScope | null;
+}
+
+/** Everything the matrix screen needs from the cells. */
+export interface MatrixData {
+  permissions: PermissionInfo[];
+  cells: MatrixCell[];
+}
 
 /** One cell of the matrix. */
 export interface PermissionCell {
@@ -38,7 +59,7 @@ export interface PermissionCell {
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03, API-PRM-01, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.8 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.10 §6.4
  */
 export abstract class RolePermissionRepository {
   /** The cells of one role (built in ST-ADM01-000-BE-08). */
@@ -49,4 +70,7 @@ export abstract class RolePermissionRepository {
 
   /** Copies every cell of one role to another role. */
   abstract copyFrom(sourceRoleId: string, targetRoleId: string): Promise<void>;
+
+  /** Every permission and every cell of every role (US-ADM01-014; replaces the planned `listAll`, decision L-23). */
+  abstract readMatrix(): Promise<MatrixData>;
 }

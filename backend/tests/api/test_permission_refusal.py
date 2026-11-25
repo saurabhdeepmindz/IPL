@@ -7,10 +7,10 @@
 @version        0.1.0
 @since          2026-11-25
 
-@lld            LLD-EPIC-ADM-01 v0.8 6.8
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+@lld            LLD-EPIC-ADM-01 v0.10 6.8
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/test_permission_refusal.py
-@lld-synced     v0.8
+@lld-synced     v0.10
 @status         built
 """
 
@@ -26,7 +26,7 @@ def get(api, path, token=None, **params):
     return requests.get(f"{api}{path}", headers=bearer(token) if token else {}, params=params or None, timeout=10)
 
 
-def test_switched_off_permission_is_refused_on_next_call(api, sign_in, admin_token, made):
+def test_switched_off_permission_is_refused_on_next_call(api, sign_in, admin_token, made, db):
     """
     @tc TC-ADM01-017-P01
     @story US-ADM01-017
@@ -34,20 +34,21 @@ def test_switched_off_permission_is_refused_on_next_call(api, sign_in, admin_tok
     @subtask ST-ADM01-017-BE-06
     In plain words: save the matrix with a right switched off; the same user's next call returns 403.
     """
-    role_id, role_code = made.role({"users.view": "COMPANY"})
+    role_id, _ = made.role({"users.view": "COMPANY"})
     _, code = made.user(role_id)
     token = sign_in(code)
     assert get(api, "/dev/probe/users", token).status_code == 200
-    saved = requests.post(
-        f"{api}/dev/probe/matrix",
-        json={"roleCode": role_code, "permissionKey": "users.view", "allowed": False},
-        headers=bearer(admin_token),
-        timeout=10,
-    )
-    assert saved.status_code == 201, saved.text
-    after = get(api, "/dev/probe/users", token)
-    assert after.status_code == 403
-    assert after.json()["error"]["code"] == "FORBIDDEN"
+    version = requests.get(f"{api}/roles/permissions/matrix", headers=bearer(admin_token), timeout=10).json()["data"]["matrixVersion"]
+    body = {"changes": [{"roleId": role_id, "permissionKey": "users.view", "allowed": False}], "matrixVersion": version, "reason": "pt017 p01"}
+    try:
+        saved = requests.put(f"{api}/roles/permissions", json=body, headers=bearer(admin_token), timeout=10)
+        assert saved.status_code == 200, saved.text
+        after = get(api, "/dev/probe/users", token)
+        assert after.status_code == 403
+        assert after.json()["error"]["code"] == "FORBIDDEN"
+    finally:
+        db.run("DELETE FROM audit_log WHERE entity = 'PermissionMatrix' AND reason = 'pt017 p01'")
+        db.run("DELETE FROM permission_matrix_versions WHERE reason = 'pt017 p01'")
 
 
 def test_user_without_admin_permission_gets_403_on_users_and_roles(api, sign_in, made):

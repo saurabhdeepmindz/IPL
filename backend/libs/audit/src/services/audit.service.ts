@@ -82,11 +82,11 @@ export class AuditService {
    * In plain words: writes who changed what, with the values before and after and the reason. If writing fails the error goes to the caller, whose transaction decides.
    *
    * @param record The change
-   * @returns Nothing
+   * @returns The id of the audit row (US-ADM01-014 hands it back as `auditId`)
    * @dependencies AuditLogRepository.add, stripSecrets
    */
-  async recordChange(record: ChangeRecord): Promise<void> {
-    await this.rows.add({
+  async recordChange(record: ChangeRecord): Promise<string> {
+    return this.rows.add({
       actor: record.actor,
       companyCode: record.companyCode,
       kind: 'CHANGE',

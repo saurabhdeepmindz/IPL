@@ -51,5 +51,5 @@ export abstract class AuditLogRepository {
    * @returns Nothing
    * @dependencies none
    */
-  abstract add(row: AuditRow): Promise<void>;
+  abstract add(row: AuditRow): Promise<string>;
 }

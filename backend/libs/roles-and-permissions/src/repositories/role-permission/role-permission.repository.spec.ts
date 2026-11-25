@@ -12,10 +12,10 @@
  * @epic           EPIC-ADM-01
  * @story          US-ADM01-017, US-ADM01-010
  * @subtask        ST-ADM01-000-BE-08, ST-ADM01-010-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.8 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+ * @lld            LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role-permission/role-permission.repository.spec.ts
- * @lld-synced     v0.8
+ * @lld-synced     v0.10
  * @status         built
  */
 
@@ -129,5 +129,42 @@ describe('ST-ADM01-010-BE-04 RolePermissionRepository.replaceForRole and copyFro
   it('copyFrom gives the target the cells of the source', async () => {
     await repo.copyFrom(roleIds[0], roleIds[1]);
     expect(await mine(roleIds[1])).toEqual(await mine(roleIds[0]));
+  });
+});
+
+describe('ST-ADM01-014-BE-03 RolePermissionRepository.readMatrix', () => {
+  let prisma: PrismaService;
+  let repo: RolePermissionRepository;
+  let roleId: string;
+  let permId: string;
+
+  beforeAll(async () => {
+    const ref = await Test.createTestingModule({ imports: [DatabaseModule, RolesAndPermissionsModule] }).compile();
+    await ref.init();
+    prisma = ref.get(PrismaService);
+    repo = ref.get(RolePermissionRepository);
+    roleId = (await prisma.raw.role.create({ data: { code: `M${stamp}`, name: `M ${stamp}`, description: 'm' } })).id;
+    permId = (await prisma.raw.permission.create({ data: { code: `m${stamp}.view`, area: `mx${stamp}`, description: `Label ${stamp}` } })).id;
+    await prisma.raw.rolePermission.create({ data: { roleId, permissionId: permId, allowed: true, scope: 'OWN' } });
+  });
+
+  afterAll(async () => {
+    await prisma.raw.rolePermission.deleteMany({ where: { roleId } });
+    await prisma.raw.role.delete({ where: { id: roleId } });
+    await prisma.raw.permission.delete({ where: { id: permId } });
+    await prisma.onModuleDestroy();
+  });
+
+  /**
+   * @story   US-ADM01-014
+   * @ac      AC-US014-01
+   * @subtask ST-ADM01-014-BE-03
+   * In plain words: supporting test. The whole-matrix read returns every permission with its module and label, and every cell of every role.
+   */
+  it('readMatrix returns the permissions with module and label, and the cells', async () => {
+    const data = await repo.readMatrix();
+    expect(data.permissions).toContainEqual({ key: `m${stamp}.view`, module: `mx${stamp}`, label: `Label ${stamp}` });
+    expect(data.cells).toContainEqual({ roleId, key: `m${stamp}.view`, allowed: true, scope: 'OWN' });
+    expect(data.permissions.length).toBeGreaterThanOrEqual(6);
   });
 });

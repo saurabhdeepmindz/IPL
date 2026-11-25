@@ -9,36 +9,18 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.8 §6.8 (C-07)
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+ * @lld            LLD-EPIC-ADM-01 v0.10 §6.8 (C-07)
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/dev-probe.controller.ts
- * @lld-synced     v0.8
+ * @lld-synced     v0.10
  * @status         built
  * @story          US-ADM01-017
  * @subtask        ST-ADM01-017-BE-06
  */
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
-import { IsBoolean, IsString, Length } from 'class-validator';
-import { NotFoundAppException, okResponse } from '@libs/common';
-import { DataScopeFilter, PermissionCache, Public, RequirePermission, SessionUser } from '@libs/core';
-import { DataScope, PrismaService } from '@libs/database';
-
-/** Body of the matrix switch. */
-export class ProbeMatrixDto {
-  /** Code of the role whose cell is changed. */
-  @IsString()
-  @Length(1, 30)
-  roleCode!: string;
-
-  /** Permission key, for example `users.view`. */
-  @IsString()
-  @Length(1, 60)
-  permissionKey!: string;
-
-  /** The new value of the cell. */
-  @IsBoolean()
-  allowed!: boolean;
-}
+import { Controller, Get, Req } from '@nestjs/common';
+import { okResponse } from '@libs/common';
+import { DataScopeFilter, Public, RequirePermission, SessionUser } from '@libs/core';
+import { DataScope } from '@libs/database';
 
 /** What a scoped probe request carries after the guards. */
 type ProbeRequest = { user: SessionUser; dataScope?: DataScope | null };
@@ -48,7 +30,7 @@ type ProbeRequest = { user: SessionUser; dataScope?: DataScope | null };
  *
  * In plain words: stand-ins for the users, roles and matrix routes of later stories.
  *
- * TBD-ADM01-02: removed when US-ADM01-010 to 014 are built.
+ * TBD-ADM01-02: removed when US-ADM01-011 and the other real users routes are built. The matrix route was removed with US-ADM01-014 (decision L-26).
  *
  * @rtm
  *   epics:     EPIC-ADM-01
@@ -56,15 +38,11 @@ type ProbeRequest = { user: SessionUser; dataScope?: DataScope | null };
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.8 section 6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.10 section 6.8
  */
 @Controller('dev/probe')
 export class DevProbeController {
-  constructor(
-    private readonly scopeFilter: DataScopeFilter,
-    private readonly cache: PermissionCache,
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly scopeFilter: DataScopeFilter) {}
 
   /** A route that needs `users.view`. In plain words: stands in for the users list. */
   @RequirePermission('users.view')
@@ -112,24 +90,5 @@ export class DevProbeController {
   scoped(@Req() req: ProbeRequest): unknown {
     const where = this.scopeFilter.toWhere(req.dataScope ?? null, req.user, { ownerField: 'createdBy', departmentField: 'departmentId' });
     return okResponse({ scope: req.dataScope ?? null, where });
-  }
-
-  /**
-   * Switches one cell of the matrix and clears the cache. In plain words: does what the matrix save (API-PRM-03) will do.
-   *
-   * @param dto The role, the permission and the new value
-   * @returns The cell after the change
-   * @dependencies PrismaService.raw, PermissionCache.clearAll
-   */
-  @RequirePermission('roles.manage')
-  @Post('matrix')
-  async matrix(@Body() dto: ProbeMatrixDto): Promise<unknown> {
-    const role = await this.prisma.raw.role.findUnique({ where: { code: dto.roleCode } });
-    const permission = await this.prisma.raw.permission.findUnique({ where: { code: dto.permissionKey } });
-    if (!role || !permission) throw new NotFoundAppException('NOT_FOUND', 'Role or permission not found');
-    const where = { roleId_permissionId: { roleId: role.id, permissionId: permission.id } };
-    await this.prisma.raw.rolePermission.update({ where, data: { allowed: dto.allowed } });
-    await this.cache.clearAll();
-    return okResponse({ roleCode: dto.roleCode, permissionKey: dto.permissionKey, allowed: dto.allowed });
   }
 }

@@ -30,3 +30,24 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/services/roles.service.spec.ts,v0.7,copied
 2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/services/roles.service.ts,v0.7,copied
 2026-11-25,US-ADM01-010,tests/api/test_roles.py,v0.7,copied
+2026-11-25,US-ADM01-014,apps/ams-apis/src/controllers/permission-matrix.controller.ts,v0.9,copied
+2026-11-25,US-ADM01-014,apps/ams-apis/src/dtos/permissions/matrix-query.dto.ts,v0.9,copied
+2026-11-25,US-ADM01-014,apps/ams-apis/src/dtos/permissions/matrix-response.dto.ts,v0.9,copied
+2026-11-25,US-ADM01-014,apps/ams-apis/src/dtos/permissions/review-changes.dto.ts,v0.9,copied
+2026-11-25,US-ADM01-014,apps/ams-apis/src/dtos/permissions/save-changes.dto.ts,v0.9,copied
+2026-11-25,US-ADM01-014,apps/ams-apis/test/permission-matrix.e2e-spec.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/constants/sensitive-rights.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/errors/locked-cell.exception.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/errors/sensitive-confirm-required.exception.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/errors/stale-matrix.exception.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/ports/permission-cache-invalidator.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/repositories/permission-matrix-version/contract.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/repositories/permission-matrix-version/database.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/repositories/permission-matrix-version/index.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/repositories/permission-matrix-version/permission-matrix-version.repository.spec.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/repositories/role-permission/contract.ts,v0.9,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/repositories/role-permission/database.ts,v0.9,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/services/matrix-change-analyzer.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/services/permission-matrix.service.spec.ts,v0.9,copied
+2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/services/permission-matrix.service.ts,v0.9,copied
+2026-11-25,US-ADM01-014,tests/api/test_permission_matrix.py,v0.9,copied

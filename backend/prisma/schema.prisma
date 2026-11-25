@@ -276,8 +276,10 @@ model UserCompanyRole {
 /// @epic EPIC-ADM-01
 /// @story US-ADM01-014
 model PermissionMatrixVersion {
-  /// Internal key and the matrixVersion
+  /// Internal key
   id      String   @id @default(uuid()) @db.Uuid
+  /// The matrixVersion: a whole number that grows by one on each save; unique, so two saves on one version cannot both succeed (US-ADM01-014, LLD L-19)
+  version Int      @unique
   /// Employee code of the person who saved it
   savedBy String   @map("saved_by") @db.VarChar(5)
   /// When it was saved

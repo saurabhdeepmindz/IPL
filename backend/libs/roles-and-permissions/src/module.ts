@@ -17,6 +17,7 @@
 import { Module } from '@nestjs/common';
 import { AuditModule } from '@libs/audit';
 import { RolesService } from './services/roles.service';
+import { PermissionMatrixVersionDatabaseRepository, PermissionMatrixVersionRepository } from './repositories/permission-matrix-version';
 import { RoleDatabaseRepository, RoleRepository } from './repositories/role';
 import { RolePermissionRepository } from './repositories/role-permission/contract';
 import { RolePermissionDatabaseRepository } from './repositories/role-permission/database';
@@ -39,8 +40,9 @@ import { RolePermissionDatabaseRepository } from './repositories/role-permission
   providers: [
     { provide: RolePermissionRepository, useClass: RolePermissionDatabaseRepository },
     { provide: RoleRepository, useClass: RoleDatabaseRepository },
+    { provide: PermissionMatrixVersionRepository, useClass: PermissionMatrixVersionDatabaseRepository },
     RolesService,
   ],
-  exports: [RolePermissionRepository, RoleRepository, RolesService],
+  exports: [RolePermissionRepository, RoleRepository, PermissionMatrixVersionRepository, RolesService],
 })
 export class RolesAndPermissionsModule {}
