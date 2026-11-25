@@ -31,3 +31,4 @@ export * from './ports/session-revocation.port';
 export * from './errors/holds-proposals.exception';
 export * from './errors/last-administrator.exception';
 export * from './errors/already-inactive.exception';
+export * from './errors/bulk-import-failed.exception';

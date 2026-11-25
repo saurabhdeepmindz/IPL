@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011, US-ADM01-001, US-ADM01-003, US-ADM01-005
  * @subtask        ST-ADM01-001-BE-03, ST-ADM01-003-BE-04, ST-ADM01-005-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user/database.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 
@@ -34,7 +34,7 @@ import { ADMINISTRATOR_ROLE_CODE, orderFor, startOfToday, toUserRecord, userIncl
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-05, API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.17 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.18 §6.4
  */
 @Injectable()
 export class UserDatabaseRepository extends UserRepository {
@@ -55,7 +55,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db user.findMany
@@ -82,7 +82,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01, AC-US001-02
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies PrismaService.db or raw user.findMany, user.count
@@ -115,7 +115,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies PrismaService.db or raw user.groupBy
@@ -144,7 +144,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US003-03
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies PrismaService.db user.findUnique
@@ -170,7 +170,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-01
  * @contract  API-USR-02
  * @ac        AC-US003-01
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies PrismaService.db user.findFirst
@@ -196,7 +196,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-01
  * @contract  API-USR-05
  * @ac        AC-US005-01
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies PrismaService.raw user.count
@@ -222,7 +222,7 @@ export class UserDatabaseRepository extends UserRepository {
  * @screen    ADM-01
  * @contract  API-USR-05
  * @ac        AC-US005-01
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies PrismaService.raw userCompanyRole.count

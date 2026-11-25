@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011, US-ADM01-001, US-ADM01-003, US-ADM01-005
  * @subtask        ST-ADM01-001-BE-03, ST-ADM01-003-BE-04, ST-ADM01-005-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user/contract.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 
@@ -104,7 +104,7 @@ export interface UserRef {
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-05, API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.17 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.18 §6.4
  */
 export abstract class UserRepository {
   /** The users with these employee codes; a code that matches nobody is simply not in the answer. */

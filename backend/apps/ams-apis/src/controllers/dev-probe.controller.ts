@@ -9,10 +9,10 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.8 (C-07)
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.8 (C-07)
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/dev-probe.controller.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  * @story          US-ADM01-017
  * @subtask        ST-ADM01-017-BE-06
@@ -38,7 +38,7 @@ type ProbeRequest = { user: SessionUser; dataScope?: DataScope | null };
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.18 section 6.8
  */
 @Controller('dev/probe')
 export class DevProbeController {

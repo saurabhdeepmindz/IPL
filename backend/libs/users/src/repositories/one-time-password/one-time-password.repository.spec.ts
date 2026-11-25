@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/one-time-password/one-time-password.repository.spec.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 

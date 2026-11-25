@@ -11,14 +11,14 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/user-command-helpers.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 
-import { ValidationFailedException } from '@libs/common';
+import { FieldError, ValidationFailedException } from '@libs/common';
 import { DuplicateEmailException } from '../errors/duplicate-email.exception';
 import { DuplicateEmployeeCodeException } from '../errors/duplicate-employee-code.exception';
 import { NewUser, UserAssignment } from '../repositories/user';
@@ -58,4 +58,13 @@ export function translateWriteError(err: unknown): unknown {
   }
   if (e?.code === 'P2003') return new ValidationFailedException([{ field: 'companies', message: 'A chosen role does not exist' }]);
   return err;
+}
+
+/** The problems of one import row whose save failed: the field and message of a known error, or a general message. */
+export function writeProblems(err: unknown): FieldError[] {
+  const e = translateWriteError(err);
+  if (e instanceof DuplicateEmailException) return [{ field: 'email', message: e.message }];
+  if (e instanceof DuplicateEmployeeCodeException) return [{ field: 'employeeCode', message: e.message }];
+  if (e instanceof ValidationFailedException) return e.fields;
+  return [{ field: 'row', message: 'The row could not be saved' }];
 }

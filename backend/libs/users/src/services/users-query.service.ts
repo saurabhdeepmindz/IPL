@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-001, US-ADM01-003
  * @subtask        ST-ADM01-001-BE-02, ST-ADM01-003-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-query.service.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 
@@ -71,7 +71,7 @@ export interface UserDetails {
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4, FR-042.6, FR-043.2
  *   contracts: API-USR-01, API-USR-03
- *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.18 section 6.1
  */
 @Injectable()
 export class UsersQueryService {
@@ -93,7 +93,7 @@ export class UsersQueryService {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01, AC-US001-02, AC-US001-03
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findPage, countByStatus, AuditService.recordChange
@@ -129,7 +129,7 @@ export class UsersQueryService {
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US003-03
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findByCode, AuditService.recentChanges

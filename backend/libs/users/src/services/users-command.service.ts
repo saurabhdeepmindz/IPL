@@ -11,23 +11,24 @@
  *
  * @story          US-ADM01-003, US-ADM01-009
  * @subtask        ST-ADM01-003-BE-03, ST-ADM01-009-IN-01
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-command.service.ts
- * @lld-synced     v0.17
- * @status         elaborated
+ * @lld-synced     v0.18
+ * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
 import { AuditService } from '@libs/audit';
-import { ValidationFailedException } from '@libs/common';
-import { UserRecord, UserRepository } from '../repositories/user';
+import { FieldError, ValidationFailedException } from '@libs/common';
+import { NewUser, UserRecord, UserRepository } from '../repositories/user';
 import { UserWriteRepository } from '../repositories/user-write';
 import { DuplicateEmailException } from '../errors/duplicate-email.exception';
 import { DuplicateEmployeeCodeException } from '../errors/duplicate-employee-code.exception';
 import { EmployeeCodeReadOnlyException } from '../errors/employee-code-read-only.exception';
 import { UnknownUserException } from '../errors/unknown-user.exception';
-import { auditFields, toAssignments, toNewUser, translateWriteError } from './user-command-helpers';
+import { BulkImportFailedException } from '../errors/bulk-import-failed.exception';
+import { auditFields, toAssignments, toNewUser, translateWriteError, writeProblems } from './user-command-helpers';
 import { OneTimePasswordService } from './one-time-password.service';
 import { UserInput, UserInputValidator } from './user-input-validator';
 
@@ -36,6 +37,15 @@ export interface CreateResult {
   employeeCode: string;
   status: 'ACTIVE';
   oneTimePassword: { required: boolean; emailStatus: 'SENT' | 'FAILED' | null };
+}
+
+/** One saved row of an import. */
+interface SavedRow {
+  id: string;
+  email: string;
+  fullName: string;
+  authType: 'SSO' | 'LOCAL';
+  data: NewUser;
 }
 
 /** The answer of an import. */
@@ -55,7 +65,7 @@ export interface BulkResult {
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.2
  *   contracts: API-USR-02, API-USR-04, API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.18 section 6.1
  */
 @Injectable()
 export class UsersCommandService {
@@ -80,7 +90,7 @@ export class UsersCommandService {
  * @screen    ADM-01
  * @contract  API-USR-02
  * @ac        AC-US003-01, AC-US003-02, AC-US003-05
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies UserInputValidator.validate, UserRepository.findByCode, findByEmail, UserWriteRepository.create, OneTimePasswordService.issue, AuditService.recordChange
@@ -120,7 +130,7 @@ export class UsersCommandService {
  * @screen    ADM-01
  * @contract  API-USR-04
  * @ac        AC-US003-04, AC-US003-05
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
  * @status    built
    *
    * @dependencies UserInputValidator.validate, UserRepository.findByCode, findByEmail, update, AuditService.recordChange
@@ -167,8 +177,8 @@ export class UsersCommandService {
  * @screen    ADM-01
  * @contract  API-USR-09
  * @ac        AC-US009-01
- * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @status    built
    *
    * @dependencies UserInputValidator.validate, UserRepository.findByCode, findByEmail, UserWriteRepository.create, OneTimePasswordService.issue, AuditService.recordChange
    *
@@ -179,12 +189,44 @@ export class UsersCommandService {
    * @throws BulkImportFailedException - no row is valid (HTTP 422, with the error report)
    */
   async bulkCreate(rows: UserInput[], actor: string, assignedBy: string): Promise<BulkResult> {
-    // TODO: 1. For each row, in order: validate; a code or e-mail already used (in the database or earlier in this file) fails only that row (decision L-56).
-    // TODO: 2. Each good row is saved in its own transaction, so one failure never stops the others.
-    // TODO: 3. After all rows: OneTimePasswordService.issue for each new LOCAL user (a failed e-mail does not undo the save).
-    // TODO: 4. One audit record per created user, reason "Excel import".
-    // TODO: 5. No good row: throw BulkImportFailedException with the report; otherwise return `{ created, failed }`.
-    throw new Error('pseudo-code: not implemented');
+    const failed: BulkResult['failed'] = [];
+    const made: SavedRow[] = [];
+    const seen = { codes: new Set<string>(), emails: new Set<string>() };
+    for (const [i, input] of rows.entries()) {
+      const problems = await this.rowProblems(input, seen);
+      const saved = problems.length === 0 ? await this.saveRow(input, assignedBy).catch((err) => (problems.push(...writeProblems(err)), null)) : null;
+      if (saved) made.push(saved);
+      failed.push(...problems.map((p) => ({ row: i + 1, field: p.field, message: p.message })));
+    }
+    if (made.length === 0) throw new BulkImportFailedException(failed.map((f) => ({ field: `rows.${f.row}.${f.field}`, message: f.message })));
+    await this.finishImport(made, actor);
+    return { created: made.length, failed };
+  }
+
+  /** Every problem of one row: the rules of one user, a code or e-mail repeated earlier in the file, or already used in the database (decision L-56). */
+  private async rowProblems(input: UserInput, seen: { codes: Set<string>; emails: Set<string> }): Promise<FieldError[]> {
+    const problems = await this.validator.validate(input);
+    const email = input.email?.toLowerCase() ?? '';
+    const inFile = { code: seen.codes.has(input.employeeCode), email: seen.emails.has(email) };
+    seen.codes.add(input.employeeCode);
+    seen.emails.add(email);
+    const known = { code: inFile.code || !!(await this.users.findByCode(input.employeeCode)), email: inFile.email || !!(await this.users.findByEmail(input.email)) };
+    if (known.code) problems.push({ field: 'employeeCode', message: 'The employee code is already used' });
+    if (known.email) problems.push({ field: 'email', message: 'The e-mail is already used' });
+    return problems;
+  }
+
+  /** Saves one good row in its own transaction. */
+  private async saveRow(input: UserInput, assignedBy: string): Promise<SavedRow> {
+    const data = toNewUser(input, await this.managerId(input.reportingManagerCode));
+    const user = await this.writes.create(data, toAssignments(input, assignedBy));
+    return { id: user.id, email: user.email, fullName: user.fullName, authType: data.authType, data };
+  }
+
+  /** After all rows: the one-time password of each new local user (a failed e-mail does not undo a save), and one audit record per created user. */
+  private async finishImport(made: SavedRow[], actor: string): Promise<void> {
+    for (const u of made.filter((m) => m.authType === 'LOCAL')) await this.passwords.issue({ id: u.id, email: u.email, fullName: u.fullName });
+    for (const u of made) await this.audit.recordChange({ actor, entity: 'User', entityKey: u.id, after: auditFields(u.data), reason: 'Excel import' });
   }
 
   /** Throws one answer with every field problem when the input breaks a rule. */

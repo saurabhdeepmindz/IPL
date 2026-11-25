@@ -145,3 +145,6 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-005,libs/users/src/services/users-lifecycle.service.spec.ts,v0.16,identical
 2026-11-25,US-ADM01-005,libs/users/src/services/users-lifecycle.service.ts,v0.16,EXISTS-DIFFERENT (not overwritten)
 2026-11-25,US-ADM01-005,tests/api/test_users_lifecycle.py,v0.16,identical
+2026-11-25,US-ADM01-009,libs/users/src/errors/bulk-import-failed.exception.ts,v0.17,copied
+2026-11-25,US-ADM01-009,libs/users/src/services/users-bulk-create.spec.ts,v0.17,copied
+2026-11-25,US-ADM01-009,libs/users/src/services/users-command.service.ts,v0.17,EXISTS-DIFFERENT (not overwritten)

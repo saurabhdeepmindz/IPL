@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/permissions/save-changes.dto.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 
@@ -33,7 +33,7 @@ import { CellChangeDto } from './review-changes.dto';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.6
  *   contracts: API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.17 §6.6
+ *   lld:       LLD-EPIC-ADM-01 v0.18 §6.6
  */
 export class SaveChangesDto {
   /** The changes to save. */

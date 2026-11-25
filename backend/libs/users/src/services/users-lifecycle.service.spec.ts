@@ -3,7 +3,7 @@
  * @module  UsersModule
  *
  * @description
- * Unit tests of the users lifecycle service (Jest). Written before the code (TDD); fakes replace the repositories, the one-time password service and the audit service. In plain words: shows that a locked user is unlocked and that a one-time password is reset or sent again by the story's rules. The cases of story 005 (deactivate) stay `it.todo`.
+ * Unit tests of the users lifecycle service (Jest). Written before the code (TDD); fakes replace the repositories, the one-time password service and the audit service. In plain words: shows that a locked user is unlocked and that a one-time password is reset or sent again by the story's rules. It also holds the deactivate cases of story 005 (J01, J02).
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-04, ST-ADM01-007-BE-05
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-lifecycle.service.spec.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-06
- * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
+ * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-command.service.spec.ts
- * @lld-synced     v0.17
+ * @lld-synced     v0.18
  * @status         built
  */
 
@@ -158,5 +158,4 @@ describe('Unit tests of the users command service (Jest)', () => {
     expect(await fieldsOf(service.create(validInput({ employeeCode: '20007', email: 'race3@example.invalid' }), 'a', '10001'))).toEqual(['companies']);
   });
 
-  it.todo('bulkCreate reports each bad row and saves the good ones (story 009)');
 });
