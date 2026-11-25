@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/role-assignment.controller.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 

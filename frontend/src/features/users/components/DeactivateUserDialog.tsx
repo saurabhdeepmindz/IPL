@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-006
  * @subtask        ST-ADM01-006-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/DeactivateUserDialog.tsx
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 'use client';
@@ -24,7 +24,7 @@ import { Button, Input, Modal, Select } from '@/components/ui';
 import { ApiError } from '@/lib/errors';
 import { useDeactivateUser } from '../hooks/useDeactivateUser';
 import { readHolds } from '../services/users.service';
-import type { DeactivationReason, HoldsProposals, UserDetails } from '../types/user.types';
+import type { DeactivationReason, HoldsProposals } from '../types/user.types';
 
 const REASONS: { value: DeactivationReason; label: string }[] = [
   { value: 'LEFT_COMPANY', label: 'Left the company' },
@@ -37,7 +37,7 @@ const REASONS: { value: DeactivationReason; label: string }[] = [
 /** Props of DeactivateUserDialog. */
 interface DeactivateUserDialogProps {
   /** The user to deactivate; null closes the dialog */
-  user: UserDetails | null;
+  user: { employeeCode: string; name: string } | null;
   /** Called when the dialog closes */
   onClose: () => void;
   /** Called after the user has been deactivated */

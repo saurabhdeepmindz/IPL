@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/components/ams/StatusBadge.tsx
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 import { Badge } from '@/components/ui';
@@ -42,7 +42,7 @@ const LOOK = {
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.25 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.26 §6.5
  * @status    built
  *
  * @dependencies Badge

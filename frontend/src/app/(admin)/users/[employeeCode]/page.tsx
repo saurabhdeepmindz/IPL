@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-006
  * @subtask        ST-ADM01-006-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/app/(admin)/users/[employeeCode]/page.tsx
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         pseudo
  */
 
@@ -32,7 +32,7 @@ import { UserDetailRoute } from '@/features/users/components/UserDetailRoute';
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US006-01
- * @lld       LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
  * @status    pseudo
  *
  * @dependencies AdminShell, UserDetailRoute

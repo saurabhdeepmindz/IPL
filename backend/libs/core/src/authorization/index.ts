@@ -10,10 +10,10 @@
  * @since   2026-11-25
  *
  * @story          US-ADM01-017
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/index.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 

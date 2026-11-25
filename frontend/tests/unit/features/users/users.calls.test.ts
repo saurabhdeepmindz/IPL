@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002, US-ADM01-004
  * @subtask        ST-ADM01-002-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/users/users.calls.test.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 
@@ -23,7 +23,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as ApiClient from '@/lib/api-client';
 import type { ApiError } from '@/lib/errors';
 import { getCompanies, getDepartments, getDesignations } from '@/features/users/services/masters.service';
-import { createUser, deactivateUser, getUser, listUsers, readHolds, updateUser } from '@/features/users/services/users.service';
+import { createUser, deactivateUser, getUser, listUsers, readHolds, resendOneTimePassword, resetUserPassword, unlockUser, updateUser } from '@/features/users/services/users.service';
 
 const seen = vi.hoisted(() => ({ calls: [] as { method?: string; url?: string; params?: unknown; data?: unknown; headers?: Record<string, unknown> }[], next: { status: 200, data: {} as unknown } }));
 vi.mock('@/lib/api-client', async () => {
@@ -146,5 +146,40 @@ describe('user and masters calls (supporting tests)', () => {
     expect(readHolds(last)).toBeNull();
     failure(404, 'USER_NOT_FOUND');
     expect(await caught(deactivateUser('99999', { reason: 'OTHER' }))).toMatchObject({ status: 404 });
+  });
+
+  /**
+   * @story   US-ADM01-008
+   * @ac      AC-US008-01, AC-US008-03
+   * @subtask ST-ADM01-008-FE-01
+   * In plain words: supporting test. unlockUser, resetUserPassword and resendOneTimePassword post to their paths and return the new status or the e-mail status.
+   */
+  it('unlocks, resets a password and resends the one-time password', async () => {
+    answer(200, { data: { status: 'ACTIVE' } });
+    expect(await unlockUser('20001')).toEqual({ status: 'ACTIVE' });
+    expect(seen.calls[0]).toMatchObject({ method: 'post', url: '/users/20001/unlock' });
+    answer(200, { data: { emailStatus: 'SENT' } });
+    expect(await resetUserPassword('20001')).toEqual({ emailStatus: 'SENT' });
+    expect(seen.calls[1]).toMatchObject({ method: 'post', url: '/users/20001/reset-password' });
+    answer(200, { data: { emailStatus: 'FAILED' } });
+    expect(await resendOneTimePassword('20001')).toEqual({ emailStatus: 'FAILED' });
+    expect(seen.calls[2]).toMatchObject({ method: 'post', url: '/users/20001/one-time-password' });
+  });
+
+  /**
+   * @story   US-ADM01-008
+   * @ac      AC-US008-01, AC-US008-03
+   * @subtask ST-ADM01-008-FE-01
+   * In plain words: supporting test. NOT_LOCKED, NOT_LOCAL_USER, ALREADY_SIGNED_IN and 404 reach the caller with their status and code.
+   */
+  it('maps the error codes of the three actions', async () => {
+    failure(409, 'NOT_LOCKED');
+    expect(await caught(unlockUser('20001'))).toMatchObject({ status: 409, code: 'NOT_LOCKED' });
+    failure(422, 'NOT_LOCAL_USER');
+    expect(await caught(resetUserPassword('20001'))).toMatchObject({ status: 422, code: 'NOT_LOCAL_USER' });
+    failure(422, 'ALREADY_SIGNED_IN');
+    expect(await caught(resendOneTimePassword('20001'))).toMatchObject({ status: 422, code: 'ALREADY_SIGNED_IN' });
+    failure(404, 'USER_NOT_FOUND');
+    expect(await caught(unlockUser('99999'))).toMatchObject({ status: 404 });
   });
 });

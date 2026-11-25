@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/one-time-password.service.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 
@@ -36,7 +36,7 @@ import { PasswordHasher } from './password-hasher';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-02, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.25 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.26 section 6.1
  */
 /** The letters and digits a one-time password is made of: no 0, O, 1, l or I, so it can be read out and typed. */
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';

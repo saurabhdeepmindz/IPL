@@ -11,15 +11,15 @@
  *
  * @story          US-ADM01-002, US-ADM01-004, US-ADM01-013
  * @subtask        ST-ADM01-002-FE-01, ST-ADM01-004-FE-01, ST-ADM01-013-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/services/users.service.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 import { api } from '@/lib/api-client';
 import type { ApiError } from '@/lib/errors';
-import type { CreateUserResult, DeactivateInput, HoldsProposals, UserDetails, UserFilters, UserFormData, UserList } from '../types/user.types';
+import type { CreateUserResult, DeactivateInput, EmailStatus, HoldsProposals, UserDetails, UserFilters, UserFormData, UserList } from '../types/user.types';
 
 /**
  * List users. In plain words: one page of users with the counts of the four tabs; the filters go in the query and empty ones are dropped. It also serves the user search of the assign dialog (`q` and `pageSize` only).
@@ -157,4 +157,76 @@ export async function deactivateUser(employeeCode: string, input: DeactivateInpu
 export function readHolds(error: ApiError): HoldsProposals | null {
   if (error.code !== 'HOLDS_PROPOSALS') return null;
   return { count: Number(error.fields.count ?? 0), workflowMonitorUrl: error.fields.workflowMonitorUrl ?? '', hasDelegate: error.fields.hasDelegate === 'true' };
+}
+
+/**
+ * Unlock a user. In plain words: unlocks a Locked user; the answer is the new status.
+ *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-008
+ * @subtask   ST-ADM01-008-FE-01
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-02
+ * @screen    ADM-01
+ * @contract  API-USR-06
+ * @ac        AC-US008-01
+ * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
+ * @status    built
+ *
+ * @dependencies api.post
+ *
+ * @param employeeCode - the user
+ * @returns The new status
+ */
+export async function unlockUser(employeeCode: string): Promise<{ status: 'ACTIVE' }> {
+  const res = await api.post<{ data: { status: 'ACTIVE' } }>(`/users/${employeeCode}/unlock`);
+  return res.data.data;
+}
+
+/**
+ * Reset a password. In plain words: e-mails a new one-time password to a local user; the answer is the e-mail status.
+ *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-008
+ * @subtask   ST-ADM01-008-FE-01
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-02
+ * @screen    ADM-01
+ * @contract  API-USR-07
+ * @ac        AC-US008-02
+ * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
+ * @status    built
+ *
+ * @dependencies api.post
+ *
+ * @param employeeCode - the user
+ * @returns SENT or FAILED
+ */
+export async function resetUserPassword(employeeCode: string): Promise<{ emailStatus: EmailStatus }> {
+  const res = await api.post<{ data: { emailStatus: EmailStatus } }>(`/users/${employeeCode}/reset-password`);
+  return res.data.data;
+}
+
+/**
+ * Resend the one-time password. In plain words: e-mails the one-time password again to a local user who has not signed in; the answer is the e-mail status.
+ *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-008
+ * @subtask   ST-ADM01-008-FE-01
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-02
+ * @screen    ADM-01
+ * @contract  API-USR-08
+ * @ac        AC-US008-03
+ * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
+ * @status    built
+ *
+ * @dependencies api.post
+ *
+ * @param employeeCode - the user
+ * @returns SENT or FAILED
+ */
+export async function resendOneTimePassword(employeeCode: string): Promise<{ emailStatus: EmailStatus }> {
+  const res = await api.post<{ data: { emailStatus: EmailStatus } }>(`/users/${employeeCode}/one-time-password`);
+  return res.data.data;
 }

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserListPage.tsx
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 'use client';
@@ -23,9 +23,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
+import { useRunUserAction } from '../hooks/useUserActions';
 import { useUsers } from '../hooks/useUsers';
 import type { UserFilters as Filters } from '../types/user.types';
 import { StatusTabs } from './StatusTabs';
+import { UserActionNotice, type UserActionResult } from './UserActionNotice';
 import { UserFilters } from './UserFilters';
 import { UserListTable } from './UserListTable';
 
@@ -51,6 +53,9 @@ const NO_COUNTS = { all: 0, active: 0, inactive: 0, locked: 0 };
  */
 export function UserListPage() {
   const [filters, setFilters] = useState<Filters>({});
+  const [result, setResult] = useState<UserActionResult | null>(null);
+  const [deactivated, setDeactivated] = useState(false);
+  const { run } = useRunUserAction(setResult);
   const params = useSearchParams();
   const query = { pageSize: 25, ...filters };
   const { data, isPending, isError, error, refetch } = useUsers(query);
@@ -78,6 +83,12 @@ export function UserListPage() {
           {otp === 'FAILED' && ' E-mail failed: use Resend once the details screen exists.'}
         </p>
       )}
+      <UserActionNotice result={result} onRepeat={(action, code) => result && void run({ employeeCode: code, email: result.email }, action)} onDismiss={() => setResult(null)} />
+      {deactivated && (
+        <p className="alert alert-success" role="status">
+          User deactivated
+        </p>
+      )}
       <StatusTabs counts={data?.counts ?? NO_COUNTS} value={filters.status ?? 'all'} onChange={(status) => setFilters({ ...filters, status: status === 'all' ? undefined : status, page: 1 })} />
       <UserFilters value={filters} onChange={setFilters} />
       {isPending && <p role="status">Loading users…</p>}
@@ -91,7 +102,7 @@ export function UserListPage() {
         </p>
       )}
       {data && data.items.length === 0 && <p data-testid="users-empty"><span>No users match your search</span>{' '}<Button variant="link" size="sm" onClick={() => setFilters({})}>Clear filters</Button></p>}
-      {data && data.items.length > 0 && <UserListTable users={data.items} />}
+      {data && data.items.length > 0 && <UserListTable users={data.items} onResult={(r) => { setDeactivated(false); setResult(r); }} onDeactivated={() => { setResult(null); setDeactivated(true); }} />}
       {data && data.total > pageSize && (
         <div className="d-flex justify-content-between align-items-center">
           <span className="small">Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, data.total)} of {data.total} users</span>

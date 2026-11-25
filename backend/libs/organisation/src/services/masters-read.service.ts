@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/organisation/src/services/masters-read.service.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { CompanyRow, DepartmentRow, DesignationRow, MastersReadRepository } from
  * @screen    ADM-01
  * @contract  API-MST-01, API-MST-02, API-MST-03
  * @ac        AC-US002-02
- * @lld       LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
  * @status    built
  *
  * @dependencies MastersReadRepository

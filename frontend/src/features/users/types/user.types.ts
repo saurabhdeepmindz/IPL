@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002, US-ADM01-004
  * @subtask        ST-ADM01-002-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/types/user.types.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 /** One company with the roles the user holds in it. */
@@ -137,3 +137,9 @@ export interface HoldsProposals {
   workflowMonitorUrl: string;
   hasDelegate: boolean;
 }
+
+/** The actions of story 008 (API-USR-06, 07, 08). */
+export type UserActionKind = 'unlock' | 'reset-password' | 'resend-otp';
+
+/** The e-mail status of a password action. */
+export type EmailStatus = 'SENT' | 'FAILED';

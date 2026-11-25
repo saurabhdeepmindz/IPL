@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005
  * @subtask        ST-ADM01-005-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/ports/workflow.stand-in.ts
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { WorkflowPort } from './workflow.port';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-01 to API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.25 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.26 section 6.1
  */
 @Injectable()
 export class WorkflowStandIn extends WorkflowPort {

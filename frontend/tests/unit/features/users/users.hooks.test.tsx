@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-004
  * @subtask        ST-ADM01-004-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/users/users.hooks.test.tsx
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         pseudo
  */
 
@@ -23,11 +23,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDeactivateUser } from '@/features/users/hooks/useDeactivateUser';
+import { useUserActions } from '@/features/users/hooks/useUserActions';
 import { useSaveUser } from '@/features/users/hooks/useSaveUser';
 import { useUser } from '@/features/users/hooks/useUser';
-import { createUser, deactivateUser, getUser, updateUser } from '@/features/users/services/users.service';
+import { createUser, deactivateUser, getUser, resendOneTimePassword, resetUserPassword, unlockUser, updateUser } from '@/features/users/services/users.service';
 
-vi.mock('@/features/users/services/users.service', () => ({ getUser: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), listUsers: vi.fn(), deactivateUser: vi.fn() }));
+vi.mock('@/features/users/services/users.service', () => ({ getUser: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), listUsers: vi.fn(), deactivateUser: vi.fn(), unlockUser: vi.fn(), resetUserPassword: vi.fn(), resendOneTimePassword: vi.fn() }));
 
 const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>;
@@ -39,6 +40,7 @@ describe('user hooks (supporting tests)', () => {
     vi.mocked(createUser).mockReset();
     vi.mocked(updateUser).mockReset();
     vi.mocked(deactivateUser).mockReset();
+    for (const m of [unlockUser, resetUserPassword, resendOneTimePassword]) vi.mocked(m).mockReset();
   });
 
   /**
@@ -93,6 +95,34 @@ describe('user hooks (supporting tests)', () => {
       await result.current.mutateAsync({ employeeCode: '20001', input: { reason: 'OTHER', note: 'x' } });
     });
     expect(deactivateUser).toHaveBeenCalledWith('20001', { reason: 'OTHER', note: 'x' });
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['users'] });
+  });
+
+  /**
+   * @story   US-ADM01-008
+   * @ac      AC-US008-01, AC-US008-03
+   * @subtask ST-ADM01-008-FE-01
+   * In plain words: supporting test. useUserActions calls the right function for each action and marks the user lists stale after a success and after a refusal.
+   */
+  it('runs each action and refreshes the lists, also after a refusal', async () => {
+    vi.mocked(unlockUser).mockResolvedValue({ status: 'ACTIVE' });
+    vi.mocked(resetUserPassword).mockResolvedValue({ emailStatus: 'SENT' });
+    vi.mocked(resendOneTimePassword).mockRejectedValue(new Error('refused'));
+    const spy = vi.spyOn(client, 'invalidateQueries');
+    const { result } = renderHook(() => useUserActions(), { wrapper });
+    await act(async () => {
+      await result.current.mutateAsync({ employeeCode: '20001', action: 'unlock' });
+    });
+    expect(unlockUser).toHaveBeenCalledWith('20001');
+    await act(async () => {
+      await result.current.mutateAsync({ employeeCode: '20001', action: 'reset-password' });
+    });
+    expect(resetUserPassword).toHaveBeenCalledWith('20001');
+    spy.mockClear();
+    await act(async () => {
+      await result.current.mutateAsync({ employeeCode: '20001', action: 'resend-otp' }).catch(() => undefined);
+    });
+    expect(resendOneTimePassword).toHaveBeenCalledWith('20001');
     expect(spy).toHaveBeenCalledWith({ queryKey: ['users'] });
   });
 });

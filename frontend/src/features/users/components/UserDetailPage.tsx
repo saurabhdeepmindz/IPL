@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-006
  * @subtask        ST-ADM01-006-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
+ * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserDetailPage.tsx
- * @lld-synced     v0.25
+ * @lld-synced     v0.26
  * @status         built
  */
 'use client';
@@ -24,9 +24,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui';
 import { StatusBadge } from '@/components/ams';
 import { ApiError } from '@/lib/errors';
+import { useRunUserAction } from '../hooks/useUserActions';
 import { useUser } from '../hooks/useUser';
 import { DeactivateUserDialog } from './DeactivateUserDialog';
+import { UserActionNotice, type UserActionResult } from './UserActionNotice';
 import { UserDetailTabs } from './UserDetailTabs';
+import { UserRowMenu } from './UserRowMenu';
 
 /** Props of UserDetailPage. */
 interface UserDetailPageProps {
@@ -56,6 +59,8 @@ export function UserDetailPage({ employeeCode }: UserDetailPageProps) {
   const { data: user, isPending, error } = useUser(employeeCode);
   const [deactivating, setDeactivating] = useState(false);
   const [done, setDone] = useState(false);
+  const [result, setResult] = useState<UserActionResult | null>(null);
+  const { run } = useRunUserAction(setResult);
 
   if (isPending) return <p role="status">Loading the user…</p>;
   if (error || !user) {
@@ -81,7 +86,8 @@ export function UserDetailPage({ employeeCode }: UserDetailPageProps) {
             </p>
           </div>
         </div>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 align-items-start">
+          <UserRowMenu user={user} place="details" onResult={setResult} onDeactivated={() => setDone(true)} />
           <Link href={`/users/${user.employeeCode}/edit`} className="btn btn-outline-primary">
             Edit user
           </Link>
@@ -97,6 +103,7 @@ export function UserDetailPage({ employeeCode }: UserDetailPageProps) {
           User deactivated
         </p>
       )}
+      <UserActionNotice result={result} onRepeat={(action, code) => void run({ employeeCode: code, email: user.email }, action)} onDismiss={() => setResult(null)} />
       <UserDetailTabs user={user} />
       <DeactivateUserDialog user={deactivating ? user : null} onClose={() => setDeactivating(false)} onDone={() => setDone(true)} />
     </section>

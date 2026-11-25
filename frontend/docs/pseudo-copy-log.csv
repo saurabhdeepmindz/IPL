@@ -88,3 +88,10 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-006,stories/users/DeactivateUserDialog.stories.tsx,v0.25,copied
 2026-11-25,US-ADM01-006,tests/e2e/user-detail.spec.ts,v0.25,copied
 2026-11-25,US-ADM01-006,tests/unit/features/users/UserDetail.test.tsx,v0.25,copied
+2026-11-25,US-ADM01-008,src/features/users/components/UserActionConfirm.tsx,v0.26,copied
+2026-11-25,US-ADM01-008,src/features/users/components/UserActionNotice.tsx,v0.26,copied
+2026-11-25,US-ADM01-008,src/features/users/components/UserRowMenu.tsx,v0.26,copied
+2026-11-25,US-ADM01-008,src/features/users/hooks/useUserActions.ts,v0.26,copied
+2026-11-25,US-ADM01-008,stories/users/UserRowMenu.stories.tsx,v0.26,copied
+2026-11-25,US-ADM01-008,tests/e2e/user-actions.spec.ts,v0.26,copied
+2026-11-25,US-ADM01-008,tests/unit/features/users/UserActions.test.tsx,v0.26,copied
