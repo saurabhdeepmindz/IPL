@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-004
  * @subtask        ST-ADM01-004-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/users/users.hooks.test.tsx
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         pseudo
  */
 
@@ -22,11 +22,12 @@ import type { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useDeactivateUser } from '@/features/users/hooks/useDeactivateUser';
 import { useSaveUser } from '@/features/users/hooks/useSaveUser';
 import { useUser } from '@/features/users/hooks/useUser';
-import { createUser, getUser, updateUser } from '@/features/users/services/users.service';
+import { createUser, deactivateUser, getUser, updateUser } from '@/features/users/services/users.service';
 
-vi.mock('@/features/users/services/users.service', () => ({ getUser: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), listUsers: vi.fn() }));
+vi.mock('@/features/users/services/users.service', () => ({ getUser: vi.fn(), createUser: vi.fn(), updateUser: vi.fn(), listUsers: vi.fn(), deactivateUser: vi.fn() }));
 
 const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>;
@@ -37,6 +38,7 @@ describe('user hooks (supporting tests)', () => {
     vi.mocked(getUser).mockReset();
     vi.mocked(createUser).mockReset();
     vi.mocked(updateUser).mockReset();
+    vi.mocked(deactivateUser).mockReset();
   });
 
   /**
@@ -74,6 +76,23 @@ describe('user hooks (supporting tests)', () => {
       await result.current.mutateAsync({ employeeCode: '20001', input: form, idempotencyKey: 'key-2' });
     });
     expect(updateUser).toHaveBeenCalledWith('20001', form);
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['users'] });
+  });
+
+  /**
+   * @story   US-ADM01-006
+   * @ac      AC-US006-01
+   * @subtask ST-ADM01-006-FE-01
+   * In plain words: supporting test. useDeactivateUser sends the reason for the user and marks the user lists and the user as stale.
+   */
+  it('deactivates a user and refreshes the lists', async () => {
+    vi.mocked(deactivateUser).mockResolvedValue({ status: 'INACTIVE' });
+    const spy = vi.spyOn(client, 'invalidateQueries');
+    const { result } = renderHook(() => useDeactivateUser(), { wrapper });
+    await act(async () => {
+      await result.current.mutateAsync({ employeeCode: '20001', input: { reason: 'OTHER', note: 'x' } });
+    });
+    expect(deactivateUser).toHaveBeenCalledWith('20001', { reason: 'OTHER', note: 'x' });
     expect(spy).toHaveBeenCalledWith({ queryKey: ['users'] });
   });
 });

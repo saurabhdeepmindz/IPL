@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002, US-ADM01-004
  * @subtask        ST-ADM01-002-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/types/user.types.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 /** One company with the roles the user holds in it. */
@@ -118,4 +118,22 @@ export interface MasterItem {
 export interface CompanyItem {
   code: string;
   name: string;
+}
+
+/** The reasons API-USR-05 accepts. */
+export type DeactivationReason = 'LEFT_COMPANY' | 'TRANSFERRED' | 'LONG_LEAVE' | 'DUPLICATE' | 'OTHER';
+
+/** The body of the deactivate call (API-USR-05). */
+export interface DeactivateInput {
+  reason: DeactivationReason;
+  note?: string;
+  /** Set true after the proposals warning has been shown. */
+  confirmWithProposals?: boolean;
+}
+
+/** The warning of a 409 HOLDS_PROPOSALS (API-USR-05). */
+export interface HoldsProposals {
+  count: number;
+  workflowMonitorUrl: string;
+  hasDelegate: boolean;
 }

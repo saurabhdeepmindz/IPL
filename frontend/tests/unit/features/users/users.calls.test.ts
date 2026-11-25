@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002, US-ADM01-004
  * @subtask        ST-ADM01-002-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/users/users.calls.test.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 
@@ -23,7 +23,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as ApiClient from '@/lib/api-client';
 import type { ApiError } from '@/lib/errors';
 import { getCompanies, getDepartments, getDesignations } from '@/features/users/services/masters.service';
-import { createUser, getUser, listUsers, updateUser } from '@/features/users/services/users.service';
+import { createUser, deactivateUser, getUser, listUsers, readHolds, updateUser } from '@/features/users/services/users.service';
 
 const seen = vi.hoisted(() => ({ calls: [] as { method?: string; url?: string; params?: unknown; data?: unknown; headers?: Record<string, unknown> }[], next: { status: 200, data: {} as unknown } }));
 vi.mock('@/lib/api-client', async () => {
@@ -114,5 +114,37 @@ describe('user and masters calls (supporting tests)', () => {
     expect(await caught(updateUser('20001', form))).toMatchObject({ status: 422, code: 'EMPLOYEE_CODE_READ_ONLY' });
     failure(403, 'FORBIDDEN');
     expect(await caught(listUsers({}))).toMatchObject({ status: 403, code: 'FORBIDDEN' });
+  });
+
+  /**
+   * @story   US-ADM01-006
+   * @ac      AC-US006-01
+   * @subtask ST-ADM01-006-FE-01
+   * In plain words: supporting test. deactivateUser posts the reason, the note and the confirmation to the deactivate path and returns the new status.
+   */
+  it('deactivates a user', async () => {
+    answer(200, { data: { status: 'INACTIVE' } });
+    const out = await deactivateUser('20001', { reason: 'LEFT_COMPANY', note: 'Resigned', confirmWithProposals: true });
+    expect(out).toEqual({ status: 'INACTIVE' });
+    expect(seen.calls[0]).toMatchObject({ method: 'post', url: '/users/20001/deactivate', data: { reason: 'LEFT_COMPANY', note: 'Resigned', confirmWithProposals: true } });
+  });
+
+  /**
+   * @story   US-ADM01-006
+   * @ac      AC-US006-02
+   * @subtask ST-ADM01-006-FE-01
+   * In plain words: supporting test. A 409 HOLDS_PROPOSALS reaches the caller and readHolds turns its fields into the count, the Workflow Monitor address and the delegate flag; any other error gives null.
+   */
+  it('reads the proposals warning of a 409', async () => {
+    answer(409, { error: { code: 'HOLDS_PROPOSALS', message: 'x', fields: [{ field: 'count', message: '7' }, { field: 'workflowMonitorUrl', message: '/workflow-monitor' }, { field: 'hasDelegate', message: 'false' }] } });
+    const e = await caught(deactivateUser('20001', { reason: 'LEFT_COMPANY' }));
+    expect(e).toMatchObject({ status: 409, code: 'HOLDS_PROPOSALS' });
+    expect(readHolds(e)).toEqual({ count: 7, workflowMonitorUrl: '/workflow-monitor', hasDelegate: false });
+    failure(422, 'LAST_ADMINISTRATOR');
+    const last = await caught(deactivateUser('20001', { reason: 'LEFT_COMPANY' }));
+    expect(last).toMatchObject({ status: 422, code: 'LAST_ADMINISTRATOR' });
+    expect(readHolds(last)).toBeNull();
+    failure(404, 'USER_NOT_FOUND');
+    expect(await caught(deactivateUser('99999', { reason: 'OTHER' }))).toMatchObject({ status: 404 });
   });
 });

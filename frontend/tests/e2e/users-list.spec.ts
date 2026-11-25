@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/e2e/users-list.spec.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 
@@ -62,6 +62,8 @@ test.describe('User list journeys (story 002)', () => {
     await expect(page.getByRole('tab', { name: /^Active/ })).toContainText(String(api.counts.active));
     await expect(page.getByRole('tab', { name: /^Inactive/ })).toContainText(String(api.counts.inactive));
     await expect(page.getByRole('tab', { name: /^Locked/ })).toContainText(String(api.counts.locked));
+    // Test users from other journeys can fill the first page, so the Administrator is found by search.
+    await page.getByLabel('Search users').filter({ visible: true }).fill('System');
     const row = page.getByRole('row', { name: /System Administrator/ });
     await expect(row).toContainText('IPL: Administrator');
     await expect(row).toContainText('Active');
@@ -90,7 +92,9 @@ test.describe('User list journeys (story 002)', () => {
     await expect(page.getByText('No users match your search')).toBeVisible();
     await shot(page, 'E02', 'empty');
     await page.getByRole('button', { name: 'Clear filters' }).first().click();
-    await expect(page.getByRole('row', { name: /System Administrator/ })).toBeVisible();
+    await expect(page.getByText('No users match your search')).toHaveCount(0);
+    await expect(page.getByLabel('Search users').filter({ visible: true })).toHaveValue('');
+    await expect(page.getByTestId('users-table').getByRole('row').nth(1)).toBeVisible();
     await shot(page, 'E02', 'cleared');
   });
 

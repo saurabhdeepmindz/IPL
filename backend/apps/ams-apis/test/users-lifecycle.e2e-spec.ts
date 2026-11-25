@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-01, ST-ADM01-007-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/test/users-lifecycle.e2e-spec.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 

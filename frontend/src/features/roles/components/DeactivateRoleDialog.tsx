@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/DeactivateRoleDialog.tsx
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 'use client';
@@ -45,7 +45,7 @@ interface DeactivateRoleDialogProps {
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US012-04, AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.25 §6.5
  * @status    built
  *
  * @dependencies useDeactivateRole, ReasonDialog

@@ -79,3 +79,12 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-004,tests/unit/features/users/AccessSummary.test.tsx,v0.23,copied
 2026-11-25,US-ADM01-004,tests/unit/features/users/UserForm.test.tsx,v0.23,copied
 2026-11-25,US-ADM01-004,tests/unit/features/users/users.calls.test.ts,v0.23,identical
+2026-11-25,US-ADM01-006,src/app/(admin)/users/[employeeCode]/page.tsx,v0.25,copied
+2026-11-25,US-ADM01-006,src/features/users/components/DeactivateUserDialog.tsx,v0.25,copied
+2026-11-25,US-ADM01-006,src/features/users/components/UserDetailPage.tsx,v0.25,copied
+2026-11-25,US-ADM01-006,src/features/users/components/UserDetailRoute.tsx,v0.25,copied
+2026-11-25,US-ADM01-006,src/features/users/components/UserDetailTabs.tsx,v0.25,copied
+2026-11-25,US-ADM01-006,src/features/users/hooks/useDeactivateUser.ts,v0.25,copied
+2026-11-25,US-ADM01-006,stories/users/DeactivateUserDialog.stories.tsx,v0.25,copied
+2026-11-25,US-ADM01-006,tests/e2e/user-detail.spec.ts,v0.25,copied
+2026-11-25,US-ADM01-006,tests/unit/features/users/UserDetail.test.tsx,v0.25,copied

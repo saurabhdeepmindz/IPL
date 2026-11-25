@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-004
  * @subtask        ST-ADM01-004-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-form/contract.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 
@@ -46,7 +46,7 @@ export interface UserFormData {
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US004-04
- * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.25 §6.1
  * @status    built
  */
 export abstract class UserFormRepository {

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005
  * @subtask        ST-ADM01-005-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/users/deactivate-user.dto.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { IsBoolean, IsIn, IsOptional, IsString, MaxLength } from 'class-validato
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05
- *   lld:       LLD-EPIC-ADM-01 v0.24 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.25 section 6.1
  */
 export class DeactivateUserDto {
   @IsIn(['LEFT_COMPANY', 'TRANSFERRED', 'LONG_LEAVE', 'DUPLICATE', 'OTHER'])

@@ -11,14 +11,15 @@
  *
  * @story          US-ADM01-002, US-ADM01-004, US-ADM01-013
  * @subtask        ST-ADM01-002-FE-01, ST-ADM01-004-FE-01, ST-ADM01-013-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/services/users.service.ts
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 import { api } from '@/lib/api-client';
-import type { CreateUserResult, UserDetails, UserFilters, UserFormData, UserList } from '../types/user.types';
+import type { ApiError } from '@/lib/errors';
+import type { CreateUserResult, DeactivateInput, HoldsProposals, UserDetails, UserFilters, UserFormData, UserList } from '../types/user.types';
 
 /**
  * List users. In plain words: one page of users with the counts of the four tabs; the filters go in the query and empty ones are dropped. It also serves the user search of the assign dialog (`q` and `pageSize` only).
@@ -111,4 +112,49 @@ export async function createUser(input: UserFormData, idempotencyKey: string): P
 export async function updateUser(employeeCode: string, input: UserFormData): Promise<UserDetails> {
   const res = await api.put<{ data: UserDetails }>(`/users/${employeeCode}`, input);
   return res.data.data;
+}
+
+/**
+ * Deactivate a user. In plain words: sends the reason, the note and, after the warning, the confirmation; the user is never deleted.
+ *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-006
+ * @subtask   ST-ADM01-006-FE-01
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-02
+ * @screen    ADM-01
+ * @contract  API-USR-05
+ * @ac        AC-US006-01, AC-US006-02
+ * @lld       LLD-EPIC-ADM-01 v0.25 §6.3
+ * @status    built
+ *
+ * @dependencies api.post
+ *
+ * @returns The new status
+ */
+export async function deactivateUser(employeeCode: string, input: DeactivateInput): Promise<{ status: 'INACTIVE' }> {
+  const res = await api.post<{ data: { status: 'INACTIVE' } }>(`/users/${employeeCode}/deactivate`, input);
+  return res.data.data;
+}
+
+/**
+ * Read the proposals warning. In plain words: turns the fields of a 409 HOLDS_PROPOSALS into the count, the Workflow Monitor address and the delegate flag; any other error gives null.
+ *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-006
+ * @subtask   ST-ADM01-006-FE-01
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-02
+ * @screen    ADM-01
+ * @contract  API-USR-05
+ * @ac        AC-US006-02
+ * @lld       LLD-EPIC-ADM-01 v0.25 §6.3
+ * @status    built
+ *
+ * @param error - the error of the deactivate call
+ * @returns The warning, or null
+ */
+export function readHolds(error: ApiError): HoldsProposals | null {
+  if (error.code !== 'HOLDS_PROPOSALS') return null;
+  return { count: Number(error.fields.count ?? 0), workflowMonitorUrl: error.fields.workflowMonitorUrl ?? '', hasDelegate: error.fields.hasDelegate === 'true' };
 }

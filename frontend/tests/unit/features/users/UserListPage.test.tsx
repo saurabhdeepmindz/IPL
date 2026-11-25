@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/users/UserListPage.test.tsx
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         built
  */
 
@@ -72,7 +72,7 @@ describe('UserListPage (J01 to J03)', () => {
     expect(within(row).getByText(/Inactive/)).toBeInTheDocument();
     expect(within(screen.getByRole('row', { name: /User 3/ })).getByText(/Locked/)).toBeInTheDocument();
     expect(within(screen.getByRole('row', { name: /User 3/ })).getByText(/Never/)).toBeInTheDocument();
-    expect(within(row).getByRole('link', { name: '10002' })).toHaveAttribute('href', '/users/10002/edit');
+    expect(within(row).getByRole('link', { name: '10002' })).toHaveAttribute('href', '/users/10002');
     await userEvent.click(screen.getByRole('tab', { name: /Locked/ }));
     await waitFor(() => expect(listUsers).toHaveBeenLastCalledWith(expect.objectContaining({ status: 'locked' })));
   });

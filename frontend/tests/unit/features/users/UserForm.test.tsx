@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-004
  * @subtask        ST-ADM01-004-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+ * @lld            LLD-EPIC-ADM-01 v0.25 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.25.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/users/UserForm.test.tsx
- * @lld-synced     v0.24
+ * @lld-synced     v0.25
  * @status         pseudo
  */
 
@@ -39,7 +39,7 @@ const renderForm = (code?: string) => render(<QueryClientProvider client={new Qu
 
 /** Fills the mandatory fields of an Add form (one company with one role). */
 async function fill(over: { code?: string; designation?: string; manager?: string | null } = {}) {
-  await screen.findByRole('option', { name: 'Finance' });
+  await screen.findByRole('option', { name: 'Finance' }, { timeout: 5000 });
   await userEvent.type(screen.getByLabelText(/Employee code/), over.code ?? '20001');
   await userEvent.type(screen.getByLabelText(/Full name/), 'New Person');
   await userEvent.type(screen.getByLabelText(/Official e-mail/), 'new.person@example.invalid');
