@@ -15,6 +15,9 @@
  */
 
 import { Module } from '@nestjs/common';
+import { AuditModule } from '@libs/audit';
+import { RolesService } from './services/roles.service';
+import { RoleDatabaseRepository, RoleRepository } from './repositories/role';
 import { RolePermissionRepository } from './repositories/role-permission/contract';
 import { RolePermissionDatabaseRepository } from './repositories/role-permission/database';
 
@@ -32,7 +35,12 @@ import { RolePermissionDatabaseRepository } from './repositories/role-permission
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  providers: [{ provide: RolePermissionRepository, useClass: RolePermissionDatabaseRepository }],
-  exports: [RolePermissionRepository],
+  imports: [AuditModule],
+  providers: [
+    { provide: RolePermissionRepository, useClass: RolePermissionDatabaseRepository },
+    { provide: RoleRepository, useClass: RoleDatabaseRepository },
+    RolesService,
+  ],
+  exports: [RolePermissionRepository, RoleRepository, RolesService],
 })
 export class RolesAndPermissionsModule {}

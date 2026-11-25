@@ -3,20 +3,24 @@
  * @module  RolesAndPermissionsModule
  *
  * @description
- * Contract of the role-permission repository. In plain words: what the rest of the code may ask about the cells of the permission matrix.
+ * Contract of the role-permission repository. In plain words: reads and writes the cells of the matrix. EXTENDS the built file: `listForRole` exists; this story adds `replaceForRole` and `copyFrom`; US-ADM01-014 adds `listAll` (decision L-14).
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @epic    EPIC-ADM-01
- * @story   US-ADM01-017
- * @subtask ST-ADM01-000-BE-08
+ * @story          US-ADM01-010
+ * @subtask        ST-ADM01-010-BE-04
+ * @lld            LLD-EPIC-ADM-01 v0.8 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.8.md
+ * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role-permission/contract.ts
+ * @lld-synced     v0.8
+ * @status         built
  */
 
 import { DataScope } from '@libs/database';
 
-/** One cell of the permission matrix as the guards need it. */
+/** One cell of the matrix. */
 export interface PermissionCell {
   key: string;
   allowed: boolean;
@@ -24,27 +28,25 @@ export interface PermissionCell {
 }
 
 /**
- * Read access to the cells of a role.
+ * Role-permission repository contract.
  *
- * In plain words: asks "what may this role do, and how far?". The write methods come with the matrix stories.
+ * In plain words: the cells of a role; the roles service and the matrix service depend on this class.
  *
  * @rtm
  *   epics:     EPIC-ADM-01
- *   stories:   US-ADM01-017
+ *   stories:   US-ADM01-010
  *   workflows: AD-03
- *   frd:       FR-043.2
- *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
+ *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
+ *   contracts: API-ROL-02, API-ROL-03, API-PRM-01, API-PRM-03
+ *   lld:       LLD-EPIC-ADM-01 v0.8 §6.4
  */
 export abstract class RolePermissionRepository {
-  /**
-   * The cells of a role.
-   *
-   * In plain words: every right the role has a row for, with the permission key, the allowed flag and the data scope.
-   *
-   * @param roleId Internal key of the role
-   * @returns The cells of the role
-   * @dependencies none
-   */
+  /** The cells of one role (built in ST-ADM01-000-BE-08). */
   abstract listForRole(roleId: string): Promise<PermissionCell[]>;
+
+  /** Replaces the cells of a role with the given ones (cells not given become not allowed). */
+  abstract replaceForRole(roleId: string, cells: PermissionCell[]): Promise<void>;
+
+  /** Copies every cell of one role to another role. */
+  abstract copyFrom(sourceRoleId: string, targetRoleId: string): Promise<void>;
 }

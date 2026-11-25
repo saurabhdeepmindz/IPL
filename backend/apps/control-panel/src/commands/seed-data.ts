@@ -14,6 +14,7 @@
  * @subtask ST-ADM01-000-BE-07
  */
 
+import { PROTECTED_RIGHTS } from '@libs/roles-and-permissions';
 import { DataScope } from '@libs/database';
 
 export interface RoleSeed {
@@ -59,8 +60,8 @@ export const GRANTS: Record<string, Record<string, DataScope | null>> = {
   AUDITOR: { 'users.view': 'COMPANY', 'roles.view': null, 'companies.view-all': null, 'audit.view': 'COMPANY' },
 };
 
-/** Rights the Administrator role can never lose. */
-export const PROTECTED_KEYS = ['users.manage', 'roles.manage'];
+/** Rights the Administrator role can never lose: one list, held in the roles library (decision L-15). */
+export const PROTECTED_KEYS = PROTECTED_RIGHTS;
 
 export const COMPANIES = [
   { code: 'IPL', name: 'Indian Potash Limited' },

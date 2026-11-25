@@ -15,4 +15,10 @@
  */
 
 export * from './module';
+export * from './repositories/role';
 export * from './repositories/role-permission';
+export * from './services/roles.service';
+export * from './constants/protected-rights';
+export * from './errors/role-in-use.exception';
+export * from './errors/role-locked.exception';
+export * from './errors/role-name-exists.exception';

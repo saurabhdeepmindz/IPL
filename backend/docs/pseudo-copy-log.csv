@@ -12,3 +12,21 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-017,libs/core/src/authorization/require-permission.decorator.ts,v0.5,copied
 2026-11-25,US-ADM01-017,libs/core/src/authorization/session-user.interface.ts,v0.5,copied
 2026-11-25,US-ADM01-017,tests/api/test_permission_refusal.py,v0.5,copied
+2026-11-25,US-ADM01-010,apps/ams-apis/src/controllers/roles.controller.ts,v0.7,copied
+2026-11-25,US-ADM01-010,apps/ams-apis/src/dtos/roles/deactivate-role.dto.ts,v0.7,copied
+2026-11-25,US-ADM01-010,apps/ams-apis/src/dtos/roles/list-roles-query.dto.ts,v0.7,copied
+2026-11-25,US-ADM01-010,apps/ams-apis/src/dtos/roles/role-response.dto.ts,v0.7,copied
+2026-11-25,US-ADM01-010,apps/ams-apis/src/dtos/roles/save-role.dto.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/constants/protected-rights.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/errors/role-in-use.exception.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/errors/role-locked.exception.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/errors/role-name-exists.exception.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/repositories/role/contract.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/repositories/role/database.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/repositories/role/index.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/repositories/role/role.repository.spec.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/repositories/role-permission/contract.ts,v0.7,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/repositories/role-permission/database.ts,v0.7,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/services/roles.service.spec.ts,v0.7,copied
+2026-11-25,US-ADM01-010,libs/roles-and-permissions/src/services/roles.service.ts,v0.7,copied
+2026-11-25,US-ADM01-010,tests/api/test_roles.py,v0.7,copied

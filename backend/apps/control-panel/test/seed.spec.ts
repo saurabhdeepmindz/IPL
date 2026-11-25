@@ -16,6 +16,7 @@
 
 import { Test } from '@nestjs/testing';
 import { DatabaseModule, PrismaService } from '@libs/database';
+import { PROTECTED_RIGHTS } from '@libs/roles-and-permissions';
 import { PERMISSIONS, PROTECTED_KEYS, SeedAdminCommand, SeedMastersCommand, SeedRolesCommand, STANDARD_ROLES } from '../src/commands';
 
 describe('ST-ADM01-000-BE-07 seeds', () => {
@@ -73,6 +74,33 @@ describe('ST-ADM01-000-BE-07 seeds', () => {
     for (const key of PROTECTED_KEYS) {
       expect(role.permissions.find((c) => c.permission.code === key)?.allowed).toBe(true);
     }
+  });
+
+  /**
+   * @tc      TC-ADM01-010-J07
+   * @story   US-ADM01-010
+   * @ac      AC-US010-07
+   * @subtask ST-ADM01-010-BE-05
+   * In plain words: exactly the six SOW roles are seeded, and none is a position on a proposal.
+   */
+  it('seeds exactly the six SOW roles and no role for a position on a proposal', async () => {
+    const six = ['Administrator', 'Auditor', 'Finance', 'Initiator', 'Processor', 'Report Viewer'];
+    expect(STANDARD_ROLES.map((r) => r.name).sort()).toEqual(six);
+    const names = (await prisma.raw.role.findMany({ where: { type: 'STANDARD' } })).map((r) => r.name).sort();
+    expect(names).toEqual(six);
+    for (const position of ['First Processor', 'Second Processor', 'Terminator', 'Discussion participant', 'AWI assignee']) {
+      expect(await prisma.raw.role.count({ where: { name: position } })).toBe(0);
+    }
+  });
+
+  /**
+   * @story   US-ADM01-010
+   * @ac      AC-US010-04
+   * @subtask ST-ADM01-010-BE-05
+   * In plain words: supporting test. The list of protected rights exists in one place only (the roles library), and the seed uses that list.
+   */
+  it('uses the shared list of protected rights', () => {
+    expect(PROTECTED_KEYS).toBe(PROTECTED_RIGHTS);
   });
 
   it('every standard role has a row for every permission', async () => {
