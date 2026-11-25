@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.26 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
+ * @lld            LLD-EPIC-ADM-01 v0.27 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/ports/temporary-password-mailer.port.ts
- * @lld-synced     v0.26
+ * @lld-synced     v0.27
  * @status         built
  */
 
@@ -29,7 +29,7 @@
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-01 to API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.26 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.27 section 6.1
  */
 export abstract class TemporaryPasswordMailer {
   /** Sends the one-time password to the user's e-mail. Never throws: a failure is the answer FAILED. */

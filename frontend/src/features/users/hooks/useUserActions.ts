@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-008
  * @subtask        ST-ADM01-008-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.26 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
+ * @lld            LLD-EPIC-ADM-01 v0.27 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/hooks/useUserActions.ts
- * @lld-synced     v0.26
+ * @lld-synced     v0.27
  * @status         built
  */
 
@@ -37,7 +37,7 @@ import type { UserActionResult } from '../components/UserActionNotice';
  * @screen    ADM-01
  * @contract  API-USR-06, API-USR-07, API-USR-08
  * @ac        AC-US008-01, 02, 03
- * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
+ * @lld       LLD-EPIC-ADM-01 v0.27 §6.3
  * @status    built
  *
  * @dependencies unlockUser, resetUserPassword, resendOneTimePassword

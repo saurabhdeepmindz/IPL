@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012, US-ADM01-013
  * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.26 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
+ * @lld            LLD-EPIC-ADM-01 v0.27 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/hooks/roles.keys.ts
- * @lld-synced     v0.26
+ * @lld-synced     v0.27
  * @status         built
  */
 /**
@@ -27,7 +27,7 @@
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.26 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.27 §6.5
  * @status    built
  */
 export const rolesKeys = {

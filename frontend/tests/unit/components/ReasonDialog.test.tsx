@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012, US-ADM01-013
  * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.26 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
+ * @lld            LLD-EPIC-ADM-01 v0.27 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/components/ReasonDialog.test.tsx
- * @lld-synced     v0.26
+ * @lld-synced     v0.27
  * @status         built
  */
 

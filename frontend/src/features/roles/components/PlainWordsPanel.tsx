@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.26 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.26.md
+ * @lld            LLD-EPIC-ADM-01 v0.27 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/PlainWordsPanel.tsx
- * @lld-synced     v0.26
+ * @lld-synced     v0.27
  * @status         built
  */
 import type { PermissionCell } from '../types/role.types';
@@ -39,7 +39,7 @@ const SCOPE = { OWN: 'own only', DEPARTMENT: 'own department', COMPANY: 'whole c
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-02
- * @lld       LLD-EPIC-ADM-01 v0.26 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.27 §6.5
  * @status    built
  *
  * @returns The rendered panel
