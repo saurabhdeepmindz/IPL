@@ -36,3 +36,26 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-012,tests/unit/features/roles/RoleListPage.test.tsx,v0.19,copied
 2026-11-25,US-ADM01-012,tests/unit/features/roles/RoleLocks.test.tsx,v0.19,copied
 2026-11-25,US-ADM01-012,tests/unit/features/roles/roles.service.test.ts,v0.19,copied
+2026-11-25,US-ADM01-013,src/app/(admin)/roles/[roleId]/page.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,src/components/ams/ReasonDialog.tsx,v0.20,identical
+2026-11-25,US-ADM01-013,src/features/roles/components/AssignUsersDialog.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/roles/components/RoleAllowsPanel.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/roles/components/RoleDetailPage.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/roles/components/RoleUsersTable.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/roles/hooks/roles.keys.ts,v0.20,identical
+2026-11-25,US-ADM01-013,src/features/roles/hooks/useAssignUsers.ts,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/roles/hooks/useRole.ts,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/roles/index.ts,v0.20,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-013,src/features/roles/services/roles.service.ts,v0.20,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-013,src/features/roles/types/role.types.ts,v0.20,identical
+2026-11-25,US-ADM01-013,src/features/users/hooks/useUserSearch.ts,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/users/index.ts,v0.20,copied
+2026-11-25,US-ADM01-013,src/features/users/services/users.service.ts,v0.20,copied
+2026-11-25,US-ADM01-013,stories/ams/ReasonDialog.stories.tsx,v0.20,identical
+2026-11-25,US-ADM01-013,tests/e2e/role-assign.spec.ts,v0.20,copied
+2026-11-25,US-ADM01-013,tests/unit/components/AdminShell.test.tsx,v0.20,identical
+2026-11-25,US-ADM01-013,tests/unit/components/ReasonDialog.test.tsx,v0.20,identical
+2026-11-25,US-ADM01-013,tests/unit/features/auth/DevSignInForm.test.tsx,v0.20,identical
+2026-11-25,US-ADM01-013,tests/unit/features/roles/AssignUsersDialog.test.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,tests/unit/features/roles/RoleDetailPage.test.tsx,v0.20,copied
+2026-11-25,US-ADM01-013,tests/unit/features/roles/roles.service.test.ts,v0.20,identical
