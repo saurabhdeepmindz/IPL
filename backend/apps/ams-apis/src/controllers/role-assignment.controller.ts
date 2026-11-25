@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.12 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.12.md
+ * @lld            LLD-EPIC-ADM-01 v0.13 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.13.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/role-assignment.controller.ts
- * @lld-synced     v0.12
+ * @lld-synced     v0.13
  * @status         built
  */
 
@@ -41,7 +41,7 @@ const roleIdPipe = new ParseUUIDPipe({ exceptionFactory: () => new NotFoundAppEx
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-05, API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.12 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.13 §6.4
  */
 @Controller('roles')
 export class RoleAssignmentController {
@@ -60,7 +60,7 @@ export class RoleAssignmentController {
  * @screen    ADM-02
  * @contract  API-ROL-05
  * @ac        AC-US011-02
- * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.13 §6.4
  * @status    built
    *
    * @dependencies RoleAssignmentService.getDetails
@@ -93,7 +93,7 @@ export class RoleAssignmentController {
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01, AC-US011-03
- * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.13 §6.4
  * @status    built
    *
    * @dependencies RoleAssignmentService.assignUsers

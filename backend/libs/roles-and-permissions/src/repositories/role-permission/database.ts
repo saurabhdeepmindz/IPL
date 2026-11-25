@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010, US-ADM01-014
  * @subtask        ST-ADM01-010-BE-04, ST-ADM01-014-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.12 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.12.md
+ * @lld            LLD-EPIC-ADM-01 v0.13 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.13.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role-permission/database.ts
- * @lld-synced     v0.12
+ * @lld-synced     v0.13
  * @status         built
  */
 
@@ -34,7 +34,7 @@ import { MatrixData, PermissionCell, RolePermissionRepository } from './contract
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03, API-PRM-01, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.12 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.13 §6.4
  */
 @Injectable()
 export class RolePermissionDatabaseRepository extends RolePermissionRepository {
@@ -60,7 +60,7 @@ export class RolePermissionDatabaseRepository extends RolePermissionRepository {
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US010-02, AC-US010-04
- * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.13 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db rolePermission.upsert
@@ -97,7 +97,7 @@ export class RolePermissionDatabaseRepository extends RolePermissionRepository {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US010-02
- * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.13 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db rolePermission.findMany, createMany
@@ -129,7 +129,7 @@ export class RolePermissionDatabaseRepository extends RolePermissionRepository {
  * @screen    ADM-03
  * @contract  API-PRM-01
  * @ac        AC-US014-01
- * @lld       LLD-EPIC-ADM-01 v0.12 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.13 §6.6
  * @status    built
    *
    * @dependencies PrismaService.db permission.findMany, rolePermission.findMany
