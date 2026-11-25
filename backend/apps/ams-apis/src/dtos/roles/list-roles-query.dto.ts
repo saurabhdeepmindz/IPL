@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/roles/list-roles-query.dto.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { RoleStatus, RoleType } from '@libs/database';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-01
- *   lld:       LLD-EPIC-ADM-01 v0.27 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.28 §6.4
  */
 export class ListRolesQueryDto {
   /** STANDARD or CUSTOM. */

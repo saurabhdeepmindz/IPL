@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010, US-ADM01-014
  * @subtask        ST-ADM01-010-BE-04, ST-ADM01-014-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role-permission/database.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -34,7 +34,7 @@ import { MatrixData, PermissionCell, RolePermissionRepository } from './contract
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03, API-PRM-01, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.27 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.28 §6.4
  */
 @Injectable()
 export class RolePermissionDatabaseRepository extends RolePermissionRepository {

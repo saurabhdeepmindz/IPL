@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-015
  * @subtask        ST-ADM01-015-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/permissions/PermissionMatrix.test.tsx
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         elaborated
  */
 
@@ -27,7 +27,7 @@ import { getMatrix } from '@/features/permissions/services/permissions.service';
 import type { PermissionMatrixData } from '@/features/permissions/types/permission.types';
 import { ApiError } from '@/lib/errors';
 
-vi.mock('@/features/permissions/services/permissions.service', () => ({ getMatrix: vi.fn() }));
+vi.mock('@/features/permissions/services/permissions.service', () => ({ getMatrix: vi.fn(), reviewChanges: vi.fn(), saveChanges: vi.fn() }));
 
 const cell = (allowed: boolean, over: { scope?: 'OWN' | 'DEPARTMENT' | 'COMPANY' | null; locked?: boolean } = {}) => ({ allowed, scope: over.scope ?? null, locked: over.locked ?? false });
 const matrix: PermissionMatrixData = {
@@ -186,15 +186,14 @@ describe('US-ADM01-015 permission matrix (J01 to J05 and supporting)', () => {
    * @story   US-ADM01-015
    * @ac      AC-US015-04
    * @subtask ST-ADM01-015-FE-03
-   * In plain words: supporting test. Review and save is shown and stays disabled with its hint (decision L-99), also after a change.
+   * In plain words: supporting test. Review and save is disabled while there is no change and enabled once there is one (decision L-99 until story 016, now story 016); Add role links to the role form.
    */
-  it('keeps Review and save disabled', async () => {
+  it('enables Review and save once there is a change', async () => {
     renderPage();
     await screen.findByText('Create General proposal');
     expect(screen.getByRole('button', { name: 'Review and save' })).toBeDisabled();
     await userEvent.click(toggle('View users', 'Initiator'));
-    expect(screen.getByRole('button', { name: 'Review and save' })).toBeDisabled();
-    expect(screen.getByText('Review comes with the next screen')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Review and save' })).toBeEnabled();
     expect(screen.getByRole('link', { name: 'Add role' })).toHaveAttribute('href', '/roles/new');
   });
 

@@ -3,7 +3,7 @@
  * @module  Permissions
  *
  * @description
- * Permission Management page. In plain words: title, the note "Same roles in every company", the filters, the counter with Discard changes, the disabled Review and save, Add role and the matrix (decisions L-95, L-98, L-99, L-101).
+ * Permission Management page. In plain words: title, the note "Same roles in every company", the filters, the counter with Discard changes, the disabled Review and save, Add role and the matrix (decisions L-95, L-98, L-101, L-103 to L-109).
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-015
  * @subtask        ST-ADM01-015-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/components/PermissionManagementPage.tsx
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 'use client';
@@ -25,7 +25,12 @@ import { Button, Input, Select } from '@/components/ui';
 import { ApiError } from '@/lib/errors';
 import { useMatrixChanges } from '../hooks/useMatrixChanges';
 import { usePermissionMatrix } from '../hooks/usePermissionMatrix';
+import type { CellChange } from '../types/permission.types';
 import { PermissionMatrix } from './PermissionMatrix';
+import { ReviewChangesPanel } from './ReviewChangesPanel';
+
+const MAX_REVIEW = 200;
+type Notice = { kind: 'saved'; count: number } | { kind: 'stale' } | { kind: 'too-many' } | null;
 
 /**
  * Permission Management page. In plain words: loads the matrix, holds the changes in memory and shows the loading, no-access and error with Retry states.
@@ -51,7 +56,16 @@ export function PermissionManagementPage() {
   const [search, setSearch] = useState('');
   const [module, setModule] = useState('');
   const [changedOnly, setChangedOnly] = useState(false);
+  const [reviewing, setReviewing] = useState<CellChange[] | null>(null);
+  const [notice, setNotice] = useState<Notice>(null);
   const count = changes.changes.length;
+  const review = () => {
+    if (count > MAX_REVIEW) setNotice({ kind: 'too-many' });
+    else {
+      setNotice(null);
+      setReviewing(changes.changes);
+    }
+  };
 
   return (
     <section data-testid="permissions-page">
@@ -68,6 +82,16 @@ export function PermissionManagementPage() {
         <strong>Same roles in every company</strong>
         <div>Who has which role in which company is set in User Management. A change here applies to every user with the role, from the moment it is saved.</div>
       </div>
+      {notice?.kind === 'saved' && (
+        <p className="alert alert-success d-flex justify-content-between" role="status">
+          <span>{notice.count === 1 ? '1 change saved' : `${notice.count} changes saved`}</span>
+          <Button variant="secondary" outline size="sm" onClick={() => setNotice(null)}>
+            Dismiss
+          </Button>
+        </p>
+      )}
+      {notice?.kind === 'stale' && <p className="alert alert-warning" role="alert">Another administrator saved first. The matrix was reloaded; make your changes again.</p>}
+      {notice?.kind === 'too-many' && <p className="alert alert-warning" role="alert">Review at most 200 changes at a time</p>}
       {isPending && <p role="status">Loading the permission matrix…</p>}
       {error && (
         <p role="alert">
@@ -101,13 +125,27 @@ export function PermissionManagementPage() {
                   Discard changes
                 </Button>
               )}
-              <Button disabled title="Review comes with the next screen">
+              <Button disabled={count === 0} onClick={review}>
                 Review and save
               </Button>
-              <span className="small text-body-secondary">Review comes with the next screen</span>
             </div>
           </div>
           <PermissionMatrix matrix={matrix} changes={changes} search={search} module={module} changedOnly={changedOnly} />
+          <ReviewChangesPanel
+            changes={reviewing}
+            matrixVersion={matrix.matrixVersion}
+            onBack={() => setReviewing(null)}
+            onSaved={(n) => {
+              changes.discard();
+              setReviewing(null);
+              setNotice({ kind: 'saved', count: n });
+            }}
+            onStale={() => {
+              changes.discard();
+              setReviewing(null);
+              setNotice({ kind: 'stale' });
+            }}
+          />
         </>
       )}
     </section>

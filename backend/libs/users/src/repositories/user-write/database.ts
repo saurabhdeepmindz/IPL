@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003, US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-003-BE-04, ST-ADM01-005-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-write/database.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -36,7 +36,7 @@ import { UserWriteRepository } from './contract';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4
  *   contracts: API-USR-02, API-USR-04, API-USR-05, API-USR-06, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.27 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.28 section 6.1
  */
 @Injectable()
 export class UserWriteDatabaseRepository extends UserWriteRepository {

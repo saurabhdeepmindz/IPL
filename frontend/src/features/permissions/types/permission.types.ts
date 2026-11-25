@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-015
  * @subtask        ST-ADM01-015-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/types/permission.types.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -68,4 +68,45 @@ export interface CellValue {
 export interface CellChange extends CellValue {
   roleId: string;
   permissionKey: string;
+}
+
+/** A cell as the review shows it. */
+export interface CellState {
+  allowed: boolean;
+  scope: DataScope | null;
+}
+
+/** One row of the review (API-PRM-02): what a change would do. */
+export interface ReviewRow {
+  roleId: string;
+  roleName: string;
+  permissionKey: string;
+  permissionLabel: string;
+  before: CellState;
+  after: CellState;
+  usersAffected: number;
+  sensitive: boolean;
+  changed: boolean;
+}
+
+/** The answer of API-PRM-02. */
+export interface ReviewResult {
+  rows: ReviewRow[];
+  warnings: string[];
+}
+
+/** The body of the save (API-PRM-03). */
+export interface SaveInput {
+  changes: CellChange[];
+  matrixVersion: string;
+  reason: string;
+  approvalReference?: string;
+  confirmSensitive?: boolean;
+}
+
+/** The answer of API-PRM-03. */
+export interface SaveResult {
+  saved: number;
+  auditId: string | null;
+  matrixVersion: string;
 }

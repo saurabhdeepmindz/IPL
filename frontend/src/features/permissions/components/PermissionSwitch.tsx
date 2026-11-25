@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-015
  * @subtask        ST-ADM01-015-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/components/PermissionSwitch.tsx
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 'use client';
@@ -48,7 +48,7 @@ interface PermissionSwitchProps {
  * @screen    ADM-03
  * @contract  API-PRM-01
  * @ac        AC-US015-01, 02, 03, 04, 05
- * @lld       LLD-EPIC-ADM-01 v0.27 §6.7
+ * @lld       LLD-EPIC-ADM-01 v0.28 §6.7
  * @status    built
  *
  * @dependencies Switch

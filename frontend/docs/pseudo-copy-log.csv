@@ -110,3 +110,11 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-015,tests/e2e/permission-matrix.spec.ts,v0.27,copied
 2026-11-25,US-ADM01-015,tests/unit/features/permissions/PermissionMatrix.test.tsx,v0.27,copied
 2026-11-25,US-ADM01-015,tests/unit/features/permissions/permissions.calls.test.ts,v0.27,copied
+2026-11-25,US-ADM01-016,src/features/permissions/components/ChangeRow.tsx,v0.28,copied
+2026-11-25,US-ADM01-016,src/features/permissions/components/ReviewChangesPanel.tsx,v0.28,copied
+2026-11-25,US-ADM01-016,src/features/permissions/components/SensitiveWarning.tsx,v0.28,copied
+2026-11-25,US-ADM01-016,src/features/permissions/hooks/useReviewChanges.ts,v0.28,copied
+2026-11-25,US-ADM01-016,src/features/permissions/hooks/useSaveChanges.ts,v0.28,copied
+2026-11-25,US-ADM01-016,stories/permissions/ReviewChangesPanel.stories.tsx,v0.28,copied
+2026-11-25,US-ADM01-016,tests/e2e/permission-review.spec.ts,v0.28,copied
+2026-11-25,US-ADM01-016,tests/unit/features/permissions/ReviewChanges.test.tsx,v0.28,copied

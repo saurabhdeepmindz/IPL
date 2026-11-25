@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-006
  * @subtask        ST-ADM01-006-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserDetailTabs.tsx
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 'use client';
@@ -40,7 +40,7 @@ interface UserDetailTabsProps {
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US006-01
- * @lld       LLD-EPIC-ADM-01 v0.27 §6.3
+ * @lld       LLD-EPIC-ADM-01 v0.28 §6.3
  * @status    built
  *
  * @dependencies Tabs

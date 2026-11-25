@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011, US-ADM01-001, US-ADM01-003, US-ADM01-005
  * @subtask        ST-ADM01-001-BE-03, ST-ADM01-003-BE-04, ST-ADM01-005-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user/database.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -34,7 +34,7 @@ import { ADMINISTRATOR_ROLE_CODE, orderFor, startOfToday, toUserRecord, userIncl
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-05, API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.27 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.28 §6.4
  */
 @Injectable()
 export class UserDatabaseRepository extends UserRepository {

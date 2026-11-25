@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-008
  * @subtask        ST-ADM01-008-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserActionConfirm.tsx
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 'use client';
@@ -49,7 +49,7 @@ interface UserActionConfirmProps {
  * @screen    ADM-01
  * @contract  API-USR-06, API-USR-07, API-USR-08
  * @ac        AC-US008-01, 02, 03
- * @lld       LLD-EPIC-ADM-01 v0.27 §6.3
+ * @lld       LLD-EPIC-ADM-01 v0.28 §6.3
  * @status    built
  *
  * @dependencies Modal, Button

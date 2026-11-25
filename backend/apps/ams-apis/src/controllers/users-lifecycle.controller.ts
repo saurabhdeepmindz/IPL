@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-01, ST-ADM01-007-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/users-lifecycle.controller.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -36,7 +36,7 @@ import { DeactivateUserDto } from '../dtos/users/deactivate-user.dto';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05 to API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.27 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.28 section 6.1
  */
 @Controller('users')
 export class UsersLifecycleController {

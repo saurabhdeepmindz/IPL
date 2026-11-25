@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012, US-ADM01-013
  * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.27 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.27.md
+ * @lld            LLD-EPIC-ADM-01 v0.28 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/services/roles.service.ts
- * @lld-synced     v0.27
+ * @lld-synced     v0.28
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import type { CatalogCell, PermissionCatalog, Role, RoleDetails, SaveRoleInput }
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.27 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.28 §6.5
  * @status    built
  *
  * @dependencies api.get
