@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-004
  * @subtask        ST-ADM01-004-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/AccessSummary.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 import type { CompanyRoleInput } from '../types/user.types';

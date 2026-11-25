@@ -118,3 +118,7 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-016,stories/permissions/ReviewChangesPanel.stories.tsx,v0.28,copied
 2026-11-25,US-ADM01-016,tests/e2e/permission-review.spec.ts,v0.28,copied
 2026-11-25,US-ADM01-016,tests/unit/features/permissions/ReviewChanges.test.tsx,v0.28,copied
+2026-11-25,US-ADM01-018,src/components/ams/NoAccess.tsx,v0.29,copied
+2026-11-25,US-ADM01-018,stories/ams/NoAccess.stories.tsx,v0.29,copied
+2026-11-25,US-ADM01-018,tests/e2e/rbac-negative.spec.ts,v0.29,copied
+2026-11-25,US-ADM01-018,tests/unit/features/access/NoAccessScreens.test.tsx,v0.29,copied

@@ -11,5 +11,6 @@
  *
  * @subtask ST-ADM01-012-FE-04
  */
+export * from './NoAccess';
 export * from './ReasonDialog';
 export * from './StatusBadge';

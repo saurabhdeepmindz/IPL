@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/errors/role-name-exists.exception.ts
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { ConflictAppException } from '@libs/common';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03, API-ROL-04
- *   lld:       LLD-EPIC-ADM-01 v0.28 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.29 §6.4
  */
 export class RoleNameExistsException extends ConflictAppException {
   constructor(message: string) {

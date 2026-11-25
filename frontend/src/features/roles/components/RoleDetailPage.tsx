@@ -11,16 +11,17 @@
  *
  * @story          US-ADM01-013
  * @subtask        ST-ADM01-013-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleDetailPage.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { isForbidden, NoAccess } from '@/components/ams';
 import { Button, Select } from '@/components/ui';
 import { useRole } from '../hooks/useRole';
 import { usePermissionCatalog } from '../hooks/usePermissionCatalog';
@@ -54,13 +55,14 @@ interface RoleDetailPageProps {
  * @returns The rendered page
  */
 export function RoleDetailPage({ roleId }: RoleDetailPageProps) {
-  const { data: role, isPending, isError } = useRole(roleId);
+  const { data: role, isPending, isError, error } = useRole(roleId);
   const labels = Object.fromEntries((usePermissionCatalog().data?.modules ?? []).flatMap((m) => m.permissions.map((p) => [p.key, p.label])));
   const [company, setCompany] = useState('');
   const [assigning, setAssigning] = useState(false);
   const [deactivating, setDeactivating] = useState(false);
 
   if (isPending) return <p role="status">Loading the role…</p>;
+  if (isError && isForbidden(error)) return <NoAccess screen="role details" />;
   if (isError || !role) return <p role="alert">The role could not be loaded. Try again.</p>;
   const companies = [...new Set(role.users.map((u) => u.company))];
   const shown = company ? role.users.filter((u) => u.company === company) : role.users;

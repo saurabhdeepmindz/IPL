@@ -10,10 +10,10 @@
 @story          US-ADM01-017
 @subtask        ST-ADM01-017-BE-06
 
-@lld            LLD-EPIC-ADM-01 v0.24 6.8
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
+@lld            LLD-EPIC-ADM-01 v0.29 6.8
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/conftest.py
-@lld-synced     v0.24
+@lld-synced     v0.29
 @status         built
 
 Environment: AMS_API_URL (default http://localhost:3000/api/v1) and AMS_DATABASE_URL (default postgresql://ams:ams@localhost:5433/ams).

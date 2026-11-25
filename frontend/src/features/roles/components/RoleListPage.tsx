@@ -11,16 +11,17 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleListPage.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { isForbidden, NoAccess } from '@/components/ams';
 import { Input, Select } from '@/components/ui';
 import { useRoles } from '../hooks/useRoles';
 import type { Role } from '../types/role.types';
@@ -38,7 +39,7 @@ import { RoleTable } from './RoleTable';
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US012-01, AC-US012-07
- * @lld       LLD-EPIC-ADM-01 v0.28 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.29 §6.5
  * @status    built
  *
  * @dependencies useRoles, RoleTable, DeactivateRoleDialog
@@ -51,7 +52,7 @@ export function RoleListPage() {
   const [status, setStatus] = useState('');
   const [target, setTarget] = useState<Role | null>(null);
   const filters = { ...(q ? { q } : {}), ...(type ? { type } : {}), ...(status ? { status } : {}) };
-  const { data, isPending, isError } = useRoles(filters);
+  const { data, isPending, isError, error } = useRoles(filters);
 
   return (
     <section data-testid="roles-page">
@@ -77,7 +78,7 @@ export function RoleListPage() {
         </div>
       </div>
       {isPending && <p role="status">Loading roles…</p>}
-      {isError && <p role="alert">The roles could not be loaded. Try again.</p>}
+      {isError && (isForbidden(error) ? <NoAccess screen="Role Management" /> : <p role="alert">The roles could not be loaded. Try again.</p>)}
       {data && <RoleTable roles={data.items} onDeactivate={setTarget} />}
       <DeactivateRoleDialog key={target?.roleId ?? 'none'} role={target} onClose={() => setTarget(null)} />
     </section>

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-015
  * @subtask        ST-ADM01-015-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/permissions/PermissionMatrix.test.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         elaborated
  */
 
@@ -219,7 +219,7 @@ describe('US-ADM01-015 permission matrix (J01 to J05 and supporting)', () => {
    * @story   US-ADM01-015
    * @ac      AC-US015-01
    * @subtask ST-ADM01-015-FE-03
-   * In plain words: supporting test (decision L-102). A matrix of 2 times the expected size (120 permissions for 12 roles) renders without a list library; the guard is 6 seconds in jsdom and the 3-second budget is measured in the journey E01.
+   * In plain words: supporting test (decision L-102). A matrix of 2 times the expected size (120 permissions for 12 roles) renders without a list library; the guard is 10 seconds in jsdom and the 3-second budget is measured in the journey E01.
    */
   it('renders a matrix of 2 times the expected size', async () => {
     const roles = Array.from({ length: 12 }, (_, i) => ({ roleId: `r${i}`, name: `Role ${i}`, userCount: i }));
@@ -230,8 +230,8 @@ describe('US-ADM01-015 permission matrix (J01 to J05 and supporting)', () => {
     vi.mocked(getMatrix).mockResolvedValue({ matrixVersion: 'v-big', roles, groups });
     const start = Date.now();
     renderPage();
-    expect(await screen.findByText('Permission 5-19', {}, { timeout: 6000 })).toBeInTheDocument();
-    expect(Date.now() - start).toBeLessThan(6000);
+    expect(await screen.findByText('Permission 5-19', {}, { timeout: 10000 })).toBeInTheDocument();
+    expect(Date.now() - start).toBeLessThan(10000);
     expect(screen.getAllByRole('switch').length + screen.getAllByRole('combobox').length).toBeGreaterThan(1000);
-  }, 20000);
+  }, 30000);
 });

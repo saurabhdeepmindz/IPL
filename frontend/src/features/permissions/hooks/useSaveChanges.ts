@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-016
  * @subtask        ST-ADM01-016-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/hooks/useSaveChanges.ts
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import { permissionsKeys } from './permissions.keys';
  * @screen    ADM-03
  * @contract  API-PRM-03
  * @ac        AC-US016-01, 02, 03
- * @lld       LLD-EPIC-ADM-01 v0.28 §6.7
+ * @lld       LLD-EPIC-ADM-01 v0.29 §6.7
  * @status    built
  *
  * @dependencies saveChanges, permissionsKeys

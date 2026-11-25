@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-015
  * @subtask        ST-ADM01-015-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.7
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.7
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/components/PermissionManagementPage.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 'use client';
@@ -22,7 +22,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button, Input, Select } from '@/components/ui';
-import { ApiError } from '@/lib/errors';
+import { isForbidden, NoAccess } from '@/components/ams';
 import { useMatrixChanges } from '../hooks/useMatrixChanges';
 import { usePermissionMatrix } from '../hooks/usePermissionMatrix';
 import type { CellChange } from '../types/permission.types';
@@ -93,14 +93,13 @@ export function PermissionManagementPage() {
       {notice?.kind === 'stale' && <p className="alert alert-warning" role="alert">Another administrator saved first. The matrix was reloaded; make your changes again.</p>}
       {notice?.kind === 'too-many' && <p className="alert alert-warning" role="alert">Review at most 200 changes at a time</p>}
       {isPending && <p role="status">Loading the permission matrix…</p>}
-      {error && (
+      {error && isForbidden(error) && <NoAccess screen="Permission Management" />}
+      {error && !isForbidden(error) && (
         <p role="alert">
-          {error instanceof ApiError && error.status === 403 ? 'You do not have access to Permission Management.' : 'The permission matrix could not be loaded.'}{' '}
-          {!(error instanceof ApiError && error.status === 403) && (
-            <Button variant="link" size="sm" onClick={() => refetch()}>
-              Retry
-            </Button>
-          )}
+          The permission matrix could not be loaded.{' '}
+          <Button variant="link" size="sm" onClick={() => refetch()}>
+            Retry
+          </Button>
         </p>
       )}
       {matrix && (

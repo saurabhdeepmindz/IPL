@@ -148,3 +148,7 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-009,libs/users/src/errors/bulk-import-failed.exception.ts,v0.17,copied
 2026-11-25,US-ADM01-009,libs/users/src/services/users-bulk-create.spec.ts,v0.17,copied
 2026-11-25,US-ADM01-009,libs/users/src/services/users-command.service.ts,v0.17,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-018,tests/api/rbac_routes.py,v0.29,copied
+2026-11-25,US-ADM01-018,tests/api/test_rbac_negative.py,v0.29,copied
+2026-11-25,US-ADM01-018,tests/rbac/make_report.py,v0.29,copied
+2026-11-25,US-ADM01-018,tests/rbac/test_make_report.py,v0.29,copied

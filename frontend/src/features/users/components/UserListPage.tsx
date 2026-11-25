@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserListPage.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 'use client';
@@ -22,6 +22,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { NoAccess } from '@/components/ams';
 import { Button } from '@/components/ui';
 import { useRunUserAction } from '../hooks/useUserActions';
 import { useUsers } from '../hooks/useUsers';
@@ -92,7 +93,7 @@ export function UserListPage() {
       <StatusTabs counts={data?.counts ?? NO_COUNTS} value={filters.status ?? 'all'} onChange={(status) => setFilters({ ...filters, status: status === 'all' ? undefined : status, page: 1 })} />
       <UserFilters value={filters} onChange={setFilters} />
       {isPending && <p role="status">Loading users…</p>}
-      {denied && <p role="alert">You do not have access to User Management.</p>}
+      {denied && <NoAccess screen="User Management" />}
       {isError && !denied && (
         <p role="alert">
           The users could not be loaded.{' '}

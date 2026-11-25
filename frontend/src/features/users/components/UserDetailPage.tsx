@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-006
  * @subtask        ST-ADM01-006-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserDetailPage.tsx
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 'use client';
@@ -22,7 +22,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui';
-import { StatusBadge } from '@/components/ams';
+import { isForbidden, NoAccess, StatusBadge } from '@/components/ams';
 import { ApiError } from '@/lib/errors';
 import { useRunUserAction } from '../hooks/useUserActions';
 import { useUser } from '../hooks/useUser';
@@ -63,6 +63,7 @@ export function UserDetailPage({ employeeCode }: UserDetailPageProps) {
   const { run } = useRunUserAction(setResult);
 
   if (isPending) return <p role="status">Loading the user…</p>;
+  if (error && isForbidden(error)) return <NoAccess screen="user details" />;
   if (error || !user) {
     const missing = error instanceof ApiError && error.status === 404;
     return (

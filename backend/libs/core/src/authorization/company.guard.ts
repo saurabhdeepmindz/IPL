@@ -9,10 +9,10 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.28 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.28.md
+ * @lld            LLD-EPIC-ADM-01 v0.29 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/company.guard.ts
- * @lld-synced     v0.28
+ * @lld-synced     v0.29
  * @status         built
  */
 
@@ -44,7 +44,7 @@ interface CompanyRequest {
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none (all); API-USR-01 uses ALL
- *   lld:       LLD-EPIC-ADM-01 v0.28 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.29 §6.8
  */
 @Injectable()
 export class CompanyGuard implements CanActivate {
