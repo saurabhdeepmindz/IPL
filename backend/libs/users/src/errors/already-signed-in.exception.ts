@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.21 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
+ * @lld            LLD-EPIC-ADM-01 v0.22 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/errors/already-signed-in.exception.ts
- * @lld-synced     v0.21
+ * @lld-synced     v0.22
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { FieldError, ValidationFailedException } from '@libs/common';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-01 to API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.21 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.22 section 6.1
  */
 export class AlreadySignedInException extends ValidationFailedException {
   constructor(fields: FieldError[] = []) {

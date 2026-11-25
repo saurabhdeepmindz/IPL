@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-001, US-ADM01-003, US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-001-BE-01, ST-ADM01-003-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.21 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
+ * @lld            LLD-EPIC-ADM-01 v0.22 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/users/user-response.dto.ts
- * @lld-synced     v0.21
+ * @lld-synced     v0.22
  * @status         built
  */
 
@@ -29,7 +29,7 @@
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4, FR-042.1, FR-042.4, FR-042.6, FR-043.2
  *   contracts: API-USR-01 to API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.21 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.22 section 6.1
  */
 export class UserCompaniesDto {
   code!: string;

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
+ * @lld            LLD-EPIC-ADM-01 v0.22 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/hooks/useDeactivateRole.ts
- * @lld-synced     v0.21
+ * @lld-synced     v0.22
  * @status         built
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -32,7 +32,7 @@ import { rolesKeys } from './roles.keys';
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.22 §6.5
  * @status    built
  *
  * @dependencies deactivateRole
