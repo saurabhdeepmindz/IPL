@@ -15,13 +15,14 @@
  */
 
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import { UnauthenticatedAppException } from '@libs/common';
 import { CompanyContext } from '@libs/database';
 import { SessionUserFactory } from './session-user.factory';
 import { AccessClaims } from './session-user.shape';
-import { SessionUser } from '../authorization/session-user.interface';
+import { PUBLIC_ROUTE_KEY, SessionUser } from '../authorization/session-user.interface';
 
 /** A request that carries the session user. */
 export type AuthedRequest = Request & { user?: SessionUser };
@@ -44,12 +45,13 @@ export class JwtAuthGuard implements CanActivate {
   constructor(
     private readonly jwt: JwtService,
     private readonly factory: SessionUserFactory,
+    private readonly reflector: Reflector,
   ) {}
 
   /**
    * Decide whether the request may go on.
    *
-   * In plain words: verifies the token, sets request.user and the session company.
+   * In plain words: verifies the token, sets request.user and the session company. An open route (`@Public`) is let through with no token; if a good token is sent, the user is still set.
    *
    * @param context The request context
    * @returns true when the token is good
@@ -60,7 +62,11 @@ export class JwtAuthGuard implements CanActivate {
     const req = context.switchToHttp().getRequest<AuthedRequest>();
     const header = req.headers.authorization ?? '';
     const token = header.startsWith('Bearer ') ? header.slice(7) : '';
-    if (!token) throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Sign in to continue');
+    const open = this.reflector.getAllAndOverride<boolean>(PUBLIC_ROUTE_KEY, [context.getHandler(), context.getClass()]) === true;
+    if (!token) {
+      if (open) return true;
+      throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Sign in to continue');
+    }
     try {
       const claims = await this.jwt.verifyAsync<AccessClaims>(token);
       if (!claims.company) throw new Error('not an access token');
@@ -68,6 +74,7 @@ export class JwtAuthGuard implements CanActivate {
       CompanyContext.enter(req.user.companyCode);
       return true;
     } catch {
+      if (open) return true;
       throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Your session is not valid. Sign in again');
     }
   }

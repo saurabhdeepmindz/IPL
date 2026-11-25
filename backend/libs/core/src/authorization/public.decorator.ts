@@ -9,11 +9,11 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.5 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.5.md
+ * @lld            LLD-EPIC-ADM-01 v0.6 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.6.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/public.decorator.ts
- * @lld-synced     v0.5
- * @status         pseudo
+ * @lld-synced     v0.6
+ * @status         built
  */
 
 import { SetMetadata } from '@nestjs/common';
@@ -30,7 +30,7 @@ import { PUBLIC_ROUTE_KEY } from './session-user.interface';
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.5 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.6 §6.8
  *
  * @epic      EPIC-ADM-01
  * @story     US-ADM01-017
@@ -40,14 +40,13 @@ import { PUBLIC_ROUTE_KEY } from './session-user.interface';
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
  *
  * @dependencies SetMetadata
  *
  * @returns A decorator that stores the "open route" mark for both guards
  */
 export const Public = (): MethodDecorator & ClassDecorator => {
-  // TODO: 1. Return SetMetadata(PUBLIC_ROUTE_KEY, true).
-  throw new Error('pseudo-code: not implemented');
+  return SetMetadata(PUBLIC_ROUTE_KEY, true);
 };

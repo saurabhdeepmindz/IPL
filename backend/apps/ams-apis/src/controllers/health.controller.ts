@@ -14,6 +14,7 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
+import { Public } from '@libs/core';
 
 /** Response of the health route. */
 export interface HealthStatus {
@@ -36,6 +37,7 @@ export interface HealthStatus {
  *   contracts: none
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
+@Public()
 @Controller('health')
 export class HealthController {
   /**

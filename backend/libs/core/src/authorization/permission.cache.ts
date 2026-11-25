@@ -9,15 +9,15 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.5 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.5.md
+ * @lld            LLD-EPIC-ADM-01 v0.6 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.6.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/permission.cache.ts
- * @lld-synced     v0.5
- * @status         pseudo
+ * @lld-synced     v0.6
+ * @status         built
  */
 
-import { Injectable } from '@nestjs/common';
-import { RedisService } from '@libs/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { RedisService } from '../redis';
 
 /** How long an entry lives, in seconds (decision L-03). */
 const CACHE_SECONDS = 60;
@@ -39,10 +39,12 @@ export const roleCellsKey = (roleId: string): string => `perm:role:${roleId}`;
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: API-PRM-03, API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.5 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.6 §6.8
  */
 @Injectable()
 export class PermissionCache {
+  private readonly logger = new Logger(PermissionCache.name);
+
   constructor(private readonly redis: RedisService) {}
 
   /**
@@ -58,8 +60,8 @@ export class PermissionCache {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies RedisService.getJson
    *
@@ -67,9 +69,12 @@ export class PermissionCache {
    * @returns The stored value, or null
    */
   async get<T>(key: string): Promise<T | null> {
-    // TODO: 1. Read the key from Redis; parse the JSON.
-    // TODO: 2. Return null when the key is missing or the value cannot be read (never throw: a cache fault must not block a call).
-    throw new Error('pseudo-code: not implemented');
+    try {
+      return await this.redis.getJson<T>(key);
+    } catch (err) {
+      this.logger.warn(`Cache read failed: ${err instanceof Error ? err.message : String(err)}`);
+      return null;
+    }
   }
 
   /**
@@ -85,8 +90,8 @@ export class PermissionCache {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies RedisService.setJson
    *
@@ -94,9 +99,11 @@ export class PermissionCache {
    * @param value - What to remember
    */
   async set<T>(key: string, value: T): Promise<void> {
-    // TODO: 1. Write the JSON with the CACHE_SECONDS life.
-    // TODO: 2. Ignore a Redis fault (log a warning).
-    throw new Error('pseudo-code: not implemented');
+    try {
+      await this.redis.setJson(key, value, CACHE_SECONDS);
+    } catch (err) {
+      this.logger.warn(`Cache write failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
   }
 
   /**
@@ -112,14 +119,13 @@ export class PermissionCache {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies RedisService.deleteByPrefix
    */
   async clearAll(): Promise<void> {
-    // TODO: 1. Delete every key that starts with "perm:".
-    throw new Error('pseudo-code: not implemented');
+    await this.redis.deleteByPrefix('perm:');
   }
 
   /**
@@ -135,15 +141,14 @@ export class PermissionCache {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies RedisService.deleteByPrefix
    *
    * @param userId - The user whose roles changed
    */
   async clearUser(userId: string): Promise<void> {
-    // TODO: 1. Delete every key that starts with "perm:user:<userId>:".
-    throw new Error('pseudo-code: not implemented');
+    await this.redis.deleteByPrefix(`perm:user:${userId}:`);
   }
 }

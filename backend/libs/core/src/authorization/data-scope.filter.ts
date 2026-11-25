@@ -9,11 +9,11 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.5 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.5.md
+ * @lld            LLD-EPIC-ADM-01 v0.6 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.6.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/data-scope.filter.ts
- * @lld-synced     v0.5
- * @status         pseudo
+ * @lld-synced     v0.6
+ * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
@@ -41,7 +41,7 @@ export interface ScopeFields {
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none (list calls)
- *   lld:       LLD-EPIC-ADM-01 v0.5 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.6 §6.8
  */
 @Injectable()
 export class DataScopeFilter {
@@ -58,8 +58,8 @@ export class DataScopeFilter {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies none
    *
@@ -69,10 +69,12 @@ export class DataScopeFilter {
    * @returns A where-fragment such as `{ companyCode: 'IPL', createdBy: 'u-1' }`
    */
   toWhere(scope: DataScope | null, user: SessionUser, fields: ScopeFields): Record<string, unknown> {
-    // TODO: 1. Always start with { [companyField ?? 'companyCode']: user.companyCode }.
-    // TODO: 2. OWN: add { [ownerField]: user.userId }.
-    // TODO: 3. DEPARTMENT: add { [departmentField]: user.departmentId }; if the user has no department, match nothing.
-    // TODO: 4. COMPANY or null: add nothing more.
-    throw new Error('pseudo-code: not implemented');
+    const where: Record<string, unknown> = { [fields.companyField ?? 'companyCode']: user.companyCode };
+    if (scope === DataScope.OWN) where[fields.ownerField] = user.userId;
+    if (scope === DataScope.DEPARTMENT) {
+      // A user with no department sees no department records: `in: []` matches nothing.
+      where[fields.departmentField] = user.departmentId ?? { in: [] };
+    }
+    return where;
   }
 }

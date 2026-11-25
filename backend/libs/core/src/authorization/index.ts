@@ -10,14 +10,13 @@
  * @since   2026-11-25
  *
  * @story          US-ADM01-017
- * @lld            LLD-EPIC-ADM-01 v0.5 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.5.md
+ * @lld            LLD-EPIC-ADM-01 v0.6 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.6.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/index.ts
- * @lld-synced     v0.5
- * @status         pseudo
+ * @lld-synced     v0.6
+ * @status         built
  */
 
-// TODO: export the module, both decorators, the guards, the cache, the resolver, the data-scope filter and the interfaces.
 export * from './authorization.module';
 export * from './require-permission.decorator';
 export * from './public.decorator';

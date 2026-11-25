@@ -14,12 +14,12 @@
  * @subtask ST-ADM01-000-BE-06
  */
 
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { okResponse, UnauthenticatedAppException } from '@libs/common';
 import { ConfigService } from '@nestjs/config';
 import { IsString, Length } from 'class-validator';
 import type { Response } from 'express';
-import { okResponse } from '@libs/common';
-import { AuthedRequest, DevSignInService, JwtAuthGuard } from '@libs/core';
+import { AuthedRequest, DevSignInService, Public } from '@libs/core';
 
 /** Body of the development sign-in. */
 export class DevSignInDto {
@@ -64,6 +64,7 @@ export class DevAuthController {
    * @returns `{ data: { accessToken } }`
    * @dependencies DevSignInService.signIn
    */
+  @Public()
   @Post('sign-in')
   async signIn(@Body() dto: DevSignInDto, @Res({ passthrough: true }) res: Response): Promise<unknown> {
     const out = await this.signInService.signIn(dto.employeeCode, dto.companyCode);
@@ -88,9 +89,10 @@ export class DevAuthController {
    * @returns `{ data: SessionUser }`
    * @dependencies JwtAuthGuard
    */
+  @Public()
   @Get('whoami')
-  @UseGuards(JwtAuthGuard)
   whoami(@Req() req: AuthedRequest): unknown {
+    if (!req.user) throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Sign in to continue');
     return okResponse(req.user);
   }
 }

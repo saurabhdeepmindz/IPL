@@ -9,18 +9,23 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.5 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.5.md
+ * @lld            LLD-EPIC-ADM-01 v0.6 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.6.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/permission-resolver.service.ts
- * @lld-synced     v0.5
- * @status         pseudo
+ * @lld-synced     v0.6
+ * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
-import { DataScope } from '@libs/database';
+import { DataScope, RoleStatus } from '@libs/database';
 import { UserCompanyRoleRepository } from '@libs/organisation';
 import { RolePermissionRepository } from '@libs/roles-and-permissions';
-import { PermissionCache } from './permission.cache';
+import { PermissionCache, roleCellsKey, userRolesKey } from './permission.cache';
+
+type Cell = { key: string; allowed: boolean; scope: DataScope | null };
+
+/** Widest first: COMPANY reaches further than DEPARTMENT, which reaches further than OWN. */
+const WIDEST_FIRST: DataScope[] = [DataScope.COMPANY, DataScope.DEPARTMENT, DataScope.OWN];
 import { ResolvedAccess, SessionUser } from './session-user.interface';
 
 /**
@@ -34,7 +39,7 @@ import { ResolvedAccess, SessionUser } from './session-user.interface';
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.5 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.6 §6.8
  */
 @Injectable()
 export class PermissionResolver {
@@ -57,8 +62,8 @@ export class PermissionResolver {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies PermissionResolver.rolesOf, PermissionResolver.cellsOf
    *
@@ -67,12 +72,13 @@ export class PermissionResolver {
    * @returns Allowed or not, and the widest data scope
    */
   async resolve(user: SessionUser, permissionKey: string): Promise<ResolvedAccess> {
-    // TODO: 1. roleIds = await this.rolesOf(user).
-    // TODO: 2. If there are no roles, return { allowed: false, scope: null }.
-    // TODO: 3. cells = await this.cellsOf(roleIds).
-    // TODO: 4. Keep the cells for permissionKey whose allowed flag is true.
-    // TODO: 5. allowed = at least one such cell; scope = widest of COMPANY > DEPARTMENT > OWN among them (null if none is scoped).
-    throw new Error('pseudo-code: not implemented');
+    const roleIds = await this.rolesOf(user);
+    if (roleIds.length === 0) return { allowed: false, scope: null };
+    const cells = await this.cellsOf(roleIds);
+    const granting = cells.filter((c) => c.key === permissionKey && c.allowed);
+    if (granting.length === 0) return { allowed: false, scope: null };
+    const scope = WIDEST_FIRST.find((w) => granting.some((c) => c.scope === w)) ?? null;
+    return { allowed: true, scope };
   }
 
   /**
@@ -85,10 +91,16 @@ export class PermissionResolver {
    * @dependencies PermissionCache.get, PermissionCache.set, UserCompanyRoleRepository.listByUser
    */
   private async rolesOf(user: SessionUser): Promise<string[]> {
-    // TODO: 1. Try the cache with userRolesKey(user.userId, user.companyCode).
-    // TODO: 2. On a miss, ask UserCompanyRoleRepository.listByUser(userId, companyCode, today) and keep roles with status ACTIVE.
-    // TODO: 3. Store the role ids in the cache; return them.
-    throw new Error('pseudo-code: not implemented');
+    const cacheKey = userRolesKey(user.userId, user.companyCode);
+    const cached = await this.cache.get<string[]>(cacheKey);
+    if (cached) return cached;
+    const today = new Date();
+    const rows = await this.userRoles.listByUser(user.userId, user.companyCode, today);
+    const roleIds = rows
+      .filter((r) => r.roleStatus === RoleStatus.ACTIVE && (r.validTo === null || r.validTo >= today))
+      .map((r) => r.roleId);
+    await this.cache.set(cacheKey, roleIds);
+    return roleIds;
   }
 
   /**
@@ -101,9 +113,13 @@ export class PermissionResolver {
    * @dependencies PermissionCache.get, PermissionCache.set, RolePermissionRepository.listForRole
    */
   private async cellsOf(roleIds: string[]): Promise<Array<{ key: string; allowed: boolean; scope: DataScope | null }>> {
-    // TODO: 1. For each role, try the cache with roleCellsKey(roleId).
-    // TODO: 2. For roles that missed, read RolePermissionRepository.listForRole(roleId) and store each in the cache.
-    // TODO: 3. Return all cells together.
-    throw new Error('pseudo-code: not implemented');
+    const all: Cell[] = [];
+    for (const roleId of roleIds) {
+      const cached = await this.cache.get<Cell[]>(roleCellsKey(roleId));
+      const cells = cached ?? (await this.rolePermissions.listForRole(roleId));
+      if (!cached) await this.cache.set(roleCellsKey(roleId), cells);
+      all.push(...cells);
+    }
+    return all;
   }
 }

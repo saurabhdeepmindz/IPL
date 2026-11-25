@@ -1,6 +1,7 @@
 # Python tools for the API contract tests (backend/tests/api). Node packages are in each package.json.
 # Setup:  python -m venv ipl-venv   then   ipl-venv\Scripts\activate   then   pip install -r requirements.txt
-# Run:    pytest backend/tests/api --html=<result folder>/report.html --self-contained-html
+# Run:    set AMS_API_URL=http://localhost:3000/api/v1 (API started with APP_ENV=test), then: pytest backend/tests/api --html=<result folder>/report.html --self-contained-html
 pytest==8.4.2
 pytest-html==4.1.1
 requests==2.32.5
+pg8000==1.31.6   # pure-Python PostgreSQL driver (no DLL; the compiled psycopg binary is blocked by the Windows Application Control policy)

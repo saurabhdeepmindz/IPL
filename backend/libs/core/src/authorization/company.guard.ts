@@ -9,11 +9,11 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.5 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.5.md
+ * @lld            LLD-EPIC-ADM-01 v0.6 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.6.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/company.guard.ts
- * @lld-synced     v0.5
- * @status         pseudo
+ * @lld-synced     v0.6
+ * @status         built
  */
 
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
@@ -24,6 +24,14 @@ import { PUBLIC_ROUTE_KEY, SessionUser } from './session-user.interface';
 
 /** Permission that lets an Administrator list the records of ALL companies (decision L-07). */
 const VIEW_ALL_COMPANIES = 'companies.view-all';
+
+/** The parts of the request this guard reads and marks. */
+interface CompanyRequest {
+  user?: SessionUser;
+  query?: Record<string, unknown>;
+  headers?: Record<string, unknown>;
+  allCompanies?: boolean;
+}
 
 /**
  * Global guard: company check on every route.
@@ -36,7 +44,7 @@ const VIEW_ALL_COMPANIES = 'companies.view-all';
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none (all); API-USR-01 uses ALL
- *   lld:       LLD-EPIC-ADM-01 v0.5 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.6 §6.8
  */
 @Injectable()
 export class CompanyGuard implements CanActivate {
@@ -59,8 +67,8 @@ export class CompanyGuard implements CanActivate {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.5 §6.8
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.6 §6.8
+ * @status    built
    *
    * @dependencies Reflector.getAllAndOverride, PermissionResolver.resolve, AuditService.recordRefusal
    *
@@ -70,10 +78,18 @@ export class CompanyGuard implements CanActivate {
    * @throws {ForbiddenException} The call names a company that is not the session company (HTTP 403, code COMPANY_MISMATCH)
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // TODO: 1. If the route is PUBLIC_ROUTE_KEY, return true.
-    // TODO: 2. requested = query "companyCode" or header "x-company-code"; if none, or equal to the session company, return true.
-    // TODO: 3. If requested is "ALL": resolve VIEW_ALL_COMPANIES; if allowed, set request.allCompanies = true and return true.
-    // TODO: 4. Otherwise write the refusal (AuditService.recordRefusal, code COMPANY_MISMATCH) and throw ForbiddenException.
-    throw new Error('pseudo-code: not implemented');
+    const targets = [context.getHandler(), context.getClass()];
+    if (this.reflector.getAllAndOverride<boolean>(PUBLIC_ROUTE_KEY, targets)) return true;
+    const request = context.switchToHttp().getRequest<CompanyRequest>();
+    const user = request.user;
+    if (!user) return true; // no session: the permission guard answers 401
+    const requested = (request.query?.companyCode as string | undefined) ?? (request.headers?.['x-company-code'] as string | undefined);
+    if (!requested || requested === user.companyCode) return true;
+    if (requested === 'ALL' && (await this.resolver.resolve(user, VIEW_ALL_COMPANIES)).allowed) {
+      request.allCompanies = true;
+      return true;
+    }
+    await this.audit.recordRefusal({ userId: user.userId, companyCode: user.companyCode, permissionKey: VIEW_ALL_COMPANIES, code: 'COMPANY_MISMATCH' });
+    throw new ForbiddenException({ code: 'COMPANY_MISMATCH', message: 'You cannot use another company.' });
   }
 }

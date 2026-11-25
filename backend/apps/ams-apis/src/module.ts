@@ -19,6 +19,7 @@ import { AllFieldsValidationPipe, GlobalExceptionFilter } from '@libs/common';
 import { ConfigModule } from '@nestjs/config';
 import { configurations } from '@config';
 import { validateEnv } from '@config/env.validation';
+import { AuthorizationModule } from '@libs/core';
 import { DatabaseModule } from '@libs/database';
 import { DevAuthModule } from './dev-auth/dev-auth.module';
 import { HealthController } from './controllers/health.controller';
@@ -38,7 +39,7 @@ import { HealthController } from './controllers/health.controller';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, DevAuthModule.register()],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, DevAuthModule.register()],
   controllers: [HealthController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
