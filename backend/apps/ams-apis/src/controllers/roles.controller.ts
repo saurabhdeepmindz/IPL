@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/roles.controller.ts
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 
@@ -39,7 +39,7 @@ import { SaveRoleDto } from '../dtos/roles/save-role.dto';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-01 to API-ROL-04
- *   lld:       LLD-EPIC-ADM-01 v0.20 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.21 §6.4
  */
 /** `:roleId` must be a UUID; anything else is "no such role", so `permissions` is never read as a role id (decision L-16). */
 const roleIdPipe = new ParseUUIDPipe({ exceptionFactory: () => new NotFoundAppException('ROLE_NOT_FOUND', 'No such role') });
@@ -67,7 +67,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US010-01, AC-US010-07
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.4
  * @status    built
    *
    * @dependencies RolesService.list
@@ -95,7 +95,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US010-02, AC-US010-03, AC-US010-06
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.4
  * @status    built
    *
    * @dependencies RolesService.create
@@ -126,7 +126,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US010-04, AC-US010-06
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.4
  * @status    built
    *
    * @dependencies RolesService.update
@@ -157,7 +157,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US010-04, AC-US010-05
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.4
  * @status    built
    *
    * @dependencies RolesService.deactivate

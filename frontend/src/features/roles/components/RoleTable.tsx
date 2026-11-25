@@ -11,14 +11,15 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleTable.tsx
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 import Link from 'next/link';
 import { StatusBadge } from '@/components/ams';
+import { formatDay } from '@/lib/utils';
 import type { Role } from '../types/role.types';
 
 /** Props of RoleTable. */
@@ -28,9 +29,6 @@ interface RoleTableProps {
   /** Called when Deactivate is chosen */
   onDeactivate: (role: Role) => void;
 }
-
-/** 28-Oct-2026 from an ISO date (UTC, so the day does not move with the computer). */
-const day = (iso: string): string => new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso)).replace(/ /g, '-');
 
 /** The Administrator role is locked by the server; the screen only shows it. */
 const isLocked = (r: Role): boolean => r.type === 'STANDARD' && r.name === 'Administrator';
@@ -46,7 +44,7 @@ const isLocked = (r: Role): boolean => r.type === 'STANDARD' && r.name === 'Admi
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US012-01, AC-US012-04, AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies StatusBadge
@@ -79,7 +77,7 @@ export function RoleTable({ roles, onDeactivate }: RoleTableProps) {
             <td>
               <Link href={`/roles/${r.roleId}`}>{r.userCount}</Link>
             </td>
-            <td>{day(r.lastChanged)}</td>
+            <td>{formatDay(r.lastChanged)}</td>
             <td>
               <StatusBadge status={r.status} />
             </td>

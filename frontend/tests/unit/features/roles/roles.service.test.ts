@@ -10,11 +10,11 @@
  * @since   2026-11-25
  *
  * @story          US-ADM01-012, US-ADM01-013
- * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @subtask        ST-ADM01-012-FE-01, ST-ADM01-013-FE-01
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/roles/roles.service.test.ts
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 
@@ -22,7 +22,7 @@ import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as ApiClient from '@/lib/api-client';
 import type { ApiError } from '@/lib/errors';
-import { createRole, deactivateRole, getPermissionCatalog, listRoles, updateRole } from '@/features/roles/services/roles.service';
+import { assignUsers, createRole, deactivateRole, getPermissionCatalog, getRole, listRoles, updateRole } from '@/features/roles/services/roles.service';
 
 const seen = vi.hoisted(() => ({ calls: [] as { method?: string; url?: string; params?: unknown; data?: unknown }[], next: { status: 200, data: {} as unknown } }));
 vi.mock('@/lib/api-client', async () => {
@@ -119,5 +119,38 @@ describe('role calls (supporting tests)', () => {
     expect(await caught(deactivateRole('r1', 'r'))).toMatchObject({ status: 409, code: 'ROLE_IN_USE', fields: { userCount: '4' } });
     failure(404, 'ROLE_NOT_FOUND');
     expect(await caught(updateRole('nope', input))).toMatchObject({ status: 404, code: 'ROLE_NOT_FOUND' });
+  });
+
+  /**
+   * @story   US-ADM01-013
+   * @ac      AC-US013-01
+   * @subtask ST-ADM01-013-FE-01
+   * In plain words: supporting test. getRole asks for the role with the company filter and returns its holders and what it allows.
+   */
+  it('reads a role with its holders', async () => {
+    answer(200, { data: { roleId: 'r1', name: 'Processor', users: [{ employeeCode: '10234', name: 'R. Sharma', department: 'Operations', company: 'IPL', assignedOn: '2026-04-01' }], allows: [{ permission: 'users.view', scope: 'OWN' }] } });
+    const out = await getRole('r1', 'IPL');
+    expect(seen.calls[0]).toMatchObject({ method: 'get', url: '/roles/r1', params: { companyCode: 'IPL' } });
+    expect(out.users[0].employeeCode).toBe('10234');
+    expect(out.allows).toEqual([{ permission: 'users.view', scope: 'OWN' }]);
+  });
+
+  /**
+   * @story   US-ADM01-013
+   * @ac      AC-US013-01
+   * @subtask ST-ADM01-013-FE-01
+   * In plain words: supporting test. assignUsers posts the codes, company, first day and reason, and returns how many were assigned; ROLE_INACTIVE, ROLE_NOT_FOUND and USER_NOT_FOUND reach the caller.
+   */
+  it('assigns users and maps the errors', async () => {
+    const input = { employeeCodes: ['10234', '10388'], companyCode: 'IPL', validFrom: '2026-12-01', reason: 'New plant team' };
+    answer(200, { data: { assigned: 2 } });
+    expect(await assignUsers('r1', input)).toEqual({ assigned: 2 });
+    expect(seen.calls[0]).toMatchObject({ method: 'post', url: '/roles/r1/users', data: input });
+    failure(422, 'ROLE_INACTIVE');
+    expect(await caught(assignUsers('r1', input))).toMatchObject({ status: 422, code: 'ROLE_INACTIVE' });
+    failure(404, 'USER_NOT_FOUND');
+    expect(await caught(assignUsers('r1', input))).toMatchObject({ status: 404, code: 'USER_NOT_FOUND' });
+    failure(404, 'ROLE_NOT_FOUND');
+    expect(await caught(getRole('nope'))).toMatchObject({ status: 404, code: 'ROLE_NOT_FOUND' });
   });
 });

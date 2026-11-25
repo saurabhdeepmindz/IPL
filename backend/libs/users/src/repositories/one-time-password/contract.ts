@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/one-time-password/contract.ts
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 
@@ -29,7 +29,7 @@
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.20 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.21 section 6.1
  */
 export abstract class OneTimePasswordRepository {
   /** Stops every unused one-time password of the user and stores this hash as the newest. */

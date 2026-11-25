@@ -11,25 +11,28 @@
  *
  * @story          US-ADM01-013
  * @subtask        ST-ADM01-013-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleAllowsPanel.tsx
- * @lld-synced     v0.20
- * @status         pseudo
+ * @lld-synced     v0.21
+ * @status         built
  */
-
-'use client';
-
+import { StatusBadge } from '@/components/ams';
+import { formatDay } from '@/lib/utils';
 import type { RoleDetails } from '../types/role.types';
 
 /** Props of RoleAllowsPanel. */
 interface RoleAllowsPanelProps {
   /** The role with its allows */
   role: RoleDetails;
+  /** Label of each permission key; a key without a label is shown as it is */
+  labels?: Record<string, string>;
 }
 
+const SCOPE = { OWN: 'own only', DEPARTMENT: 'own department', COMPANY: 'whole company' } as const;
+
 /**
- * Allows panel. In plain words: a list with a check symbol; text as well as symbol.
+ * What the role allows. In plain words: the allowed permissions with their scope in words, then type, status, companies and last changed.
  *
  * @epic      EPIC-ADM-01
  * @story     US-ADM01-013
@@ -37,14 +40,37 @@ interface RoleAllowsPanelProps {
  * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
  * @workflow  AD-03
  * @screen    ADM-02
+ * @contract  API-ROL-05
  * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.5
+ * @status    built
  *
- * @returns The rendered component
+ * @returns The rendered panel
  */
-export function RoleAllowsPanel({ role }: RoleAllowsPanelProps) {
-  // TODO: 1. List `role.allows` in words.
-  // TODO: 2. Show type, status, companies ("Same role in every company") and last changed.
-  throw new Error('pseudo-code: not implemented');
+export function RoleAllowsPanel({ role, labels = {} }: RoleAllowsPanelProps) {
+  return (
+    <aside className="card p-3" aria-label="What this role allows" data-testid="roles-allows">
+      <h2 className="h5">What this role allows</h2>
+      <ul className="list-unstyled">
+        {role.allows.map((a) => (
+          <li key={a.permission}>
+            {labels[a.permission] ?? a.permission}
+            {a.scope ? <strong> — {SCOPE[a.scope]}</strong> : null}
+          </li>
+        ))}
+      </ul>
+      <dl className="row mb-0 small">
+        <dt className="col-5">Type</dt>
+        <dd className="col-7">{role.type === 'STANDARD' ? 'Standard' : 'Custom'}</dd>
+        <dt className="col-5">Status</dt>
+        <dd className="col-7">
+          <StatusBadge status={role.status} />
+        </dd>
+        <dt className="col-5">Companies</dt>
+        <dd className="col-7">Same role in every company</dd>
+        <dt className="col-5">Last changed</dt>
+        <dd className="col-7">{formatDay(role.lastChanged)}</dd>
+      </dl>
+    </aside>
+  );
 }

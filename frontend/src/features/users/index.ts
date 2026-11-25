@@ -11,11 +11,11 @@
  *
  * @story          US-ADM01-013
  * @subtask        ST-ADM01-013-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/index.ts
- * @lld-synced     v0.20
- * @status         pseudo
+ * @lld-synced     v0.21
+ * @status         built
  */
 
 export { useUserSearch } from './hooks/useUserSearch';

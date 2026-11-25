@@ -11,11 +11,11 @@
  *
  * @story          US-ADM01-012, US-ADM01-013
  * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/services/roles.service.ts
- * @lld-synced     v0.20
- * @status         elaborated
+ * @lld-synced     v0.21
+ * @status         built
  */
 
 import { api } from '@/lib/api-client';
@@ -32,7 +32,7 @@ import type { CatalogCell, PermissionCatalog, Role, RoleDetails, SaveRoleInput }
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies api.get
@@ -55,7 +55,7 @@ export async function listRoles(query: { q?: string; type?: string; status?: str
  * @screen    ADM-02
  * @contract  API-PRM-01
  * @ac        AC-US012-02
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies api.get
@@ -86,7 +86,7 @@ export async function getPermissionCatalog(): Promise<PermissionCatalog> {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US012-02, AC-US012-03
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies api.post
@@ -109,7 +109,7 @@ export async function createRole(input: SaveRoleInput): Promise<{ roleId: string
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US012-02, AC-US012-04
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies api.put
@@ -132,7 +132,7 @@ export async function updateRole(roleId: string, input: SaveRoleInput): Promise<
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies api.post
@@ -154,16 +154,16 @@ export async function deactivateRole(roleId: string, reason: string): Promise<vo
  * @screen    ADM-02
  * @contract  API-ROL-05
  * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
+ * @status    built
  *
  * @dependencies api.get
  *
  * @returns The role details
  */
-export async function getRole(_roleId: string, _companyCode?: string): Promise<RoleDetails> {
-  // TODO: 1. GET /roles/:roleId with the optional company filter.
-  throw new Error('pseudo-code: not implemented');
+export async function getRole(roleId: string, companyCode?: string): Promise<RoleDetails> {
+  const res = await api.get<{ data: RoleDetails }>(`/roles/${roleId}`, { params: companyCode ? { companyCode } : {} });
+  return res.data.data;
 }
 
 /**
@@ -177,14 +177,14 @@ export async function getRole(_roleId: string, _companyCode?: string): Promise<R
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
+ * @status    built
  *
  * @dependencies api.post
  *
  * @returns How many were assigned
  */
-export async function assignUsers(_roleId: string, _input: { employeeCodes: string[]; companyCode: string; validFrom: string; reason: string }): Promise<{ assigned: number }> {
-  // TODO: 1. POST /roles/:roleId/users with the input.
-  throw new Error('pseudo-code: not implemented');
+export async function assignUsers(roleId: string, input: { employeeCodes: string[]; companyCode: string; validFrom: string; reason: string }): Promise<{ assigned: number }> {
+  const res = await api.post<{ data: { assigned: number } }>(`/roles/${roleId}/users`, input);
+  return res.data.data;
 }

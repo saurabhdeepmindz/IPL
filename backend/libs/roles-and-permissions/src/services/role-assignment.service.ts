@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/services/role-assignment.service.ts
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 
@@ -66,7 +66,7 @@ export interface AssignInput {
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-05, API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.20 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.21 §6.4
  */
 /** The start of today in UTC, the way the date columns are compared. */
 const startOfToday = (): Date => {
@@ -99,7 +99,7 @@ export class RoleAssignmentService {
  * @screen    ADM-02
  * @contract  API-ROL-05
  * @ac        AC-US011-02
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.4
  * @status    built
    *
    * @dependencies RoleRepository.findById, UserCompanyRoleRepository.listByRole, RolePermissionRepository.listForRole
@@ -131,7 +131,7 @@ export class RoleAssignmentService {
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01, AC-US011-03
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.4
  * @status    built
    *
    * @dependencies RoleRepository.findById, UserRepository.findByCodes, UserCompanyRoleRepository.findHolders, insertMany, PermissionCacheInvalidator.clearUser, AuditService.recordChange

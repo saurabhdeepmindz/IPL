@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleForm.tsx
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 'use client';
@@ -52,7 +52,7 @@ interface RoleFormProps {
  * @screen    ADM-02
  * @contract  API-ROL-02, API-ROL-03
  * @ac        AC-US012-02, AC-US012-03, AC-US012-04, AC-US012-06
- * @lld       LLD-EPIC-ADM-01 v0.20 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.21 §6.5
  * @status    built
  *
  * @dependencies useSaveRole, usePermissionCatalog, ReasonDialog, RolePermissionSwitches, PlainWordsPanel

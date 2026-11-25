@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.20 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
+ * @lld            LLD-EPIC-ADM-01 v0.21 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.21.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/permission-matrix.module.ts
- * @lld-synced     v0.20
+ * @lld-synced     v0.21
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import { PermissionMatrixService } from './services/permission-matrix.service';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.6
  *   contracts: API-PRM-01, API-PRM-02, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.20 section 6.6
+ *   lld:       LLD-EPIC-ADM-01 v0.21 section 6.6
  */
 @Module({
   imports: [RolesAndPermissionsModule, AuditModule],

@@ -85,3 +85,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
     timer = setTimeout(() => fn(...args), delay);
   };
 }
+
+/** 28-Oct-2026 from an ISO date (UTC, so the day does not move with the computer). */
+export const formatDay = (iso: string): string =>
+  new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso)).replace(/ /g, '-');
