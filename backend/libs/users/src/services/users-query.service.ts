@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-001, US-ADM01-003
  * @subtask        ST-ADM01-001-BE-02, ST-ADM01-003-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-query.service.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -22,6 +22,7 @@ import { Injectable } from '@nestjs/common';
 import { AuditService } from '@libs/audit';
 import { UserStatus } from '@libs/database';
 import { UserFilter, UserRecord, UserRepository } from '../repositories/user';
+import { UserFormData, UserFormRepository } from '../repositories/user-form';
 import { UnknownUserException } from '../errors/unknown-user.exception';
 
 /** The list filters of the call. */
@@ -58,6 +59,8 @@ export interface UserDetails {
   signInLocked: boolean;
   summaryText: string;
   activity: Array<{ at: Date; text: string }>;
+  /** The data the Edit form needs (decision L-78). */
+  form: UserFormData | null;
 }
 
 /**
@@ -71,13 +74,14 @@ export interface UserDetails {
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4, FR-042.6, FR-043.2
  *   contracts: API-USR-01, API-USR-03
- *   lld:       LLD-EPIC-ADM-01 v0.23 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.24 section 6.1
  */
 @Injectable()
 export class UsersQueryService {
   constructor(
     private readonly users: UserRepository,
     private readonly audit: AuditService,
+    private readonly forms: UserFormRepository,
   ) {}
 
   /**
@@ -93,7 +97,7 @@ export class UsersQueryService {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01, AC-US001-02, AC-US001-03
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findPage, countByStatus, AuditService.recordChange
@@ -129,7 +133,7 @@ export class UsersQueryService {
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US003-03
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findByCode, AuditService.recentChanges
@@ -147,6 +151,7 @@ export class UsersQueryService {
       signInLocked: user.status === 'LOCKED',
       summaryText: sentences.length > 0 ? sentences.join(' ') : 'No company role is assigned.',
       activity: await this.audit.recentChanges('User', user.id, 10),
+      form: await this.forms.findFormData(employeeCode),
     };
   }
 }

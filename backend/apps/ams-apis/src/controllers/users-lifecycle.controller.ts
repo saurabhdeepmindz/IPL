@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-01, ST-ADM01-007-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/users-lifecycle.controller.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -36,7 +36,7 @@ import { DeactivateUserDto } from '../dtos/users/deactivate-user.dto';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05 to API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.23 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.24 section 6.1
  */
 @Controller('users')
 export class UsersLifecycleController {
@@ -57,7 +57,7 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-05
  * @ac        AC-US005-01, AC-US005-02
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
  * @status    built
    *
    * @dependencies UsersLifecycleService.deactivate
@@ -88,7 +88,7 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-06
  * @ac        AC-US007-01
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
  * @status    built
    *
    * @dependencies UsersLifecycleService.unlock
@@ -118,7 +118,7 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
  * @status    built
    *
    * @dependencies UsersLifecycleService.resetPassword
@@ -148,7 +148,7 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-08
  * @ac        AC-US007-03
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.1
  * @status    built
    *
    * @dependencies UsersLifecycleService.resendOneTimePassword

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/test/users-write.e2e-spec.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -138,6 +138,9 @@ describe('ST-ADM01-003-BE-01 user write routes (C02 to C04)', () => {
     expect(res.body.data).toMatchObject({ employeeCode: code('R1'), name: 'Two Companies', signInLocked: false, firstSignInAt: null });
     expect(res.body.data.companies.map((c: { code: string }) => c.code).sort()).toEqual(['IPL', 'IPLFB']);
     expect(res.body.data.summaryText).toBe(`Company IPL: Uwt ${stamp}. Company IPLFB: Uwt ${stamp}.`);
+    expect(res.body.data.form.companies.map((c: { companyCode: string }) => c.companyCode).sort()).toEqual(['IPL', 'IPLFB']);
+    expect(res.body.data.form.companies[0]).toMatchObject({ roleIds: [roleIds[2]], validFrom: '2026-01-01', validTo: null });
+    expect(res.body.data.form).toHaveProperty('reportingManagerCode', null);
     expect(res.body.data.activity).toEqual([{ at: expect.any(String), text: 'Seeded for the test' }]);
     expect((await http().get('/api/v1/users/99999').set(as('admin')).expect(404)).body.error.code).toBe('USER_NOT_FOUND');
     await http().get(`/api/v1/users/${code('R1')}`).expect(401);

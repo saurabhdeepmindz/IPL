@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RolePermissionSwitches.tsx
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 import { Select, Switch } from '@/components/ui';
@@ -48,7 +48,7 @@ const SCOPES = [
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-02, AC-US012-04
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @returns The rendered switches

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003, US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-003-BE-04, ST-ADM01-005-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-write/contract.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { NewUser, UserAssignment, UserRecord } from '../user';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4
  *   contracts: API-USR-02, API-USR-04, API-USR-05, API-USR-06, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.23 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.24 section 6.1
  */
 export abstract class UserWriteRepository {
   /** Creates the user and its company roles in one transaction. */

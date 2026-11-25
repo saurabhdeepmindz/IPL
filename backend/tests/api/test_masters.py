@@ -10,10 +10,10 @@
 @story          US-ADM01-002
 @subtask        ST-ADM01-002-BE-01
 
-@lld            LLD-EPIC-ADM-01 v0.23 6.3
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+@lld            LLD-EPIC-ADM-01 v0.24 6.3
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/test_masters.py
-@lld-synced     v0.23
+@lld-synced     v0.24
 @status         built
 """
 

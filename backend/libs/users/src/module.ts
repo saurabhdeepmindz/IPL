@@ -19,6 +19,7 @@ import { OneTimePasswordDatabaseRepository, OneTimePasswordRepository } from './
 import { UserDatabaseRepository, UserRepository } from './repositories/user';
 import { OrganisationModule } from '@libs/organisation';
 import { MastersDatabaseAdapter } from '@libs/organisation/repositories/masters/database';
+import { UserFormDatabaseRepository, UserFormRepository } from './repositories/user-form';
 import { UserWriteDatabaseRepository, UserWriteRepository } from './repositories/user-write';
 import { DelegationPort } from './ports/delegation.port';
 import { DelegationStandIn } from './ports/delegation.stand-in';
@@ -54,6 +55,7 @@ import { UsersQueryService } from './services/users-query.service';
   providers: [
     { provide: UserRepository, useClass: UserDatabaseRepository },
     { provide: UserWriteRepository, useClass: UserWriteDatabaseRepository },
+    { provide: UserFormRepository, useClass: UserFormDatabaseRepository },
     { provide: OneTimePasswordRepository, useClass: OneTimePasswordDatabaseRepository },
     UsersQueryService,
     { provide: TemporaryPasswordMailer, useClass: TemporaryPasswordMailerStandIn },
@@ -67,6 +69,6 @@ import { UsersQueryService } from './services/users-query.service';
     UserInputValidator,
     UsersCommandService,
   ],
-  exports: [UserRepository, UserWriteRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService, UsersCommandService],
+  exports: [UserRepository, UserWriteRepository, UserFormRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService, UsersCommandService],
 })
 export class UsersModule {}

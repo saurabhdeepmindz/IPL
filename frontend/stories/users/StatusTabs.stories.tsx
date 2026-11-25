@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/stories/users/StatusTabs.stories.tsx
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 import type { Meta, StoryObj } from '@storybook/react';

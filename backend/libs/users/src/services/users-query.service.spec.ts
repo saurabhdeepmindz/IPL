@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-001, US-ADM01-003
  * @subtask        ST-ADM01-001-BE-04, ST-ADM01-003-BE-06
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-query.service.spec.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -32,7 +32,7 @@ describe('UsersQueryService.search', () => {
   beforeEach(() => {
     users = new FakeUserReads();
     audit = { recordChange: jest.fn().mockResolvedValue('audit-1') };
-    service = new UsersQueryService(users as never, audit as never);
+    service = new UsersQueryService(users as never, audit as never, {} as never);
   });
 
   /**
@@ -118,11 +118,13 @@ describe('UsersQueryService.getDetails (story 003)', () => {
   let service: UsersQueryService;
   const both = userRecord({ employeeCode: '10031', id: 'u-both', companies: [{ code: '1000', roles: ['Initiator', 'Processor'] }, { code: '2000', roles: ['Initiator'] }] });
   const locked = userRecord({ employeeCode: '10032', id: 'u-lock', status: 'LOCKED' });
+  const formData = { mobile: '9876543210', departmentId: 'd1', designationId: 'g1', reportingManagerCode: '10050', companies: [{ companyCode: '1000', roleIds: ['r1'], validFrom: '2026-01-01', validTo: null }] };
   const reads = { findByCode: async (code: string) => [both, locked].find((u) => u.employeeCode === code) ?? null };
+  const forms = { findFormData: async (code: string) => (code === '10031' ? formData : null) };
 
   beforeEach(() => {
     audit = { recentChanges: jest.fn().mockResolvedValue([{ at: when, text: 'Created' }]), recordChange: jest.fn() };
-    service = new UsersQueryService(reads as never, audit as never);
+    service = new UsersQueryService(reads as never, audit as never, forms as never);
   });
 
   /**
@@ -139,6 +141,8 @@ describe('UsersQueryService.getDetails (story 003)', () => {
     expect(out.signInLocked).toBe(false);
     expect(out.activity).toEqual([{ at: when, text: 'Created' }]);
     expect(audit.recentChanges).toHaveBeenCalledWith('User', 'u-both', 10);
+    expect(out.form).toEqual(formData);
+    expect((await service.getDetails('10032')).form).toBeNull();
     expect((await service.getDetails('10032')).signInLocked).toBe(true);
     await expect(service.getDetails('99999')).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
   });
@@ -151,7 +155,7 @@ describe('UsersQueryService.getDetails (story 003)', () => {
    */
   it('says plainly when the user holds no role', async () => {
     const none = userRecord({ employeeCode: '10033', id: 'u-none', companies: [] });
-    const svc = new UsersQueryService({ findByCode: async () => none } as never, audit as never);
+    const svc = new UsersQueryService({ findByCode: async () => none } as never, audit as never, forms as never);
     expect((await svc.getDetails('10033')).summaryText).toBe('No company role is assigned.');
   });
 });

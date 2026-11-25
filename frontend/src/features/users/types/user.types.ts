@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002, US-ADM01-004
  * @subtask        ST-ADM01-002-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/types/user.types.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 /** One company with the roles the user holds in it. */
@@ -64,8 +64,17 @@ export interface UserDetails extends UserListItem {
   signInLocked: boolean;
   summaryText: string;
   activity: { at: string; text: string }[];
-  /** Ids and dates the edit form needs. */
-  form?: UserFormData;
+  /** The data the Edit form needs (decision L-78). */
+  form: UserEditData | null;
+}
+
+/** The `form` part of API-USR-03. */
+export interface UserEditData {
+  mobile: string | null;
+  departmentId: string | null;
+  designationId: string | null;
+  reportingManagerCode: string | null;
+  companies: { companyCode: string; roleIds: string[]; validFrom: string; validTo: string | null }[];
 }
 
 /** One company assignment of the form. */

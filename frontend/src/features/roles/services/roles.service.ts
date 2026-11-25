@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012, US-ADM01-013
  * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/services/roles.service.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import type { CatalogCell, PermissionCatalog, Role, RoleDetails, SaveRoleInput }
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.get
@@ -55,7 +55,7 @@ export async function listRoles(query: { q?: string; type?: string; status?: str
  * @screen    ADM-02
  * @contract  API-PRM-01
  * @ac        AC-US012-02
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.get
@@ -86,7 +86,7 @@ export async function getPermissionCatalog(): Promise<PermissionCatalog> {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US012-02, AC-US012-03
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.post
@@ -109,7 +109,7 @@ export async function createRole(input: SaveRoleInput): Promise<{ roleId: string
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US012-02, AC-US012-04
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.put
@@ -132,7 +132,7 @@ export async function updateRole(roleId: string, input: SaveRoleInput): Promise<
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.post
@@ -154,7 +154,7 @@ export async function deactivateRole(roleId: string, reason: string): Promise<vo
  * @screen    ADM-02
  * @contract  API-ROL-05
  * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.get
@@ -177,7 +177,7 @@ export async function getRole(roleId: string, companyCode?: string): Promise<Rol
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies api.post

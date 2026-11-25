@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/permissions/matrix-query.dto.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { IsOptional, IsString, MaxLength } from 'class-validator';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.6
  *   contracts: API-PRM-01
- *   lld:       LLD-EPIC-ADM-01 v0.23 §6.6
+ *   lld:       LLD-EPIC-ADM-01 v0.24 §6.6
  */
 export class MatrixQueryDto {
   /** SOW module (the permission area). */

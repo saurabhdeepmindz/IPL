@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/roles/hooks/useSaveRole.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -33,7 +33,7 @@ import { rolesKeys } from './roles.keys';
  * @screen    ADM-02
  * @contract  API-ROL-02, API-ROL-03
  * @ac        AC-US012-02, AC-US012-03
- * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
  * @status    built
  *
  * @dependencies createRole, updateRole

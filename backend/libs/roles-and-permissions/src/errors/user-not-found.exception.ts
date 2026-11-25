@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.23 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+ * @lld            LLD-EPIC-ADM-01 v0.24 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/errors/user-not-found.exception.ts
- * @lld-synced     v0.23
+ * @lld-synced     v0.24
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { NotFoundAppException } from '@libs/common';
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.23 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.24 §6.4
  */
 export class UserNotFoundException extends NotFoundAppException {
   constructor(readonly codes: string[]) {

@@ -10,10 +10,10 @@
 @story          US-ADM01-003
 @subtask        ST-ADM01-003-BE-06
 
-@lld            LLD-EPIC-ADM-01 v0.23 6.1
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
+@lld            LLD-EPIC-ADM-01 v0.24 6.1
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.24.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/test_users_write.py
-@lld-synced     v0.23
+@lld-synced     v0.24
 @status         built
 """
 
@@ -209,7 +209,7 @@ def test_contract_read_shape(wr):
     assert wr.create(body).status_code == 201
     res = wr.get(body["employeeCode"])
     assert res.status_code == 200
-    assert sorted(res.json()["data"]) == ["activity", "companies", "department", "designation", "email", "employeeCode", "firstSignInAt", "lastSignIn", "name", "signIn", "signInLocked", "status", "summaryText"]
+    assert sorted(res.json()["data"]) == ["activity", "companies", "department", "designation", "email", "employeeCode", "firstSignInAt", "form", "lastSignIn", "name", "signIn", "signInLocked", "status", "summaryText"]
     missing = wr.get("00001")
     assert (missing.status_code, missing.json()["error"]["code"]) == (404, "USER_NOT_FOUND")
 
