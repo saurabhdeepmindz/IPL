@@ -9,6 +9,8 @@ Approval Management System (AMS), Phase 1, for Indian Potash Limited. Two applic
 
 Design, stories, LLD, sub-tasks, the coding standard and the test results live in the documents project (`IPL-ProjectSourceCode/docs`), not in this repository. Every source file starts with a header block that names its story and sub-task. Read `backend/README.md`, `backend/STRUCTURE.md` and `frontend/README.md` once.
 
+**First time on localhost? Follow the step-by-step guide `INSTALL-LOCALHOST.md`.** This README is the reference.
+
 ## 1. What to install (once per computer)
 
 | Tool | Version we use | Why |
