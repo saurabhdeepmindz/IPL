@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-006
  * @subtask        ST-ADM01-006-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserDetailRoute.tsx
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         pseudo
  */
 'use client';
@@ -39,7 +39,7 @@ interface UserDetailRouteProps {
  * @screen    ADM-01
  * @contract  API-USR-03
  * @ac        AC-US006-01
- * @lld       LLD-EPIC-ADM-01 v0.29 §6.3
+ * @lld       LLD-EPIC-ADM-01 v0.30 §6.3
  * @status    pseudo
  *
  * @dependencies UserDetailPage

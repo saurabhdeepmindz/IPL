@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.3
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserListPage.tsx
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 'use client';
@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { NoAccess } from '@/components/ams';
 import { Button } from '@/components/ui';
+import { ImportUsersButton } from './ImportUsersButton';
 import { useRunUserAction } from '../hooks/useUserActions';
 import { useUsers } from '../hooks/useUsers';
 import type { UserFilters as Filters } from '../types/user.types';
@@ -73,9 +74,12 @@ export function UserListPage() {
           <h1 className="h3">User Management</h1>
           <p className="text-body-secondary mb-0">Who can sign in to AMS, in which companies and with which roles.</p>
         </div>
-        <Link href="/users/new" className="btn btn-primary">
-          Add user
-        </Link>
+        <div className="d-flex gap-2">
+          <ImportUsersButton />
+          <Link href="/users/new" className="btn btn-primary">
+            Add user
+          </Link>
+        </div>
       </div>
       {created && (
         <p className="alert alert-success" role="status" data-testid="users-notice">

@@ -9,10 +9,10 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/require-permission.decorator.ts
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 
@@ -41,7 +41,7 @@ import { REQUIRE_PERMISSION_KEY } from './session-user.interface';
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.29 §6.8
+ * @lld       LLD-EPIC-ADM-01 v0.30 §6.8
  * @status    built
  *
  * @dependencies SetMetadata

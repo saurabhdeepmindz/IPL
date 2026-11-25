@@ -11,18 +11,18 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/user-command-helpers.ts
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 
 import { FieldError, ValidationFailedException } from '@libs/common';
 import { DuplicateEmailException } from '../errors/duplicate-email.exception';
 import { DuplicateEmployeeCodeException } from '../errors/duplicate-employee-code.exception';
-import { NewUser, UserAssignment } from '../repositories/user';
-import { UserInput } from './user-input-validator';
+import { NewUser, UserAssignment, UserRepository } from '../repositories/user';
+import { UserInput, UserInputValidator } from './user-input-validator';
 
 /** One assignment row per company and role of the input. */
 export function toAssignments(input: UserInput, assignedBy: string): UserAssignment[] {
@@ -47,6 +47,37 @@ export function toNewUser(input: UserInput, reportingManagerId: string | null): 
 export function auditFields(user: NewUser): Record<string, unknown> {
   const { employeeCode, fullName, email, mobile, departmentId, designationId, reportingManagerId, authType } = user;
   return { employeeCode, fullName, email, mobile, departmentId, designationId, reportingManagerId, authType };
+}
+
+/** The codes and e-mails already met in one list of rows. */
+export interface SeenRows {
+  codes: Set<string>;
+  emails: Set<string>;
+}
+
+/**
+ * Every problem of one row.
+ *
+ * @story    US-ADM01-009
+ * @subtask  ST-ADM01-009-IN-03
+ * In plain words: the rules of one user, a code or e-mail repeated earlier in the list, or already used in the database (decision L-56). One function serves the check and the import.
+ *
+ * @param validator - the rules of one user
+ * @param users - the user lookups
+ * @param input - the row
+ * @param seen - the codes and e-mails of the earlier rows (this call adds the row's own)
+ * @returns The field problems (empty when the row is good)
+ */
+export async function rowProblems(validator: UserInputValidator, users: UserRepository, input: UserInput, seen: SeenRows): Promise<FieldError[]> {
+  const problems = await validator.validate(input);
+  const email = input.email?.toLowerCase() ?? '';
+  const inFile = { code: seen.codes.has(input.employeeCode), email: seen.emails.has(email) };
+  seen.codes.add(input.employeeCode);
+  seen.emails.add(email);
+  const known = { code: inFile.code || !!(await users.findByCode(input.employeeCode)), email: inFile.email || !!(await users.findByEmail(input.email)) };
+  if (known.code) problems.push({ field: 'employeeCode', message: 'The employee code is already used' });
+  if (known.email) problems.push({ field: 'email', message: 'The e-mail is already used' });
+  return problems;
 }
 
 /** Turns a database clash (two saves at once, or an unknown role) into the answer the caller expects. Other errors pass through. */

@@ -11,16 +11,16 @@
  *
  * @story          US-ADM01-003, US-ADM01-009
  * @subtask        ST-ADM01-003-BE-03, ST-ADM01-009-IN-01
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-command.service.ts
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
 import { AuditService } from '@libs/audit';
-import { FieldError, ValidationFailedException } from '@libs/common';
+import { ValidationFailedException } from '@libs/common';
 import { NewUser, UserRecord, UserRepository } from '../repositories/user';
 import { UserWriteRepository } from '../repositories/user-write';
 import { DuplicateEmailException } from '../errors/duplicate-email.exception';
@@ -28,7 +28,7 @@ import { DuplicateEmployeeCodeException } from '../errors/duplicate-employee-cod
 import { EmployeeCodeReadOnlyException } from '../errors/employee-code-read-only.exception';
 import { UnknownUserException } from '../errors/unknown-user.exception';
 import { BulkImportFailedException } from '../errors/bulk-import-failed.exception';
-import { auditFields, toAssignments, toNewUser, translateWriteError, writeProblems } from './user-command-helpers';
+import { auditFields, rowProblems, toAssignments, toNewUser, translateWriteError, writeProblems } from './user-command-helpers';
 import { OneTimePasswordService } from './one-time-password.service';
 import { UserInput, UserInputValidator } from './user-input-validator';
 
@@ -193,7 +193,7 @@ export class UsersCommandService {
     const made: SavedRow[] = [];
     const seen = { codes: new Set<string>(), emails: new Set<string>() };
     for (const [i, input] of rows.entries()) {
-      const problems = await this.rowProblems(input, seen);
+      const problems = await rowProblems(this.validator, this.users, input, seen);
       const saved = problems.length === 0 ? await this.saveRow(input, assignedBy).catch((err) => (problems.push(...writeProblems(err)), null)) : null;
       if (saved) made.push(saved);
       failed.push(...problems.map((p) => ({ row: i + 1, field: p.field, message: p.message })));
@@ -203,17 +203,25 @@ export class UsersCommandService {
     return { created: made.length, failed };
   }
 
-  /** Every problem of one row: the rules of one user, a code or e-mail repeated earlier in the file, or already used in the database (decision L-56). */
-  private async rowProblems(input: UserInput, seen: { codes: Set<string>; emails: Set<string> }): Promise<FieldError[]> {
-    const problems = await this.validator.validate(input);
-    const email = input.email?.toLowerCase() ?? '';
-    const inFile = { code: seen.codes.has(input.employeeCode), email: seen.emails.has(email) };
-    seen.codes.add(input.employeeCode);
-    seen.emails.add(email);
-    const known = { code: inFile.code || !!(await this.users.findByCode(input.employeeCode)), email: inFile.email || !!(await this.users.findByEmail(input.email)) };
-    if (known.code) problems.push({ field: 'employeeCode', message: 'The employee code is already used' });
-    if (known.email) problems.push({ field: 'email', message: 'The e-mail is already used' });
-    return problems;
+  /**
+   * Checks many rows without saving. In plain words: the same problems as `bulkCreate` gives for the same rows; nothing is saved, sent or audited.
+   *
+   * @story    US-ADM01-009
+   * @subtask  ST-ADM01-009-IN-03
+   * @contract API-USR-09
+   * @ac       AC-US009-03
+   * @dependencies rowProblems (user-command-helpers)
+   * @param rows - the rows of one call
+   * @returns The failed rows: position in the list (from 1), field, message
+   */
+  async checkRows(rows: UserInput[]): Promise<BulkResult['failed']> {
+    const failed: BulkResult['failed'] = [];
+    const seen = { codes: new Set<string>(), emails: new Set<string>() };
+    for (const [i, input] of rows.entries()) {
+      const problems = await rowProblems(this.validator, this.users, input, seen);
+      failed.push(...problems.map((p) => ({ row: i + 1, field: p.field, message: p.message })));
+    }
+    return failed;
   }
 
   /** Saves one good row in its own transaction. */

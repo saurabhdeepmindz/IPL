@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-018
  * @subtask        ST-ADM01-018-IN-04
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.9
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.9
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/stories/ams/NoAccess.stories.tsx
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 import type { Meta, StoryObj } from '@storybook/react';

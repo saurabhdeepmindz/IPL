@@ -9,11 +9,11 @@
 
 @story          US-ADM01-018
 @subtask        ST-ADM01-018-IN-01
-@lld            LLD-EPIC-ADM-01 v0.29 6.9
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+@lld            LLD-EPIC-ADM-01 v0.30 6.9
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/test_rbac_negative.py
-@lld-synced     v0.29
-@status         elaborated
+@lld-synced     v0.30
+@status         built
 Environment: RBAC_OUT (folder for rbac-api.json, default ./rbac-out) and AMS_CONTROLLERS_DIR (default: the controllers of this repository).
 """
 
@@ -128,7 +128,7 @@ def test_rbac_case(role, route, api, matrix, role_tokens):
     @story US-ADM01-018
     @ac AC-US018-01
     @subtask ST-ADM01-018-IN-01
-    In plain words: 6 roles x 20 routes = 120 cases; not allowed in the matrix gives 403 FORBIDDEN, allowed gives anything but 403 (and no server error).
+    In plain words: 6 roles x 22 routes = 132 cases; not allowed in the matrix gives 403 FORBIDDEN, allowed gives anything but 403 (and no server error).
     """
     cell = allowed(matrix, role, route.permission)
     res = send(api, role_tokens[role], route)

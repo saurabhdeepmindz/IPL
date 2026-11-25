@@ -9,10 +9,10 @@
 
 @story          US-ADM01-018
 @subtask        ST-ADM01-018-IN-01
-@lld            LLD-EPIC-ADM-01 v0.29 6.9
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+@lld            LLD-EPIC-ADM-01 v0.30 6.9
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/rbac_routes.py
-@lld-synced     v0.29
+@lld-synced     v0.30
 @status         pseudo
 """
 
@@ -37,6 +37,8 @@ ROUTES: list[Route] = [
     Route("GET", "/masters/companies", "users.view"),
     Route("POST", "/users", "users.manage"),
     Route("PUT", f"/users/{UNKNOWN_USER}", "users.manage"),
+    Route("POST", "/users/import/check", "users.manage"),
+    Route("POST", "/users/import", "users.manage"),
     Route("POST", f"/users/{UNKNOWN_USER}/deactivate", "users.manage"),
     Route("POST", f"/users/{UNKNOWN_USER}/unlock", "users.manage"),
     Route("POST", f"/users/{UNKNOWN_USER}/reset-password", "users.manage"),

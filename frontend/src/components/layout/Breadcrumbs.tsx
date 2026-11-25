@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/components/layout/Breadcrumbs.tsx
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 import Link from 'next/link';
@@ -43,7 +43,7 @@ interface BreadcrumbsProps {
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.29 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.30 §6.5
  * @status    built
  *
  * @returns The rendered breadcrumb

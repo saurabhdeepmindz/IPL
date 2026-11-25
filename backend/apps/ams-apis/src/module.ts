@@ -29,6 +29,7 @@ import { PermissionMatrixController } from './controllers/permission-matrix.cont
 import { PermissionCacheBridgeModule } from './permission-cache-bridge.module';
 import { RoleAssignmentController } from './controllers/role-assignment.controller';
 import { UsersController } from './controllers/users.controller';
+import { UsersImportController } from './controllers/users-import.controller';
 import { UsersLifecycleController } from './controllers/users-lifecycle.controller';
 import { MastersController } from './controllers/masters.controller';
 import { OrganisationModule } from '@libs/organisation';
@@ -51,7 +52,7 @@ import { RolesController } from './controllers/roles.controller';
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, RoleAssignmentModule, UsersModule, OrganisationModule, DevAuthModule.register()],
   // PermissionMatrixController must come before RolesController: PUT /roles/permissions would otherwise be read as PUT /roles/:roleId (decision L-27).
-  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController, UsersController, UsersLifecycleController, MastersController],
+  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController, UsersController, UsersLifecycleController, UsersImportController, MastersController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_PIPE, useClass: AllFieldsValidationPipe },

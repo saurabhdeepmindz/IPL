@@ -152,3 +152,12 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-018,tests/api/test_rbac_negative.py,v0.29,copied
 2026-11-25,US-ADM01-018,tests/rbac/make_report.py,v0.29,copied
 2026-11-25,US-ADM01-018,tests/rbac/test_make_report.py,v0.29,copied
+2026-11-26,US-ADM01-009,apps/ams-apis/src/controllers/users-import.controller.ts,v0.30,copied
+2026-11-26,US-ADM01-009,apps/ams-apis/src/dtos/users/import-users.dto.ts,v0.30,copied
+2026-11-26,US-ADM01-009,libs/users/src/errors/bulk-import-failed.exception.ts,v0.30,identical
+2026-11-26,US-ADM01-009,libs/users/src/services/user-command-helpers.ts,v0.30,EXISTS-DIFFERENT (not overwritten)
+2026-11-26,US-ADM01-009,libs/users/src/services/users-bulk-create.db.spec.ts,v0.30,identical
+2026-11-26,US-ADM01-009,libs/users/src/services/users-bulk-create.spec.ts,v0.30,identical
+2026-11-26,US-ADM01-009,libs/users/src/services/users-check-rows.spec.ts,v0.30,copied
+2026-11-26,US-ADM01-009,libs/users/src/services/users-command.service.ts,v0.30,EXISTS-DIFFERENT (not overwritten)
+2026-11-26,US-ADM01-009,tests/api/test_users_import.py,v0.30,copied

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-004
  * @subtask        ST-ADM01-004-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-form/index.ts
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 

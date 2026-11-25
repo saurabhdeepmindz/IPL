@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.29 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.29.md
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/organisation/src/repositories/masters/database.ts
- * @lld-synced     v0.29
+ * @lld-synced     v0.30
  * @status         built
  */
 
@@ -54,7 +54,7 @@ export class MastersDatabaseAdapter extends MastersPort {
  * @screen    ADM-01
  * @contract  API-USR-02
  * @ac        AC-US003-01
- * @lld       LLD-EPIC-ADM-01 v0.29 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.30 §6.1
  * @status    built
    *
    * @dependencies PrismaService.db department.count
