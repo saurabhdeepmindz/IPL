@@ -47,7 +47,7 @@ export class SeedMastersCommand {
     const db = this.prisma.raw;
     for (const c of COMPANIES) await db.company.upsert({ where: { code: c.code }, update: {}, create: c });
     for (const d of DEPARTMENTS) await db.department.upsert({ where: { code: d.code }, update: {}, create: d });
-    for (const d of DESIGNATIONS) await db.designation.upsert({ where: { code: d.code }, update: {}, create: d });
+    for (const d of DESIGNATIONS) await db.designation.upsert({ where: { code: d.code }, update: { isHighest: d.isHighest ?? false }, create: d });
     return { companies: COMPANIES.length, departments: DEPARTMENTS.length, designations: DESIGNATIONS.length };
   }
 }

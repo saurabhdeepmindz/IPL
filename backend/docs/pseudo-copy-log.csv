@@ -69,3 +69,12 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-011,libs/users/src/repositories/user/index.ts,v0.11,copied
 2026-11-25,US-ADM01-011,libs/users/src/repositories/user/user.repository.spec.ts,v0.11,copied
 2026-11-25,US-ADM01-011,tests/api/test_role_assignment.py,v0.11,copied
+2026-11-25,US-ADM01-001,apps/ams-apis/src/controllers/users.controller.ts,v0.13,copied
+2026-11-25,US-ADM01-001,apps/ams-apis/src/dtos/users/list-users-query.dto.ts,v0.13,copied
+2026-11-25,US-ADM01-001,apps/ams-apis/src/dtos/users/user-response.dto.ts,v0.13,copied
+2026-11-25,US-ADM01-001,apps/ams-apis/test/users.e2e-spec.ts,v0.13,copied
+2026-11-25,US-ADM01-001,libs/users/src/repositories/user/contract.ts,v0.13,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-001,libs/users/src/repositories/user/database.ts,v0.13,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-001,libs/users/src/services/users-query.service.spec.ts,v0.13,copied
+2026-11-25,US-ADM01-001,libs/users/src/services/users-query.service.ts,v0.13,copied
+2026-11-25,US-ADM01-001,tests/api/test_users_list.py,v0.13,copied

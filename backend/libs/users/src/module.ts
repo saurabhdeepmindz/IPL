@@ -14,7 +14,9 @@
  */
 
 import { Module } from '@nestjs/common';
+import { AuditModule } from '@libs/audit';
 import { UserDatabaseRepository, UserRepository } from './repositories/user';
+import { UsersQueryService } from './services/users-query.service';
 
 /**
  * Nest module of the users library.
@@ -30,7 +32,8 @@ import { UserDatabaseRepository, UserRepository } from './repositories/user';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  providers: [{ provide: UserRepository, useClass: UserDatabaseRepository }],
-  exports: [UserRepository],
+  imports: [AuditModule],
+  providers: [{ provide: UserRepository, useClass: UserDatabaseRepository }, UsersQueryService],
+  exports: [UserRepository, UsersQueryService],
 })
 export class UsersModule {}

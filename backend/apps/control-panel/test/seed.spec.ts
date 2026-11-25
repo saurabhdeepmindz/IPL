@@ -103,6 +103,20 @@ describe('ST-ADM01-000-BE-07 seeds', () => {
     expect(PROTECTED_KEYS).toBe(PROTECTED_RIGHTS);
   });
 
+  /**
+   * @story   US-ADM01-001
+   * @ac      AC-US001-01
+   * @subtask ST-ADM01-001-BE-03
+   * In plain words: supporting test (decisions L-45, L-59). Exactly one designation is marked the highest (AGM, for IPL to confirm), and the users table has a last-sign-in column.
+   */
+  it('marks one designation as the highest and has the last-sign-in column', async () => {
+    await masters.run();
+    const highest = await prisma.raw.designation.findMany({ where: { isHighest: true } });
+    expect(highest.map((d) => d.code)).toEqual(['AGM']);
+    const user = await prisma.raw.user.findFirst({ select: { lastSignInAt: true } });
+    expect(user === null || user.lastSignInAt === null || user.lastSignInAt instanceof Date).toBe(true);
+  });
+
   it('every standard role has a row for every permission', async () => {
     for (const r of STANDARD_ROLES) {
       const n = await prisma.raw.rolePermission.count({ where: { role: { code: r.code } } });

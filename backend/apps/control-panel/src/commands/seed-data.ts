@@ -76,5 +76,6 @@ export const DEPARTMENTS = [
 export const DESIGNATIONS = [
   { code: 'EXEC', name: 'Executive' },
   { code: 'MGR', name: 'Manager' },
-  { code: 'AGM', name: 'Assistant General Manager' },
+  // Marked the highest designation (IPL to confirm, LLD L-59): a user with it may have no reporting manager.
+  { code: 'AGM', name: 'Assistant General Manager', isHighest: true },
 ];

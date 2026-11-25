@@ -59,6 +59,8 @@ model Designation {
   code      String   @unique @db.VarChar(20)
   /// Name shown on screens
   name      String   @db.VarChar(100)
+  /// True for the highest designation: a user with it may have no reporting manager (US-ADM01-003, LLD L-59)
+  isHighest Boolean  @default(false) @map("is_highest")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -115,6 +117,8 @@ model User {
   lockedUntil        DateTime?  @map("locked_until")
   /// Empty until the first sign-in; set by the sign-in service
   firstSignInAt      DateTime?  @map("first_sign_in_at")
+  /// When the user last signed in; filled by the sign-in epic (US-ADM01-001, LLD L-45)
+  lastSignInAt       DateTime?  @map("last_sign_in_at")
   /// When the user was deactivated
   deactivatedAt      DateTime?  @map("deactivated_at")
   /// Reason code of the deactivation

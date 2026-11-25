@@ -15,3 +15,4 @@
 
 export * from './module';
 export * from './repositories/user';
+export * from './services/users-query.service';

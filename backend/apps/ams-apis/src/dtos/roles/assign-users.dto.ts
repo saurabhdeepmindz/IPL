@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.13 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.13.md
+ * @lld            LLD-EPIC-ADM-01 v0.14 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.14.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/roles/assign-users.dto.ts
- * @lld-synced     v0.13
+ * @lld-synced     v0.14
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { ArrayMaxSize, ArrayMinSize, IsArray, IsString, Length, Matches } from '
  *   workflows: AD-03
  *   frd:       FR-042.5, FR-043.4
  *   contracts: API-ROL-06
- *   lld:       LLD-EPIC-ADM-01 v0.13 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.14 §6.4
  */
 export class AssignUsersDto {
   /** Employee codes of the users to give the role to. */

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.13 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.13.md
+ * @lld            LLD-EPIC-ADM-01 v0.14 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.14.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role/role-helpers.ts
- * @lld-synced     v0.13
+ * @lld-synced     v0.14
  * @status         built
  */
 
