@@ -20,10 +20,11 @@ import type { Request } from 'express';
 import { UnauthenticatedAppException } from '@libs/common';
 import { CompanyContext } from '@libs/database';
 import { SessionUserFactory } from './session-user.factory';
-import { AccessClaims, SessionUserShape } from './session-user.shape';
+import { AccessClaims } from './session-user.shape';
+import { SessionUser } from '../authorization/session-user.interface';
 
 /** A request that carries the session user. */
-export type AuthedRequest = Request & { user?: SessionUserShape };
+export type AuthedRequest = Request & { user?: SessionUser };
 
 /**
  * JWT authentication guard.

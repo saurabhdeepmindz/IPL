@@ -6,3 +6,8 @@ coverage/
 .env.*
 !.env.example
 *.tsbuildinfo
+
+# Python
+ipl-venv/
+__pycache__/
+.pytest_cache/

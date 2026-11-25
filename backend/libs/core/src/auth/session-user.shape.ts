@@ -3,7 +3,7 @@
  * @module  CoreModule
  *
  * @description
- * The shape of the signed-in user as the stand-in sign-in builds it. In plain words: it has the same four fields as SessionUser of the authorization pseudo-code; when US-ADM01-017 copies that interface in, this type is replaced by it (TBD-ADM01-02).
+ * The claims that the access token carries. In plain words: the small set of facts put in the token at sign-in. The signed-in user itself is `SessionUser` in the authorization folder (replaced the stand-in type on 25 Nov 2026).
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
@@ -13,30 +13,6 @@
  * @story   US-ADM01-017
  * @subtask ST-ADM01-000-BE-06
  */
-
-/**
- * The signed-in user.
- *
- * In plain words: who is calling, in which company, and which department they work in.
- *
- * @rtm
- *   epics:     EPIC-ADM-01
- *   stories:   US-ADM01-017
- *   workflows: AD-03
- *   frd:       FR-043.2
- *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
- */
-export interface SessionUserShape {
-  /** Internal key of the user (UUID). */
-  userId: string;
-  /** The five-digit employee code shown on screens. */
-  employeeCode: string;
-  /** The company chosen at sign-in; every call is tied to it. */
-  companyCode: string;
-  /** Home department; needed for the DEPARTMENT data scope. */
-  departmentId: string | null;
-}
 
 /** What the access token carries. */
 export interface AccessClaims {

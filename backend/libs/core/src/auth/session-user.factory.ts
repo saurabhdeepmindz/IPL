@@ -15,7 +15,8 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { AccessClaims, SessionUserShape } from './session-user.shape';
+import { AccessClaims } from './session-user.shape';
+import { SessionUser } from '../authorization/session-user.interface';
 
 /**
  * Session user factory.
@@ -41,7 +42,7 @@ export class SessionUserFactory {
    * @returns The session user
    * @dependencies none
    */
-  fromClaims(claims: AccessClaims): SessionUserShape {
+  fromClaims(claims: AccessClaims): SessionUser {
     return { userId: claims.sub, employeeCode: claims.emp, companyCode: claims.company, departmentId: claims.dept ?? null };
   }
 }

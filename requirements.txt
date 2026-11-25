@@ -1,0 +1,6 @@
+# Python tools for the API contract tests (backend/tests/api). Node packages are in each package.json.
+# Setup:  python -m venv ipl-venv   then   ipl-venv\Scripts\activate   then   pip install -r requirements.txt
+# Run:    pytest backend/tests/api --html=<result folder>/report.html --self-contained-html
+pytest==8.4.2
+pytest-html==4.1.1
+requests==2.32.5
