@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.14 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.14.md
+ * @lld            LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/roles/save-role.dto.ts
- * @lld-synced     v0.14
+ * @lld-synced     v0.15
  * @status         built
  */
 
@@ -33,7 +33,7 @@ import { DataScope } from '@libs/database';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03
- *   lld:       LLD-EPIC-ADM-01 v0.14 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.15 §6.4
  */
 export class PermissionCellDto {
   /** Permission key, for example `users.view`. */
@@ -62,7 +62,7 @@ export class PermissionCellDto {
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-02, API-ROL-03
- *   lld:       LLD-EPIC-ADM-01 v0.14 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.15 §6.4
  */
 export class SaveRoleDto {
   /** Unique name, up to 40 characters. */

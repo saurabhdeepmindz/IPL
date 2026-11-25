@@ -9,10 +9,10 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @lld            LLD-EPIC-ADM-01 v0.14 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.14.md
+ * @lld            LLD-EPIC-ADM-01 v0.15 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/permission-resolver.service.ts
- * @lld-synced     v0.14
+ * @lld-synced     v0.15
  * @status         built
  */
 
@@ -39,7 +39,7 @@ import { ResolvedAccess, SessionUser } from './session-user.interface';
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.14 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.15 §6.8
  */
 @Injectable()
 export class PermissionResolver {
@@ -62,7 +62,7 @@ export class PermissionResolver {
  * @screen    none (platform; applies to every screen)
  * @contract  none (applies to every contract)
  * @ac        AC-US017-01, AC-US017-02
- * @lld       LLD-EPIC-ADM-01 v0.14 §6.8
+ * @lld       LLD-EPIC-ADM-01 v0.15 §6.8
  * @status    built
    *
    * @dependencies PermissionResolver.rolesOf, PermissionResolver.cellsOf

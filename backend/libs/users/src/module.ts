@@ -15,7 +15,14 @@
 
 import { Module } from '@nestjs/common';
 import { AuditModule } from '@libs/audit';
+import { OneTimePasswordDatabaseRepository, OneTimePasswordRepository } from './repositories/one-time-password';
 import { UserDatabaseRepository, UserRepository } from './repositories/user';
+import { UserWriteDatabaseRepository, UserWriteRepository } from './repositories/user-write';
+import { TemporaryPasswordMailer } from './ports/temporary-password-mailer.port';
+import { TemporaryPasswordMailerStandIn } from './ports/temporary-password-mailer.stand-in';
+import { OneTimePasswordService } from './services/one-time-password.service';
+import { PasswordHasher } from './services/password-hasher';
+import { UsersLifecycleService } from './services/users-lifecycle.service';
 import { UsersQueryService } from './services/users-query.service';
 
 /**
@@ -33,7 +40,16 @@ import { UsersQueryService } from './services/users-query.service';
  */
 @Module({
   imports: [AuditModule],
-  providers: [{ provide: UserRepository, useClass: UserDatabaseRepository }, UsersQueryService],
-  exports: [UserRepository, UsersQueryService],
+  providers: [
+    { provide: UserRepository, useClass: UserDatabaseRepository },
+    { provide: UserWriteRepository, useClass: UserWriteDatabaseRepository },
+    { provide: OneTimePasswordRepository, useClass: OneTimePasswordDatabaseRepository },
+    UsersQueryService,
+    { provide: TemporaryPasswordMailer, useClass: TemporaryPasswordMailerStandIn },
+    PasswordHasher,
+    OneTimePasswordService,
+    UsersLifecycleService,
+  ],
+  exports: [UserRepository, UserWriteRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService],
 })
 export class UsersModule {}

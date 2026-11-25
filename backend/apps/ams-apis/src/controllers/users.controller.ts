@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-001, US-ADM01-003
  * @subtask        ST-ADM01-001-BE-01, ST-ADM01-003-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.14 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.14.md
+ * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/users.controller.ts
- * @lld-synced     v0.14
+ * @lld-synced     v0.15
  * @status         elaborated
  */
 
@@ -37,7 +37,7 @@ import { UserListItemDto } from '../dtos/users/user-response.dto';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4, FR-042.6, FR-043.2
  *   contracts: API-USR-01 to API-USR-04
- *   lld:       LLD-EPIC-ADM-01 v0.14 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.15 section 6.1
  */
 /** One user of the list as the screen shows it. */
 const toItem = (u: UserRecord): UserListItemDto => ({
@@ -71,7 +71,7 @@ export class UsersController {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01, AC-US001-02, AC-US001-03, AC-US001-05
- * @lld       LLD-EPIC-ADM-01 v0.14 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
  * @status    pseudo
    *
    * @dependencies UsersQueryService.search

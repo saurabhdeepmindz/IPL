@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.14 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.14.md
+ * @lld            LLD-EPIC-ADM-01 v0.15 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/permission-matrix-version/index.ts
- * @lld-synced     v0.14
+ * @lld-synced     v0.15
  * @status         built
  */
 
