@@ -20,7 +20,13 @@ import { UserDatabaseRepository, UserRepository } from './repositories/user';
 import { OrganisationModule } from '@libs/organisation';
 import { MastersDatabaseAdapter } from '@libs/organisation/repositories/masters/database';
 import { UserWriteDatabaseRepository, UserWriteRepository } from './repositories/user-write';
+import { DelegationPort } from './ports/delegation.port';
+import { DelegationStandIn } from './ports/delegation.stand-in';
 import { MastersPort } from './ports/masters.port';
+import { SessionRevocationPort } from './ports/session-revocation.port';
+import { SessionRevocationStandIn } from './ports/session-revocation.stand-in';
+import { WorkflowPort } from './ports/workflow.port';
+import { WorkflowStandIn } from './ports/workflow.stand-in';
 import { TemporaryPasswordMailer } from './ports/temporary-password-mailer.port';
 import { TemporaryPasswordMailerStandIn } from './ports/temporary-password-mailer.stand-in';
 import { OneTimePasswordService } from './services/one-time-password.service';
@@ -55,6 +61,9 @@ import { UsersQueryService } from './services/users-query.service';
     OneTimePasswordService,
     UsersLifecycleService,
     { provide: MastersPort, useClass: MastersDatabaseAdapter },
+    { provide: WorkflowPort, useClass: WorkflowStandIn },
+    { provide: DelegationPort, useClass: DelegationStandIn },
+    { provide: SessionRevocationPort, useClass: SessionRevocationStandIn },
     UserInputValidator,
     UsersCommandService,
   ],

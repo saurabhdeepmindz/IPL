@@ -10,10 +10,10 @@
 @story          US-ADM01-001
 @subtask        ST-ADM01-001-BE-04
 
-@lld            LLD-EPIC-ADM-01 v0.16 6.1
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+@lld            LLD-EPIC-ADM-01 v0.17 6.1
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/test_users_list.py
-@lld-synced     v0.16
+@lld-synced     v0.17
 @status         built
 """
 
@@ -31,7 +31,7 @@ from conftest import bearer
 @pytest.fixture()
 def ul(api, admin_token, db, made):
     """User-list helpers as the Administrator. Users made here carry a unique tag in the name and are removed after the test."""
-    run = uuid.uuid4().hex[:2]
+    run = "Q" + uuid.uuid4().hex[0]  # starts with a letter so a code can never equal a seeded numeric code such as 10001
     tag = "UL" + uuid.uuid4().hex[:6]
     state = {"n": 0}
 

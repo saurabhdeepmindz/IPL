@@ -10,10 +10,10 @@
 @story          US-ADM01-005, US-ADM01-007
 @subtask        ST-ADM01-005-BE-04
 
-@lld            LLD-EPIC-ADM-01 v0.16 6.1
-@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+@lld            LLD-EPIC-ADM-01 v0.17 6.1
+@lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
 @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/api/test_users_lifecycle.py
-@lld-synced     v0.16
+@lld-synced     v0.17
 @status         built
 """
 
@@ -28,7 +28,7 @@ from conftest import bearer
 @pytest.fixture()
 def lf(api, admin_token, db, made):
     """User-life helpers as the Administrator. Users made here are removed with their audit rows and one-time passwords."""
-    run = uuid.uuid4().hex[:2]
+    run = "Q" + uuid.uuid4().hex[0]  # starts with a letter so a code can never equal a seeded numeric code such as 10001
     state = {"n": 0, "ids": []}
 
     class Life:
@@ -51,8 +51,8 @@ def lf(api, admin_token, db, made):
             state["ids"].append(uid)
             return code, uid
 
-        def post(self, code: str, action: str, token: str | None = None):
-            return requests.post(f"{api}/users/{code}/{action}", headers=bearer(token or admin_token), timeout=10)
+        def post(self, code: str, action: str, token: str | None = None, json: dict | None = None):
+            return requests.post(f"{api}/users/{code}/{action}", json=json, headers=bearer(token or admin_token), timeout=10)
 
         def otps(self, uid: str) -> list:
             return db.run("SELECT hash, used_at IS NOT NULL FROM one_time_passwords WHERE user_id = CAST(:u AS uuid) ORDER BY issued_at", u=uid)
@@ -173,41 +173,66 @@ def test_contract_resend_shape(lf):
     assert lf.post("99999", "one-time-password").status_code == 404
 
 
-@pytest.mark.skip(reason="story 005 (build order L-62)")
-def test_deactivate_user():
+def test_deactivate_user(lf, sign_in, api, admin_token, db):
     """
     @tc TC-ADM01-005-P01
     @story US-ADM01-005
     @ac AC-US005-01
     @contract API-USR-05
     @subtask ST-ADM01-005-BE-04
-    In plain words: a user is deactivated, can no longer sign in, and stays in the list under Inactive.
+    In plain words: a user is deactivated with a reason, can no longer sign in, stays in the list under Inactive and the change is audited; an Administrator who is not the last one can be deactivated too.
     """
-    # TODO: call the route as a seeded Administrator (development sign-in) with temporary users and roles; assert the status, the error code and the body.
-    raise NotImplementedError("pseudo-code")
+    code, uid = lf.mk()
+    done = lf.post(code, "deactivate", json={"reason": "LEFT_COMPANY", "note": "Resigned"})
+    assert (done.status_code, done.json()["data"]) == (200, {"status": "INACTIVE"})
+    assert db.run("SELECT status, deactivation_reason, deactivation_note FROM users WHERE id = CAST(:u AS uuid)", u=uid) == [["INACTIVE", "LEFT_COMPANY", "Resigned"]]
+    with pytest.raises(AssertionError):
+        sign_in(code)
+    listed = requests.get(f"{api}/users", params={"q": code, "status": "inactive"}, headers=bearer(admin_token), timeout=10).json()["data"]["items"]
+    assert [u["employeeCode"] for u in listed] == [code]
+    assert db.run("SELECT reason FROM audit_log WHERE entity = 'User' AND entity_key = :k", k=uid) == [["Deactivated: LEFT_COMPANY"]]
+    boss, boss_id = lf.mk()
+    db.run(
+        "INSERT INTO user_company_roles (id, user_id, role_id, company_code, valid_from, assigned_by) SELECT CAST(:i AS uuid), CAST(:u AS uuid), id, 'IPL', :f, '10001' FROM roles WHERE code = 'ADMINISTRATOR'",
+        i=str(uuid.uuid4()), u=boss_id, f=date(2026, 1, 1),
+    )
+    assert lf.post(boss, "deactivate", json={"reason": "OTHER"}).status_code == 200
 
-@pytest.mark.skip(reason="story 005 (build order L-62)")
-def test_holds_proposals_warning():
+
+def test_holds_proposals_warning(lf, db):
     """
     @tc TC-ADM01-005-P02
     @story US-ADM01-005
     @ac AC-US005-02
     @contract API-USR-05
     @subtask ST-ADM01-005-BE-04
-    In plain words: held proposals give HOLDS_PROPOSALS until confirmed (the workflow port is replaced by a fake that holds 7).
+    In plain words: the running API has no workflow yet, so the stand-in answers 0 proposals and `confirmWithProposals` is not needed; the 409 answer with 7 proposals is proved by J02 and by the route test C05, where the workflow port is replaced by a fake.
     """
-    # TODO: call the route as a seeded Administrator (development sign-in) with temporary users and roles; assert the status, the error code and the body.
-    raise NotImplementedError("pseudo-code")
+    code, uid = lf.mk()
+    done = lf.post(code, "deactivate", json={"reason": "TRANSFERRED", "confirmWithProposals": False})
+    assert done.status_code == 200, done.text
+    assert db.run("SELECT status FROM users WHERE id = CAST(:u AS uuid)", u=uid) == [["INACTIVE"]]
+    again = lf.post(code, "deactivate", json={"reason": "TRANSFERRED", "confirmWithProposals": True})
+    assert (again.status_code, again.json()["error"]["code"]) == (409, "ALREADY_INACTIVE")
 
-@pytest.mark.skip(reason="story 005 (build order L-62)")
-def test_contract_deactivate_shape():
+
+def test_contract_deactivate_shape(lf, made, sign_in, api):
     """
     @tc TC-ADM01-005-C05
     @story US-ADM01-005
     @ac AC-US005-01
     @contract API-USR-05
     @subtask ST-ADM01-005-BE-04
-    In plain words: contract: deactivate answers 200, 404, 409 or 422.
+    In plain words: contract: deactivate answers 200 with only the status, 404, 409 ALREADY_INACTIVE, 422 for a reason that is not one of the five, 401 and 403.
     """
-    # TODO: call the route as a seeded Administrator (development sign-in) with temporary users and roles; assert the status, the error code and the body.
-    raise NotImplementedError("pseudo-code")
+    code, _ = lf.mk()
+    ok = lf.post(code, "deactivate", json={"reason": "DUPLICATE"})
+    assert (ok.status_code, sorted(ok.json()["data"])) == (200, ["status"])
+    assert lf.post(code, "deactivate", json={"reason": "DUPLICATE"}).json()["error"]["code"] == "ALREADY_INACTIVE"
+    assert lf.post("99999", "deactivate", json={"reason": "OTHER"}).status_code == 404
+    other, _ = lf.mk()
+    bad = lf.post(other, "deactivate", json={"reason": "BORED"})
+    assert bad.status_code == 422 and "reason" in [x["field"] for x in bad.json()["error"]["fields"]]
+    assert requests.post(f"{api}/users/{other}/deactivate", json={"reason": "OTHER"}, timeout=10).status_code == 401
+    _, plain_code = made.user(made.role({})[0])
+    assert lf.post(other, "deactivate", token=sign_in(plain_code), json={"reason": "OTHER"}).status_code == 403

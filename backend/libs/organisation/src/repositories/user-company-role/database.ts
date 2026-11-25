@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/organisation/src/repositories/user-company-role/database.ts
- * @lld-synced     v0.16
+ * @lld-synced     v0.17
  * @status         built
  */
 
@@ -74,7 +74,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-02
  * @contract  API-ROL-05
  * @ac        AC-US011-02
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db or raw userCompanyRole.findMany
@@ -113,7 +113,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db userCompanyRole.findMany
@@ -146,7 +146,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01, AC-US011-03
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db $transaction, userCompanyRole.createMany
@@ -174,7 +174,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-01
  * @contract  API-USR-02, API-USR-04
  * @ac        AC-US003-03
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
  * @status    built
    *
    * @dependencies PrismaService.db $transaction, userCompanyRole.findMany, update, deleteMany, createMany

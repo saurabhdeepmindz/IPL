@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user/user.repository.spec.ts
- * @lld-synced     v0.16
+ * @lld-synced     v0.17
  * @status         built
  */
 
@@ -210,5 +210,17 @@ describe('ST-ADM01-001-BE-03 UserRepository: list, counts, lookups and adminCoun
     await give(ids.Carol, adminRole, 'IPL');
     await give(ids.Bob, adminRole, 'IPLFB', new Date('2026-01-31'));
     expect(await repo.adminCount()).toBe(before + 1);
+  });
+
+  /**
+   * @story   US-ADM01-005
+   * @ac      AC-US005-01
+   * @subtask ST-ADM01-005-BE-02
+   * In plain words: supporting test. isAdministrator is true for a user who holds the Administrator role today and false for a user whose assignment has ended or who holds another role.
+   */
+  it('knows who holds the Administrator role today', async () => {
+    expect(await repo.isAdministrator(ids.Alice)).toBe(true);
+    expect(await repo.isAdministrator(ids.Bob)).toBe(false);
+    expect(await repo.isAdministrator('00000000-0000-4000-8000-000000000000')).toBe(false);
   });
 });

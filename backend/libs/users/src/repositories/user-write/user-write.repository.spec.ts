@@ -11,16 +11,17 @@
  *
  * @story          US-ADM01-003, US-ADM01-007
  * @subtask        ST-ADM01-003-BE-04, ST-ADM01-007-BE-05
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-write/user-write.repository.spec.ts
- * @lld-synced     v0.16
+ * @lld-synced     v0.17
  * @status         built
  */
 
 import { Test } from '@nestjs/testing';
 import { DatabaseModule, PrismaService } from '@libs/database';
 import { UsersModule } from '../../module';
+import { UserRepository } from '../user';
 import { UserWriteRepository } from './contract';
 
 const stamp = Date.now().toString(36).slice(-6);
@@ -147,5 +148,59 @@ describe('UserWriteRepository create and update (supporting tests, ST-ADM01-003-
     const kept = await repo.update(`${stamp.slice(0, 3)}C6`, { mobile: '9876543210' }, null);
     expect(kept.mobile).toBe('9876543210');
     expect(kept.companies).toEqual([{ code: 'IPL', roles: [`Uwb ${stamp}`] }]);
+  });
+});
+
+describe('UserWriteRepository setStatus INACTIVE (supporting tests, ST-ADM01-005-BE-03)', () => {
+  let prisma: PrismaService;
+  let repo: UserWriteRepository;
+  let reads: UserRepository;
+  let userId: string;
+  let roleId: string;
+
+  beforeAll(async () => {
+    const ref = await Test.createTestingModule({ imports: [DatabaseModule, UsersModule] }).compile();
+    await ref.init();
+    prisma = ref.get(PrismaService);
+    repo = ref.get(UserWriteRepository);
+    reads = ref.get(UserRepository);
+    await prisma.raw.company.upsert({ where: { code: 'IPL' }, update: {}, create: { code: 'IPL', name: 'IPL' } });
+    roleId = (await prisma.raw.role.create({ data: { code: `Ui${stamp}`, name: `Ui ${stamp}`, description: 'spec', status: 'ACTIVE' } })).id;
+    userId = (await prisma.raw.user.create({ data: { employeeCode: `${stamp.slice(0, 3)}I1`, fullName: 'Leaver', email: `i1${stamp}@example.invalid` } })).id;
+    await prisma.raw.userCompanyRole.create({ data: { userId, roleId, companyCode: 'IPL', validFrom: new Date('2026-01-01'), assignedBy: '10001' } });
+  });
+
+  afterAll(async () => {
+    await prisma.raw.userCompanyRole.deleteMany({ where: { userId } });
+    await prisma.raw.user.delete({ where: { id: userId } });
+    await prisma.raw.role.delete({ where: { id: roleId } });
+    await prisma.onModuleDestroy();
+  });
+
+  /**
+   * @story   US-ADM01-005
+   * @ac      AC-US005-01
+   * @subtask ST-ADM01-005-BE-03
+   * In plain words: supporting test. Setting a user Inactive saves the date, the reason and the note; the user is not deleted and is still found, with the status Inactive.
+   */
+  it('saves the deactivation fields and keeps the user', async () => {
+    await repo.setStatus(userId, 'INACTIVE', { reason: 'LEFT_COMPANY', note: 'Resigned on 30 Nov' });
+    const row = await prisma.raw.user.findUniqueOrThrow({ where: { id: userId } });
+    expect(row).toMatchObject({ status: 'INACTIVE', deactivationReason: 'LEFT_COMPANY', deactivationNote: 'Resigned on 30 Nov' });
+    expect(row.deactivatedAt).toBeInstanceOf(Date);
+    expect((await reads.findByCode(`${stamp.slice(0, 3)}I1`))?.status).toBe('INACTIVE');
+    const page = await reads.findPage({ companyCode: 'IPL', status: 'INACTIVE', q: `${stamp.slice(0, 3)}I1` }, { page: 1, pageSize: 10, sort: 'name:asc' });
+    expect(page.rows.map((r) => r.employeeCode)).toEqual([`${stamp.slice(0, 3)}I1`]);
+  });
+
+  /**
+   * @story   US-ADM01-005
+   * @ac      AC-US005-01
+   * @subtask ST-ADM01-005-BE-03
+   * In plain words: supporting test. Setting the user Active again clears the deactivation fields as well as the lock.
+   */
+  it('clears the deactivation fields when the user is Active again', async () => {
+    await repo.setStatus(userId, 'ACTIVE', { clearLock: true });
+    expect(await prisma.raw.user.findUniqueOrThrow({ where: { id: userId } })).toMatchObject({ status: 'ACTIVE', deactivatedAt: null, deactivationReason: null, deactivationNote: null });
   });
 });

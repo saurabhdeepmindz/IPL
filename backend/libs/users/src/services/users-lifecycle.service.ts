@@ -11,23 +11,32 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-02, ST-ADM01-007-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-lifecycle.service.ts
- * @lld-synced     v0.16
- * @status         elaborated
+ * @lld-synced     v0.17
+ * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
 import { AuditService } from '@libs/audit';
+import { AlreadyInactiveException } from '../errors/already-inactive.exception';
 import { AlreadySignedInException } from '../errors/already-signed-in.exception';
+import { HoldsProposalsException } from '../errors/holds-proposals.exception';
+import { LastAdministratorException } from '../errors/last-administrator.exception';
 import { NotLocalUserException } from '../errors/not-local-user.exception';
 import { NotLockedException } from '../errors/not-locked.exception';
 import { UnknownUserException } from '../errors/unknown-user.exception';
 import { UserInactiveException } from '../errors/user-inactive.exception';
+import { DelegationPort } from '../ports/delegation.port';
+import { SessionRevocationPort } from '../ports/session-revocation.port';
+import { WorkflowPort } from '../ports/workflow.port';
 import { UserRecord, UserRepository } from '../repositories/user';
 import { UserWriteRepository } from '../repositories/user-write';
 import { OneTimePasswordService } from './one-time-password.service';
+
+/** Why a user is deactivated (the five values of the screen). */
+export type DeactivationReason = 'LEFT_COMPANY' | 'TRANSFERRED' | 'LONG_LEAVE' | 'DUPLICATE' | 'OTHER';
 
 /**
  * Users lifecycle service.
@@ -40,13 +49,16 @@ import { OneTimePasswordService } from './one-time-password.service';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05, API-USR-06, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.1
  */
 @Injectable()
 export class UsersLifecycleService {
   constructor(
     private readonly users: UserRepository,
     private readonly writes: UserWriteRepository,
+    private readonly workflow: WorkflowPort,
+    private readonly delegation: DelegationPort,
+    private readonly sessions: SessionRevocationPort,
     private readonly passwords: OneTimePasswordService,
     private readonly audit: AuditService,
   ) {}
@@ -74,6 +86,47 @@ export class UsersLifecycleService {
   }
 
   /**
+   * Deactivates a user.
+   *
+   * In plain words: sets the user Inactive (never deletes), after a warning when they hold proposals, and never the last active Administrator.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-005
+ * @subtask   ST-ADM01-005-BE-02
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-05
+ * @ac        AC-US005-01, AC-US005-02
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
+   *
+   * @dependencies UserRepository.findByCode, isAdministrator, adminCount, WorkflowPort, DelegationPort, UserWriteRepository.setStatus, SessionRevocationPort, AuditService.recordChange
+   *
+   * @param employeeCode - the user
+   * @param input - reason, note and the confirmation after the proposals warning
+   * @param actor - key of the Administrator
+   * @returns The new status
+   * @throws UnknownUserException, AlreadyInactiveException, LastAdministratorException, HoldsProposalsException
+   */
+  async deactivate(employeeCode: string, input: { reason: DeactivationReason; note?: string; confirmWithProposals?: boolean }, actor: string): Promise<{ status: 'INACTIVE' }> {
+    const user = await this.mustFind(employeeCode);
+    if (user.status === 'INACTIVE') throw new AlreadyInactiveException();
+    if ((await this.users.isAdministrator(user.id)) && (await this.users.adminCount()) <= 1) throw new LastAdministratorException();
+    await this.warnAboutProposals(user, input.confirmWithProposals === true);
+    await this.writes.setStatus(user.id, 'INACTIVE', { reason: input.reason, note: input.note });
+    await this.sessions.endSessions(user.id);
+    await this.audit.recordChange({ actor, entity: 'User', entityKey: user.id, before: { status: user.status }, after: { status: 'INACTIVE', reason: input.reason, note: input.note }, reason: `Deactivated: ${input.reason}` });
+    return { status: 'INACTIVE' };
+  }
+
+  /** Stops with HOLDS_PROPOSALS (count, monitor address, delegate) when proposals wait with the user and the warning was not confirmed. */
+  private async warnAboutProposals(user: UserRecord, confirmed: boolean): Promise<void> {
+    const count = await this.workflow.countProposalsHeldBy(user.id);
+    if (count > 0 && !confirmed) throw new HoldsProposalsException(count, this.workflow.monitorUrl(), await this.delegation.hasActiveDelegate(user.id));
+  }
+
+  /**
    * Unlocks a user.
    *
    * In plain words: a Locked user becomes Active again with the lock cleared.
@@ -86,8 +139,8 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-06
  * @ac        AC-US007-01
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
    *
    * @dependencies UserRepository.findByCode, setStatus, AuditService.recordChange
    *
@@ -118,8 +171,8 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
    *
    * @dependencies UserRepository.findByCode, OneTimePasswordService.issue, AuditService.recordChange
    *
@@ -147,8 +200,8 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-08
  * @ac        AC-US007-03
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
    *
    * @dependencies UserRepository.findByCode, OneTimePasswordService.issue, AuditService.recordChange
    *

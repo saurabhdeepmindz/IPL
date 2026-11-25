@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/user-input-validator.ts
- * @lld-synced     v0.16
+ * @lld-synced     v0.17
  * @status         built
  */
 
@@ -57,7 +57,7 @@ export interface UserInput {
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.2
  *   contracts: API-USR-02, API-USR-04, API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.1
  */
 @Injectable()
 export class UserInputValidator {
@@ -79,7 +79,7 @@ export class UserInputValidator {
  * @screen    ADM-01
  * @contract  API-USR-02, API-USR-04
  * @ac        AC-US003-01, AC-US003-05
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
  * @status    built
    *
    * @dependencies MastersPort.departmentExists, designationExists, isHighestDesignation, UserRepository.findByCode

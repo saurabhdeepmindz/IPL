@@ -125,3 +125,23 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-003,libs/users/src/services/users-query.service.spec.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
 2026-11-25,US-ADM01-003,libs/users/src/services/users-query.service.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
 2026-11-25,US-ADM01-003,tests/api/test_users_write.py,v0.15,copied
+2026-11-25,US-ADM01-005,apps/ams-apis/src/controllers/users-lifecycle.controller.ts,v0.16,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-005,apps/ams-apis/src/dtos/users/deactivate-user.dto.ts,v0.16,copied
+2026-11-25,US-ADM01-005,apps/ams-apis/src/dtos/users/user-response.dto.ts,v0.16,identical
+2026-11-25,US-ADM01-005,apps/ams-apis/test/users-lifecycle.e2e-spec.ts,v0.16,identical
+2026-11-25,US-ADM01-005,libs/users/src/errors/already-inactive.exception.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/errors/holds-proposals.exception.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/errors/last-administrator.exception.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/ports/delegation.port.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/ports/delegation.stand-in.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/ports/session-revocation.port.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/ports/session-revocation.stand-in.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/ports/workflow.port.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/ports/workflow.stand-in.ts,v0.16,copied
+2026-11-25,US-ADM01-005,libs/users/src/repositories/user/contract.ts,v0.16,identical
+2026-11-25,US-ADM01-005,libs/users/src/repositories/user/database.ts,v0.16,identical
+2026-11-25,US-ADM01-005,libs/users/src/repositories/user-write/contract.ts,v0.16,identical
+2026-11-25,US-ADM01-005,libs/users/src/repositories/user-write/database.ts,v0.16,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-005,libs/users/src/services/users-lifecycle.service.spec.ts,v0.16,identical
+2026-11-25,US-ADM01-005,libs/users/src/services/users-lifecycle.service.ts,v0.16,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-005,tests/api/test_users_lifecycle.py,v0.16,identical

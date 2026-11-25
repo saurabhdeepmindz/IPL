@@ -11,18 +11,19 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-01, ST-ADM01-007-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/users-lifecycle.controller.ts
- * @lld-synced     v0.16
- * @status         elaborated
+ * @lld-synced     v0.17
+ * @status         built
  */
 
-import { Controller, HttpCode, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post, Req } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { okResponse } from '@libs/common';
 import { RequirePermission, SessionUser } from '@libs/core';
 import { UsersLifecycleService } from '@libs/users';
+import { DeactivateUserDto } from '../dtos/users/deactivate-user.dto';
 
 /**
  * Users lifecycle controller.
@@ -35,13 +36,44 @@ import { UsersLifecycleService } from '@libs/users';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05 to API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.1
  */
 @Controller('users')
 export class UsersLifecycleController {
   constructor(
     private readonly lifecycle: UsersLifecycleService,
   ) {}
+
+  /**
+   * POST /users/:employeeCode/deactivate.
+   *
+   * In plain words: deactivates a leaver; the user is never deleted.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-005
+ * @subtask   ST-ADM01-005-BE-01
+ * @frd       FR-042.1, FR-042.4
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-05
+ * @ac        AC-US005-01, AC-US005-02
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
+   *
+   * @dependencies UsersLifecycleService.deactivate
+   *
+   * @param employeeCode - the user
+   * @param dto - reason, note and the confirmation after the proposals warning
+   * @param req - the request (the signed-in Administrator)
+   * @returns `{ data: { status: 'INACTIVE' } }`
+   */
+  @RequirePermission('users.manage')
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Deactivate a user (API-USR-05)' })
+  @Post(':employeeCode/deactivate')
+  async deactivate(@Param('employeeCode') employeeCode: string, @Body() dto: DeactivateUserDto, @Req() req: { user: SessionUser }): Promise<unknown> {
+    return okResponse(await this.lifecycle.deactivate(employeeCode, dto, req.user.userId));
+  }
 
   /**
    * POST /users/:employeeCode/unlock.
@@ -56,8 +88,8 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-06
  * @ac        AC-US007-01
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
    *
    * @dependencies UsersLifecycleService.unlock
    *
@@ -86,8 +118,8 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
    *
    * @dependencies UsersLifecycleService.resetPassword
    *
@@ -116,8 +148,8 @@ export class UsersLifecycleController {
  * @screen    ADM-01
  * @contract  API-USR-08
  * @ac        AC-US007-03
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
+ * @status    built
    *
    * @dependencies UsersLifecycleService.resendOneTimePassword
    *

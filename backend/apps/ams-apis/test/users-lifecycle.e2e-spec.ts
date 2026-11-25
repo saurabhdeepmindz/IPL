@@ -3,7 +3,7 @@
  * @module  AmsApis
  *
  * @description
- * Route tests of API-USR-06 to API-USR-08 on the real application (Jest e2e, real PostgreSQL and Redis). Written before the controller (TDD). In plain words: calls unlock, reset password and send the one-time password again with a signed-in Administrator and checks the status, the error code and the body. The case of story 005 (deactivate) stays `it.todo`.
+ * Route tests of API-USR-06 to API-USR-08 on the real application (Jest e2e, real PostgreSQL and Redis). Written before the controller (TDD). In plain words: calls unlock, reset password and send the one-time password again with a signed-in Administrator and checks the status, the error code and the body. The deactivate route (C05) is tested in `users-deactivate.e2e-spec.ts`.
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-01, ST-ADM01-007-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/test/users-lifecycle.e2e-spec.ts
- * @lld-synced     v0.16
+ * @lld-synced     v0.17
  * @status         built
  */
 
@@ -136,5 +136,4 @@ describe('ST-ADM01-007-BE-01 user life routes (C06 to C08)', () => {
     expect((await post('admin', '99999/one-time-password').expect(404)).body.error.code).toBe('USER_NOT_FOUND');
   });
 
-  it.todo('C05 deactivates a user (story 005)');
 });

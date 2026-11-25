@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
+ * @lld            LLD-EPIC-ADM-01 v0.17 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.17.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/interceptors/idempotency.interceptor.ts
- * @lld-synced     v0.16
+ * @lld-synced     v0.17
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import { RedisService } from '@libs/core';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7
  *   contracts: API-USR-02
- *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.17 section 6.1
  */
 @Injectable()
 export class IdempotencyInterceptor implements NestInterceptor {
@@ -56,7 +56,7 @@ export class IdempotencyInterceptor implements NestInterceptor {
  * @screen    ADM-01
  * @contract  API-USR-02
  * @ac        AC-US003-01
- * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.17 §6.1
  * @status    built
    *
    * @dependencies RedisService.getJson, setJson
