@@ -14,6 +14,7 @@
  */
 
 import { Module } from '@nestjs/common';
+import { UserDatabaseRepository, UserRepository } from './repositories/user';
 
 /**
  * Nest module of the users library.
@@ -28,5 +29,8 @@ import { Module } from '@nestjs/common';
  *   contracts: none
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
-@Module({})
+@Module({
+  providers: [{ provide: UserRepository, useClass: UserDatabaseRepository }],
+  exports: [UserRepository],
+})
 export class UsersModule {}

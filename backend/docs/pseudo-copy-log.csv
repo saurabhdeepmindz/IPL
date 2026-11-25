@@ -51,3 +51,21 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/services/permission-matrix.service.spec.ts,v0.9,copied
 2026-11-25,US-ADM01-014,libs/roles-and-permissions/src/services/permission-matrix.service.ts,v0.9,copied
 2026-11-25,US-ADM01-014,tests/api/test_permission_matrix.py,v0.9,copied
+2026-11-25,US-ADM01-011,apps/ams-apis/src/controllers/role-assignment.controller.ts,v0.11,copied
+2026-11-25,US-ADM01-011,apps/ams-apis/src/dtos/roles/assign-users.dto.ts,v0.11,copied
+2026-11-25,US-ADM01-011,apps/ams-apis/src/dtos/roles/role-details-query.dto.ts,v0.11,copied
+2026-11-25,US-ADM01-011,apps/ams-apis/src/dtos/roles/role-details-response.dto.ts,v0.11,copied
+2026-11-25,US-ADM01-011,apps/ams-apis/test/role-assignment.e2e-spec.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/organisation/src/repositories/user-company-role/contract.ts,v0.11,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-011,libs/organisation/src/repositories/user-company-role/database.ts,v0.11,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-011,libs/roles-and-permissions/src/errors/role-inactive.exception.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/roles-and-permissions/src/errors/user-not-found.exception.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/roles-and-permissions/src/ports/permission-cache-invalidator.ts,v0.11,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-011,libs/roles-and-permissions/src/role-assignment.module.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/roles-and-permissions/src/services/role-assignment.service.spec.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/roles-and-permissions/src/services/role-assignment.service.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/users/src/repositories/user/contract.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/users/src/repositories/user/database.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/users/src/repositories/user/index.ts,v0.11,copied
+2026-11-25,US-ADM01-011,libs/users/src/repositories/user/user.repository.spec.ts,v0.11,copied
+2026-11-25,US-ADM01-011,tests/api/test_role_assignment.py,v0.11,copied

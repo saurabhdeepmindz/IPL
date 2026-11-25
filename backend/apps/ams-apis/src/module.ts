@@ -22,10 +22,11 @@ import { validateEnv } from '@config/env.validation';
 import { AuthorizationModule } from '@libs/core';
 import { DatabaseModule } from '@libs/database';
 import { DevAuthModule } from './dev-auth/dev-auth.module';
-import { PermissionMatrixModule, RolesAndPermissionsModule } from '@libs/roles-and-permissions';
+import { PermissionMatrixModule, RoleAssignmentModule, RolesAndPermissionsModule } from '@libs/roles-and-permissions';
 import { HealthController } from './controllers/health.controller';
 import { PermissionMatrixController } from './controllers/permission-matrix.controller';
 import { PermissionCacheBridgeModule } from './permission-cache-bridge.module';
+import { RoleAssignmentController } from './controllers/role-assignment.controller';
 import { RolesController } from './controllers/roles.controller';
 
 
@@ -43,9 +44,9 @@ import { RolesController } from './controllers/roles.controller';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, DevAuthModule.register()],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, RoleAssignmentModule, DevAuthModule.register()],
   // PermissionMatrixController must come before RolesController: PUT /roles/permissions would otherwise be read as PUT /roles/:roleId (decision L-27).
-  controllers: [HealthController, PermissionMatrixController, RolesController],
+  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_PIPE, useClass: AllFieldsValidationPipe },

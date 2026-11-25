@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.10 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
+ * @lld            LLD-EPIC-ADM-01 v0.12 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.12.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/services/matrix.fakes.ts
- * @lld-synced     v0.10
+ * @lld-synced     v0.12
  * @status         built
  */
 

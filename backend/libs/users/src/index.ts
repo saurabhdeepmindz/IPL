@@ -14,3 +14,4 @@
  */
 
 export * from './module';
+export * from './repositories/user';

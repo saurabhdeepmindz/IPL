@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.10 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
+ * @lld            LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.12.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/roles.controller.ts
- * @lld-synced     v0.10
+ * @lld-synced     v0.12
  * @status         built
  */
 
@@ -22,10 +22,10 @@ import { Body, Controller, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, Query
 import { ApiOperation } from '@nestjs/swagger';
 import { NotFoundAppException, okResponse } from '@libs/common';
 import { RequirePermission, SessionUser } from '@libs/core';
-import { RoleCellInput, RoleRecord, RolesService } from '@libs/roles-and-permissions';
+import { RoleCellInput, RolesService } from '@libs/roles-and-permissions';
 import { DeactivateRoleDto } from '../dtos/roles/deactivate-role.dto';
 import { ListRolesQueryDto } from '../dtos/roles/list-roles-query.dto';
-import { RoleResponseDto } from '../dtos/roles/role-response.dto';
+import { toRoleResponse } from '../dtos/roles/role-response.dto';
 import { SaveRoleDto } from '../dtos/roles/save-role.dto';
 
 /**
@@ -39,21 +39,10 @@ import { SaveRoleDto } from '../dtos/roles/save-role.dto';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-01 to API-ROL-04
- *   lld:       LLD-EPIC-ADM-01 v0.10 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.12 §6.4
  */
 /** `:roleId` must be a UUID; anything else is "no such role", so `permissions` is never read as a role id (decision L-16). */
 const roleIdPipe = new ParseUUIDPipe({ exceptionFactory: () => new NotFoundAppException('ROLE_NOT_FOUND', 'No such role') });
-
-/** One role as the screen shows it. */
-const toDto = (r: RoleRecord): RoleResponseDto => ({
-  roleId: r.id,
-  name: r.name,
-  description: r.description,
-  type: r.type,
-  userCount: r.userCount,
-  lastChanged: r.updatedAt.toISOString(),
-  status: r.status,
-});
 
 /** The cells of a save, or null when none were sent. */
 const toCells = (dto: SaveRoleDto): RoleCellInput[] | null =>
@@ -78,7 +67,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US010-01, AC-US010-07
- * @lld       LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
  * @status    built
    *
    * @dependencies RolesService.list
@@ -90,7 +79,7 @@ export class RolesController {
   @ApiOperation({ summary: 'List roles (API-ROL-01)' })
   @Get()
   async list(@Query() query: ListRolesQueryDto): Promise<unknown> {
-    return okResponse({ items: (await this.roles.list(query)).map(toDto) });
+    return okResponse({ items: (await this.roles.list(query)).map(toRoleResponse) });
   }
 
   /**
@@ -106,7 +95,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US010-02, AC-US010-03, AC-US010-06
- * @lld       LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
  * @status    built
    *
    * @dependencies RolesService.create
@@ -137,7 +126,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US010-04, AC-US010-06
- * @lld       LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
  * @status    built
    *
    * @dependencies RolesService.update
@@ -152,7 +141,7 @@ export class RolesController {
   @Put(':roleId')
   async update(@Param('roleId', roleIdPipe) roleId: string, @Body() dto: SaveRoleDto, @Req() req: { user: SessionUser }): Promise<unknown> {
     const fields = { name: dto.name, description: dto.description, status: dto.status };
-    return okResponse(toDto(await this.roles.update(roleId, fields, toCells(dto), req.user.userId, dto.reason)));
+    return okResponse(toRoleResponse(await this.roles.update(roleId, fields, toCells(dto), req.user.userId, dto.reason)));
   }
 
   /**
@@ -168,7 +157,7 @@ export class RolesController {
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US010-04, AC-US010-05
- * @lld       LLD-EPIC-ADM-01 v0.10 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.12 §6.4
  * @status    built
    *
    * @dependencies RolesService.deactivate

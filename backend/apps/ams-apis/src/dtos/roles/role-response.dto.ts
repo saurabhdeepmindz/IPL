@@ -11,14 +11,15 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.10 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.10.md
+ * @lld            LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.12.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/roles/role-response.dto.ts
- * @lld-synced     v0.10
+ * @lld-synced     v0.12
  * @status         built
  */
 
 import { RoleStatus, RoleType } from '@libs/database';
+import type { RoleRecord } from '@libs/roles-and-permissions';
 
 /**
  * One role in an answer.
@@ -31,7 +32,7 @@ import { RoleStatus, RoleType } from '@libs/database';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-01, API-ROL-02, API-ROL-03
- *   lld:       LLD-EPIC-ADM-01 v0.10 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.12 §6.4
  */
 export class RoleResponseDto {
   roleId!: string;
@@ -44,3 +45,14 @@ export class RoleResponseDto {
   lastChanged!: string;
   status!: RoleStatus;
 }
+
+/** One role as the screen shows it (the same mapping for every role route). */
+export const toRoleResponse = (r: RoleRecord): RoleResponseDto => ({
+  roleId: r.id,
+  name: r.name,
+  description: r.description,
+  type: r.type,
+  userCount: r.userCount,
+  lastChanged: r.updatedAt.toISOString(),
+  status: r.status,
+});

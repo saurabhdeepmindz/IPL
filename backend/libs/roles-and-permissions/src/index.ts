@@ -31,3 +31,7 @@ export * from './constants/sensitive-rights';
 export * from './errors/locked-cell.exception';
 export * from './errors/sensitive-confirm-required.exception';
 export * from './permission-matrix.module';
+export * from './services/role-assignment.service';
+export * from './role-assignment.module';
+export * from './errors/user-not-found.exception';
+export * from './errors/role-inactive.exception';

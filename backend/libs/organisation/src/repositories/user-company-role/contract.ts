@@ -3,15 +3,19 @@
  * @module  OrganisationModule
  *
  * @description
- * Contract of the user-company-role repository. In plain words: what the rest of the code may ask about the roles a user holds; the database file is the only one that knows how.
+ * Contract of the user-company-role repository. In plain words: the roles users hold in a company. EXTENDS the built file: `listByUser` exists (US-ADM01-017); this story adds `listByRole`, `findHolders` and `insertMany` (decision L-38).
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @epic    EPIC-ADM-01
- * @story   US-ADM01-017
- * @subtask ST-ADM01-000-BE-08
+ * @story          US-ADM01-011
+ * @subtask        ST-ADM01-011-BE-04
+ * @lld            LLD-EPIC-ADM-01 v0.12 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.12.md
+ * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/organisation/src/repositories/user-company-role/contract.ts
+ * @lld-synced     v0.12
+ * @status         built
  */
 
 import { RoleStatus } from '@libs/database';
@@ -38,6 +42,24 @@ export interface UserRoleGrant {
  *   contracts: none
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
+/** One person who holds a role, as the role details show them. */
+export interface RoleHolderRow {
+  employeeCode: string;
+  fullName: string;
+  departmentName: string | null;
+  companyCode: string;
+  assignedOn: Date;
+}
+
+/** One assignment to write. */
+export interface NewAssignment {
+  userId: string;
+  roleId: string;
+  companyCode: string;
+  validFrom: Date;
+  assignedBy: string;
+}
+
 export abstract class UserCompanyRoleRepository {
   /**
    * The roles a user holds in a company that are valid on a date.
@@ -51,4 +73,13 @@ export abstract class UserCompanyRoleRepository {
    * @dependencies none
    */
   abstract listByUser(userId: string, companyCode: string, validOn: Date): Promise<UserRoleGrant[]>;
+
+  /** The people who hold the role today; `companyCode` null means every company (decision L-33). */
+  abstract listByRole(roleId: string, companyCode: string | null, validOn: Date): Promise<RoleHolderRow[]>;
+
+  /** Which of these users already hold the role in the company on the given day (decision L-34). */
+  abstract findHolders(roleId: string, companyCode: string, userIds: string[], onDate: Date): Promise<string[]>;
+
+  /** Writes the assignments in one transaction. Returns how many were written. */
+  abstract insertMany(rows: NewAssignment[]): Promise<number>;
 }
