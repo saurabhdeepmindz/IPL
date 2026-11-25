@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/ports/masters.port.ts
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 
@@ -29,7 +29,7 @@
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7
  *   contracts: API-USR-01 to API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.22 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.23 section 6.1
  */
 export abstract class MastersPort {
   /** True when the department exists. */

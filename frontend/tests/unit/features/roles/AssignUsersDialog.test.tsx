@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-013
  * @subtask        ST-ADM01-013-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/unit/features/roles/AssignUsersDialog.test.tsx
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 
@@ -41,7 +41,7 @@ describe('AssignUsersDialog (J02, J03)', () => {
     vi.mocked(getRole).mockReset();
     vi.mocked(assignUsers).mockReset();
     vi.mocked(getPermissionCatalog).mockResolvedValue(CATALOG);
-    vi.mocked(listUsers).mockResolvedValue({ items: [{ employeeCode: '10388', name: 'K. Pillai', department: 'Operations' }], total: 1 });
+    vi.mocked(listUsers).mockResolvedValue({ items: [{ employeeCode: '10388', name: 'K. Pillai', department: 'Operations' }], total: 1 } as never);
     useSessionStore.getState().signIn({ userId: 'u1', employeeCode: '10001', companyCode: 'IPL' });
   });
 

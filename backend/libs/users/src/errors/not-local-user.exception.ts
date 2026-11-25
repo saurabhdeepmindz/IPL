@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/errors/not-local-user.exception.ts
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { FieldError, ValidationFailedException } from '@libs/common';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-01 to API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.22 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.23 section 6.1
  */
 export class NotLocalUserException extends ValidationFailedException {
   constructor(fields: FieldError[] = []) {

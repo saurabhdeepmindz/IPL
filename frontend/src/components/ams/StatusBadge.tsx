@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/components/ams/StatusBadge.tsx
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 import { Badge } from '@/components/ui';
@@ -22,13 +22,14 @@ import { Badge } from '@/components/ui';
 /** Props of StatusBadge. */
 interface StatusBadgeProps {
   /** The status to show */
-  status: 'ACTIVE' | 'DRAFT' | 'INACTIVE';
+  status: 'ACTIVE' | 'DRAFT' | 'INACTIVE' | 'LOCKED';
 }
 
 const LOOK = {
   ACTIVE: { label: 'Active', variant: 'success' },
   DRAFT: { label: 'Draft', variant: 'warning' },
   INACTIVE: { label: 'Inactive', variant: 'secondary' },
+  LOCKED: { label: 'Locked', variant: 'danger' },
 } as const;
 
 /**
@@ -41,7 +42,7 @@ const LOOK = {
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
  * @status    built
  *
  * @dependencies Badge

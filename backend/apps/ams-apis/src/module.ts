@@ -30,6 +30,8 @@ import { PermissionCacheBridgeModule } from './permission-cache-bridge.module';
 import { RoleAssignmentController } from './controllers/role-assignment.controller';
 import { UsersController } from './controllers/users.controller';
 import { UsersLifecycleController } from './controllers/users-lifecycle.controller';
+import { MastersController } from './controllers/masters.controller';
+import { OrganisationModule } from '@libs/organisation';
 import { RolesController } from './controllers/roles.controller';
 
 
@@ -47,9 +49,9 @@ import { RolesController } from './controllers/roles.controller';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, RoleAssignmentModule, UsersModule, DevAuthModule.register()],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, RoleAssignmentModule, UsersModule, OrganisationModule, DevAuthModule.register()],
   // PermissionMatrixController must come before RolesController: PUT /roles/permissions would otherwise be read as PUT /roles/:roleId (decision L-27).
-  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController, UsersController, UsersLifecycleController],
+  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController, UsersController, UsersLifecycleController, MastersController],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_PIPE, useClass: AllFieldsValidationPipe },

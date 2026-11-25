@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-009
  * @subtask        ST-ADM01-009-IN-01
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-bulk-create.spec.ts
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 

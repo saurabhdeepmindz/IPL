@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/password-hasher.ts
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 
@@ -34,7 +34,7 @@ const COST = 12;
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.22 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.23 section 6.1
  */
 @Injectable()
 export class PasswordHasher {
@@ -51,7 +51,7 @@ export class PasswordHasher {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
  * @status    built
    *
    * @dependencies bcryptjs.hash
@@ -76,7 +76,7 @@ export class PasswordHasher {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.1
  * @status    built
    *
    * @dependencies bcryptjs.compare

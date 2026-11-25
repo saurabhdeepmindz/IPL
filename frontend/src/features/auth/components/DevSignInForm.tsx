@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.5
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.5
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/auth/components/DevSignInForm.tsx
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 'use client';
@@ -37,7 +37,7 @@ import { devSignIn } from '../services/auth.service';
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.5
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.5
  * @status    built
  *
  * @dependencies devSignIn, useSessionStore, useRouter

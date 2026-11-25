@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.22 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.22.md
+ * @lld            LLD-EPIC-ADM-01 v0.23 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.23.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/services/permission-matrix.service.ts
- * @lld-synced     v0.22
+ * @lld-synced     v0.23
  * @status         built
  */
 
@@ -58,7 +58,7 @@ export interface SaveInput {
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.6
  *   contracts: API-PRM-01, API-PRM-02, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.22 §6.6
+ *   lld:       LLD-EPIC-ADM-01 v0.23 §6.6
  */
 /** A cell is locked when it is a protected right: the Administrator role keeps it and no other role can be given it (decision L-20). */
 const isLocked = (key: string): boolean => PROTECTED_RIGHTS.includes(key);
@@ -99,7 +99,7 @@ export class PermissionMatrixService {
  * @screen    ADM-03
  * @contract  API-PRM-01
  * @ac        AC-US014-01
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.6
  * @status    built
    *
    * @dependencies RoleRepository.findPage, RolePermissionRepository.readMatrix, PermissionMatrixVersionRepository.current
@@ -128,7 +128,7 @@ export class PermissionMatrixService {
  * @screen    ADM-03
  * @contract  API-PRM-02
  * @ac        AC-US014-03, AC-US014-05
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.6
  * @status    built
    *
    * @dependencies MatrixChangeAnalyzer.analyze
@@ -157,7 +157,7 @@ export class PermissionMatrixService {
  * @screen    ADM-03
  * @contract  API-PRM-03
  * @ac        AC-US014-03, AC-US014-04, AC-US014-05
- * @lld       LLD-EPIC-ADM-01 v0.22 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.23 §6.6
  * @status    built
    *
    * @dependencies MatrixChangeAnalyzer.analyze, PermissionMatrixVersionRepository.current, commit, PermissionCacheInvalidator.clearAll, AuditService.recordChange
