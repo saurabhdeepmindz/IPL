@@ -99,3 +99,29 @@ date,story,file,lld_version,result
 2026-11-25,US-ADM01-007,libs/users/src/services/users-lifecycle.service.spec.ts,v0.14,copied
 2026-11-25,US-ADM01-007,libs/users/src/services/users-lifecycle.service.ts,v0.14,copied
 2026-11-25,US-ADM01-007,tests/api/test_users_lifecycle.py,v0.14,copied
+2026-11-25,US-ADM01-003,apps/ams-apis/src/controllers/users.controller.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-003,apps/ams-apis/src/dtos/users/company-role.dto.ts,v0.15,copied
+2026-11-25,US-ADM01-003,apps/ams-apis/src/dtos/users/create-user.dto.ts,v0.15,copied
+2026-11-25,US-ADM01-003,apps/ams-apis/src/dtos/users/update-user.dto.ts,v0.15,copied
+2026-11-25,US-ADM01-003,apps/ams-apis/src/dtos/users/user-response.dto.ts,v0.15,identical
+2026-11-25,US-ADM01-003,apps/ams-apis/src/interceptors/idempotency.interceptor.ts,v0.15,copied
+2026-11-25,US-ADM01-003,apps/ams-apis/test/users.e2e-spec.ts,v0.15,identical
+2026-11-25,US-ADM01-003,libs/organisation/src/repositories/masters/database.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/organisation/src/repositories/user-company-role/contract.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-003,libs/organisation/src/repositories/user-company-role/database.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-003,libs/users/src/errors/duplicate-email.exception.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/errors/duplicate-employee-code.exception.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/errors/employee-code-read-only.exception.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/errors/unknown-user.exception.ts,v0.15,identical
+2026-11-25,US-ADM01-003,libs/users/src/ports/masters.port.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/repositories/user/contract.ts,v0.15,identical
+2026-11-25,US-ADM01-003,libs/users/src/repositories/user/database.ts,v0.15,identical
+2026-11-25,US-ADM01-003,libs/users/src/repositories/user-write/contract.ts,v0.15,identical
+2026-11-25,US-ADM01-003,libs/users/src/repositories/user-write/database.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-003,libs/users/src/repositories/user-write/index.ts,v0.15,identical
+2026-11-25,US-ADM01-003,libs/users/src/services/user-input-validator.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/services/users-command.service.spec.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/services/users-command.service.ts,v0.15,copied
+2026-11-25,US-ADM01-003,libs/users/src/services/users-query.service.spec.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-003,libs/users/src/services/users-query.service.ts,v0.15,EXISTS-DIFFERENT (not overwritten)
+2026-11-25,US-ADM01-003,tests/api/test_users_write.py,v0.15,copied

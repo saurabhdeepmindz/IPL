@@ -10,10 +10,10 @@
  * @since   2026-11-25
  *
  * @story          US-ADM01-017
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.8
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.8
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/core/src/authorization/session-user.interface.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { DataScope } from '@libs/database';
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.15 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.16 §6.8
  *
  * TBD-Future TBD-ADM01-02: the sign-in epic provides the real value. Until then a
  * development sign-in builds it for a seeded user (LLD §8.1).
@@ -56,7 +56,7 @@ export interface SessionUser {
  *   workflows: AD-03
  *   frd:       FR-043.2
  *   contracts: none
- *   lld:       LLD-EPIC-ADM-01 v0.15 §6.8
+ *   lld:       LLD-EPIC-ADM-01 v0.16 §6.8
  */
 export interface ResolvedAccess {
   /** True when at least one valid role of the session company allows the permission. */

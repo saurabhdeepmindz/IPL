@@ -11,11 +11,11 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-write/index.ts
- * @lld-synced     v0.15
- * @status         pseudo
+ * @lld-synced     v0.16
+ * @status         built
  */
 
 export * from './contract';

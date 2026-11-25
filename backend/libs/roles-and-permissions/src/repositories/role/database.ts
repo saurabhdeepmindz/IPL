@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-010
  * @subtask        ST-ADM01-010-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/roles-and-permissions/src/repositories/role/database.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         built
  */
 
@@ -34,7 +34,7 @@ import { freeCode, holdersByRole, toRecord, writeCells } from './role-helpers';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.5
  *   contracts: API-ROL-01 to API-ROL-04
- *   lld:       LLD-EPIC-ADM-01 v0.15 §6.4
+ *   lld:       LLD-EPIC-ADM-01 v0.16 §6.4
  */
 @Injectable()
 export class RoleDatabaseRepository extends RoleRepository {
@@ -55,7 +55,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-01
  * @ac        AC-US010-01, AC-US010-07
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db role.findMany, RoleDatabaseRepository.countHolders
@@ -89,7 +89,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US010-04
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db role.findUnique
@@ -115,7 +115,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US010-03
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db role.findFirst
@@ -141,7 +141,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-02
  * @ac        AC-US010-02
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db $transaction, role.create, rolePermission.createMany
@@ -172,7 +172,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-03
  * @ac        AC-US010-04, AC-US010-06
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db $transaction, role.update, rolePermission.upsert
@@ -204,7 +204,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US010-05
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db role.update
@@ -231,7 +231,7 @@ export class RoleDatabaseRepository extends RoleRepository {
  * @screen    ADM-02
  * @contract  API-ROL-04
  * @ac        AC-US010-05
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.raw userCompanyRole.groupBy

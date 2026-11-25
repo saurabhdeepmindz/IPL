@@ -22,3 +22,6 @@ export * from './services/users-lifecycle.service';
 export * from './services/one-time-password.service';
 export * from './ports/temporary-password-mailer.port';
 export * from './ports/temporary-password-mailer.stand-in';
+export * from './ports/masters.port';
+export * from './services/users-command.service';
+export * from './services/user-input-validator';

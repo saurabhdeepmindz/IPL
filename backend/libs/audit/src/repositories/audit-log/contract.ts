@@ -28,6 +28,13 @@ export interface AuditRow {
   code?: string | null;
 }
 
+/** One stored change row as the readers see it. */
+export interface AuditEntry {
+  at: Date;
+  actor: string;
+  reason: string | null;
+}
+
 /**
  * Write access to the audit log.
  *
@@ -52,4 +59,17 @@ export abstract class AuditLogRepository {
    * @dependencies none
    */
   abstract add(row: AuditRow): Promise<string>;
+
+  /**
+   * The latest change rows of one record.
+   *
+   * In plain words: newest first, only rows of kind CHANGE for this entity and key, at most `limit` rows.
+   *
+   * @param entity Kind of record, for example User
+   * @param entityKey Key of the record
+   * @param limit How many rows at most
+   * @returns The rows, newest first
+   * @dependencies none
+   */
+  abstract listFor(entity: string, entityKey: string, limit: number): Promise<AuditEntry[]>;
 }

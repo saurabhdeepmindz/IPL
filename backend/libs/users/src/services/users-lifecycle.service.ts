@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-02, ST-ADM01-007-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-lifecycle.service.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         elaborated
  */
 
@@ -40,7 +40,7 @@ import { OneTimePasswordService } from './one-time-password.service';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05, API-USR-06, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.15 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
  */
 @Injectable()
 export class UsersLifecycleService {
@@ -86,7 +86,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-06
  * @ac        AC-US007-01
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
  * @status    pseudo
    *
    * @dependencies UserRepository.findByCode, setStatus, AuditService.recordChange
@@ -118,7 +118,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
  * @status    pseudo
    *
    * @dependencies UserRepository.findByCode, OneTimePasswordService.issue, AuditService.recordChange
@@ -147,7 +147,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-08
  * @ac        AC-US007-03
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
  * @status    pseudo
    *
    * @dependencies UserRepository.findByCode, OneTimePasswordService.issue, AuditService.recordChange

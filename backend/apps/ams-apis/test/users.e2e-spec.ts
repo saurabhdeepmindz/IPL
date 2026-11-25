@@ -3,18 +3,18 @@
  * @module  AmsApis
  *
  * @description
- * Route tests of the user contracts API-USR-01 to API-USR-04 on the real application (Jest e2e, real PostgreSQL and Redis). Written before the controller (TDD). In plain words: calls the user routes with a signed-in user and checks the status, the error code and the body. The cases of stories 003 stay `it.todo` until that story is built.
+ * Route tests of the user contracts API-USR-01 to API-USR-04 on the real application (Jest e2e, real PostgreSQL and Redis). Written before the controller (TDD). In plain words: calls the user routes with a signed-in user and checks the status, the error code and the body. The write routes (C02 to C04) are in `users-write.e2e-spec.ts`.
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @story          US-ADM01-001, US-ADM01-003
- * @subtask        ST-ADM01-001-BE-04, ST-ADM01-003-BE-06
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @story          US-ADM01-001
+ * @subtask        ST-ADM01-001-BE-04
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/test/users.e2e-spec.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         built
  */
 
@@ -132,7 +132,4 @@ describe('ST-ADM01-001-BE-01 user list route (C01)', () => {
     expect(await prisma.raw.auditLog.count({ where: { entity: 'UserList', entityKey: 'ALL', actor: { in: userIds } } })).toBe(1);
   });
 
-  it.todo('C02 creates a user and answers 409 and 422');
-  it.todo('C03 reads a user');
-  it.todo('C04 changes a user');
 });

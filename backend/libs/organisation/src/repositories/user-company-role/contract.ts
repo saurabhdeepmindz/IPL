@@ -11,14 +11,17 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/organisation/src/repositories/user-company-role/contract.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         built
  */
 
-import { RoleStatus } from '@libs/database';
+import { Prisma, RoleStatus } from '@libs/database';
+
+/** A database transaction a caller may pass so the roles are written in the caller's transaction. */
+export type DbTransaction = Prisma.TransactionClient;
 
 /** One role a user holds in a company, with the dates it counts. */
 export interface UserRoleGrant {
@@ -57,6 +60,7 @@ export interface NewAssignment {
   roleId: string;
   companyCode: string;
   validFrom: Date;
+  validTo?: Date | null;
   assignedBy: string;
 }
 
@@ -82,4 +86,11 @@ export abstract class UserCompanyRoleRepository {
 
   /** Writes the assignments in one transaction. Returns how many were written. */
   abstract insertMany(rows: NewAssignment[]): Promise<number>;
+
+  /**
+   * Replaces the company roles of a user with the given ones (US-ADM01-003).
+   *
+   * In plain words: a role that stays is kept; a role that goes is ended yesterday (or dropped when it never started); a new role is added. Pass `tx` to write inside the caller's transaction.
+   */
+  abstract replaceForUser(userId: string, rows: NewAssignment[], tx?: DbTransaction): Promise<void>;
 }

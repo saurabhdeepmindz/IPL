@@ -17,11 +17,16 @@ import { Module } from '@nestjs/common';
 import { AuditModule } from '@libs/audit';
 import { OneTimePasswordDatabaseRepository, OneTimePasswordRepository } from './repositories/one-time-password';
 import { UserDatabaseRepository, UserRepository } from './repositories/user';
+import { OrganisationModule } from '@libs/organisation';
+import { MastersDatabaseAdapter } from '@libs/organisation/repositories/masters/database';
 import { UserWriteDatabaseRepository, UserWriteRepository } from './repositories/user-write';
+import { MastersPort } from './ports/masters.port';
 import { TemporaryPasswordMailer } from './ports/temporary-password-mailer.port';
 import { TemporaryPasswordMailerStandIn } from './ports/temporary-password-mailer.stand-in';
 import { OneTimePasswordService } from './services/one-time-password.service';
 import { PasswordHasher } from './services/password-hasher';
+import { UserInputValidator } from './services/user-input-validator';
+import { UsersCommandService } from './services/users-command.service';
 import { UsersLifecycleService } from './services/users-lifecycle.service';
 import { UsersQueryService } from './services/users-query.service';
 
@@ -39,7 +44,7 @@ import { UsersQueryService } from './services/users-query.service';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  imports: [AuditModule],
+  imports: [AuditModule, OrganisationModule],
   providers: [
     { provide: UserRepository, useClass: UserDatabaseRepository },
     { provide: UserWriteRepository, useClass: UserWriteDatabaseRepository },
@@ -49,7 +54,10 @@ import { UsersQueryService } from './services/users-query.service';
     PasswordHasher,
     OneTimePasswordService,
     UsersLifecycleService,
+    { provide: MastersPort, useClass: MastersDatabaseAdapter },
+    UserInputValidator,
+    UsersCommandService,
   ],
-  exports: [UserRepository, UserWriteRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService],
+  exports: [UserRepository, UserWriteRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService, UsersCommandService],
 })
 export class UsersModule {}

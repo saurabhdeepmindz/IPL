@@ -92,4 +92,23 @@ describe('ST-ADM01-000-BE-03 AuditService', () => {
     const broken = new AuditService({ add: () => Promise.reject(new Error('db down')) } as unknown as AuditLogRepository);
     await expect(broken.recordChange({ actor: 'u', entity: 'User', entityKey: 'k' })).rejects.toThrow('db down');
   });
+
+  /**
+   * @story   US-ADM01-003
+   * @ac      AC-US003-03
+   * @subtask ST-ADM01-003-BE-02
+   * In plain words: supporting test. The latest changes of one record come back newest first, only for that record, and at most as many as asked (the user details show up to 10).
+   */
+  it('returns the latest changes of one record, newest first, limited', async () => {
+    const key = `rc-${stamp}`;
+    for (let i = 1; i <= 12; i += 1) await audit.recordChange({ actor: `t-${stamp}-r`, entity: 'User', entityKey: key, reason: `change ${i}` });
+    await audit.recordChange({ actor: `t-${stamp}-r`, entity: 'User', entityKey: `${key}-other`, reason: 'other user' });
+    const latest = await audit.recentChanges('User', key, 10);
+    expect(latest).toHaveLength(10);
+    expect(latest[0].text).toBe('change 12');
+    expect(latest[9].text).toBe('change 3');
+    expect(latest.every((l) => l.at instanceof Date)).toBe(true);
+    expect(await audit.recentChanges('User', `${key}-none`, 10)).toEqual([]);
+    await prisma.raw.auditLog.deleteMany({ where: { entityKey: { startsWith: key } } });
+  });
 });

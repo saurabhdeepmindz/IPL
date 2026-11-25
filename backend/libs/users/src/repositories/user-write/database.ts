@@ -11,16 +11,18 @@
  *
  * @story          US-ADM01-003, US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-003-BE-04, ST-ADM01-005-BE-03
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/repositories/user-write/database.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         pseudo
  */
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService, UserStatus } from '@libs/database';
+import { DbTransaction, UserCompanyRoleRepository } from '@libs/organisation';
 import { NewUser, UserAssignment, UserRecord } from '../user';
+import { startOfToday, toUserRecord, userInclude } from '../user/user-helpers';
 import { UserWriteRepository } from './contract';
 
 /**
@@ -34,11 +36,14 @@ import { UserWriteRepository } from './contract';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4
  *   contracts: API-USR-02, API-USR-04, API-USR-05, API-USR-06, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.15 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
  */
 @Injectable()
 export class UserWriteDatabaseRepository extends UserWriteRepository {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly roles: UserCompanyRoleRepository,
+  ) {
     super();
   }
 
@@ -55,19 +60,22 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
  * @screen    ADM-01
  * @contract  API-USR-02
  * @ac        AC-US003-01
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
    *
-   * @dependencies PrismaService.db $transaction, user.create, userCompanyRole.createMany
+   * @dependencies PrismaService.db $transaction, user.create, UserCompanyRoleRepository.replaceForUser
    *
    * @param data - the user
    * @param assignments - company, role and dates
    * @returns The created user
    */
   async create(data: NewUser, assignments: UserAssignment[]): Promise<UserRecord> {
-    // TODO: 1. In one transaction create the user as ACTIVE, then one `userCompanyRole` row per assignment (assigned by the caller's code is set by the service through `data`).
-    // TODO: 2. Return the user through findByCode.
-    throw new Error('pseudo-code: not implemented');
+    const id = await this.prisma.db.$transaction(async (tx) => {
+      const user = await tx.user.create({ data: { ...data, status: 'ACTIVE' } });
+      await this.roles.replaceForUser(user.id, assignments.map((a) => ({ ...a, userId: user.id })), tx as unknown as DbTransaction);
+      return user.id;
+    });
+    return this.read(id);
   }
 
   /**
@@ -83,10 +91,10 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
  * @screen    ADM-01
  * @contract  API-USR-04
  * @ac        AC-US003-04
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
    *
-   * @dependencies PrismaService.db $transaction, user.update
+   * @dependencies PrismaService.db $transaction, user.update, UserCompanyRoleRepository.replaceForUser
    *
    * @param employeeCode - the user
    * @param data - the changed fields; `newEmployeeCode` renames the key
@@ -94,9 +102,13 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
    * @returns The updated user
    */
   async update(employeeCode: string, data: Partial<NewUser> & { newEmployeeCode?: string }, assignments: UserAssignment[] | null): Promise<UserRecord> {
-    // TODO: 1. In one transaction update the user row (set `employeeCode` from `newEmployeeCode` when given).
-    // TODO: 2. When assignments is not null, replace the company roles (the user-company-role repository does the rows).
-    throw new Error('pseudo-code: not implemented');
+    const { newEmployeeCode, ...fields } = data;
+    const id = await this.prisma.db.$transaction(async (tx) => {
+      const user = await tx.user.update({ where: { employeeCode }, data: { ...fields, ...(newEmployeeCode ? { employeeCode: newEmployeeCode } : {}) } });
+      if (assignments) await this.roles.replaceForUser(user.id, assignments.map((a) => ({ ...a, userId: user.id })), tx as unknown as DbTransaction);
+      return user.id;
+    });
+    return this.read(id);
   }
 
   /**
@@ -112,7 +124,7 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
  * @screen    ADM-01
  * @contract  API-USR-05, API-USR-06
  * @ac        AC-US005-01, AC-US007-01
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
  * @status    pseudo
    *
    * @dependencies PrismaService.db user.update
@@ -141,7 +153,7 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
  * @screen    ADM-01
  * @contract  API-USR-07, API-USR-08
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
  * @status    pseudo
    *
    * @dependencies PrismaService.db user.update
@@ -152,5 +164,10 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
    */
   async setMustChangePassword(userId: string, value: boolean): Promise<void> {
     await this.prisma.db.user.update({ where: { id: userId }, data: { mustChangePassword: value } });
+  }
+
+  /** Reads one user back as a record. */
+  private async read(id: string): Promise<UserRecord> {
+    return toUserRecord(await this.prisma.db.user.findUniqueOrThrow({ where: { id }, include: userInclude(startOfToday()) }));
   }
 }

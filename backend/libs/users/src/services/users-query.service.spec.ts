@@ -10,12 +10,12 @@
  * @since   2026-11-25
  *
  * @story          US-ADM01-001, US-ADM01-003
- * @subtask        ST-ADM01-001-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @subtask        ST-ADM01-001-BE-04, ST-ADM01-003-BE-06
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-query.service.spec.ts
- * @lld-synced     v0.15
- * @status         elaborated
+ * @lld-synced     v0.16
+ * @status         built
  */
 
 import { ListContext, ListInput, UsersQueryService } from './users-query.service';
@@ -109,5 +109,49 @@ describe('UsersQueryService.search', () => {
     expect(users.pageCalls[0].filter.status).toBeUndefined();
     await service.search(input({ status: 'inactive' }), ctx());
     expect(users.pageCalls[1].filter.status).toBe('INACTIVE');
+  });
+});
+
+describe('UsersQueryService.getDetails (story 003)', () => {
+  const when = new Date('2026-11-20T10:00:00Z');
+  let audit: { recentChanges: jest.Mock; recordChange: jest.Mock };
+  let service: UsersQueryService;
+  const both = userRecord({ employeeCode: '10031', id: 'u-both', companies: [{ code: '1000', roles: ['Initiator', 'Processor'] }, { code: '2000', roles: ['Initiator'] }] });
+  const locked = userRecord({ employeeCode: '10032', id: 'u-lock', status: 'LOCKED' });
+  const reads = { findByCode: async (code: string) => [both, locked].find((u) => u.employeeCode === code) ?? null };
+
+  beforeEach(() => {
+    audit = { recentChanges: jest.fn().mockResolvedValue([{ at: when, text: 'Created' }]), recordChange: jest.fn() };
+    service = new UsersQueryService(reads as never, audit as never);
+  });
+
+  /**
+   * @tc        TC-ADM01-003-J03
+   * @story     US-ADM01-003
+   * @ac        AC-US003-03
+   * @subtask   ST-ADM01-003-BE-06
+   * In plain words: the details show both companies with their roles, one plain sentence per company, the lock flag and the latest changes; an unknown code gives 404.
+   */
+  it('J03 shows both companies, the summary sentence, the lock flag and the activity', async () => {
+    const out = await service.getDetails('10031');
+    expect(out.user.companies).toEqual(both.companies);
+    expect(out.summaryText).toBe('Company 1000: Initiator, Processor. Company 2000: Initiator.');
+    expect(out.signInLocked).toBe(false);
+    expect(out.activity).toEqual([{ at: when, text: 'Created' }]);
+    expect(audit.recentChanges).toHaveBeenCalledWith('User', 'u-both', 10);
+    expect((await service.getDetails('10032')).signInLocked).toBe(true);
+    await expect(service.getDetails('99999')).rejects.toMatchObject({ code: 'USER_NOT_FOUND' });
+  });
+
+  /**
+   * @story   US-ADM01-003
+   * @ac      AC-US003-03
+   * @subtask ST-ADM01-003-BE-06
+   * In plain words: supporting test. A user with no company role gets a plain sentence that says so.
+   */
+  it('says plainly when the user holds no role', async () => {
+    const none = userRecord({ employeeCode: '10033', id: 'u-none', companies: [] });
+    const svc = new UsersQueryService({ findByCode: async () => none } as never, audit as never);
+    expect((await svc.getDetails('10033')).summaryText).toBe('No company role is assigned.');
   });
 });

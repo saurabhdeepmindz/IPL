@@ -120,4 +120,20 @@ export class AuditService {
       this.logger.error(`Could not write refusal row: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
+
+  /**
+   * The latest changes of one record.
+   *
+   * In plain words: a short list for a details screen; each line is the time and the reason that was written ("Created", "Unlocked").
+   *
+   * @param entity Kind of record, for example User
+   * @param entityKey Key of the record
+   * @param limit How many at most (default 10)
+   * @returns Newest first
+   * @dependencies AuditLogRepository.listFor
+   */
+  async recentChanges(entity: string, entityKey: string, limit = 10): Promise<Array<{ at: Date; text: string }>> {
+    const rows = await this.rows.listFor(entity, entityKey, limit);
+    return rows.map((r) => ({ at: r.at, text: r.reason ?? 'Changed' }));
+  }
 }

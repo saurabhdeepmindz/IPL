@@ -159,3 +159,67 @@ describe('ST-ADM01-011-BE-04 UserCompanyRoleRepository.listByRole, findHolders a
     expect(await repo.findHolders(roleId, 'IPL', [userIds[2]], today)).toEqual([userIds[2]]);
   });
 });
+
+describe('ST-ADM01-003-BE-05 UserCompanyRoleRepository.replaceForUser', () => {
+  let prisma: PrismaService;
+  let repo: UserCompanyRoleRepository;
+  let userId: string;
+  const roleIds: string[] = [];
+  const row = (roleIdx: number, companyCode: string, validFrom = '2020-01-01') => ({ userId, roleId: roleIds[roleIdx], companyCode, validFrom: new Date(validFrom), assignedBy: '10001' });
+
+  beforeAll(async () => {
+    const ref = await Test.createTestingModule({ imports: [DatabaseModule, OrganisationModule] }).compile();
+    await ref.init();
+    prisma = ref.get(PrismaService);
+    repo = ref.get(UserCompanyRoleRepository);
+    for (const code of ['IPL', 'IPLFB']) await prisma.raw.company.upsert({ where: { code }, update: {}, create: { code, name: code } });
+    userId = (await prisma.raw.user.create({ data: { employeeCode: `${stamp.slice(0, 3)}P1`, fullName: 'Replace', email: `p1${stamp}@example.invalid` } })).id;
+    for (const n of [0, 1, 2, 3]) roleIds.push((await prisma.raw.role.create({ data: { code: `P${n}${stamp}`, name: `P${n} ${stamp}`, description: 'p', status: 'ACTIVE' } })).id);
+    await prisma.raw.userCompanyRole.createMany({
+      data: [row(0, 'IPL'), row(1, 'IPL'), row(2, 'IPL', '2999-01-01')].map((r) => ({ ...r, validTo: null })),
+    });
+  });
+
+  afterAll(async () => {
+    await prisma.raw.userCompanyRole.deleteMany({ where: { userId } });
+    await prisma.raw.role.deleteMany({ where: { id: { in: roleIds } } });
+    await prisma.raw.user.delete({ where: { id: userId } });
+    await prisma.onModuleDestroy();
+  });
+
+  /**
+   * @story   US-ADM01-003
+   * @ac      AC-US003-03
+   * @subtask ST-ADM01-003-BE-05
+   * In plain words: supporting test. Replacing the roles keeps a role that stays (same row), ends a role that goes (the row is kept, with an end date of yesterday), drops a role that never started, and adds the new one.
+   */
+  it('keeps, ends, drops and adds company roles', async () => {
+    const before = await prisma.raw.userCompanyRole.findMany({ where: { userId } });
+    const keptId = before.find((r) => r.roleId === roleIds[0])!.id;
+    await repo.replaceForUser(userId, [row(0, 'IPL'), row(3, 'IPLFB')]);
+    const after = await prisma.raw.userCompanyRole.findMany({ where: { userId } });
+    expect(after.find((r) => r.roleId === roleIds[0])).toMatchObject({ id: keptId, validTo: null });
+    const ended = after.find((r) => r.roleId === roleIds[1])!;
+    expect(ended.validTo).not.toBeNull();
+    expect(ended.validTo!.getTime()).toBeLessThan(Date.now());
+    expect(after.find((r) => r.roleId === roleIds[2])).toBeUndefined();
+    expect(after.find((r) => r.roleId === roleIds[3])).toMatchObject({ companyCode: 'IPLFB', validTo: null, assignedBy: '10001' });
+    const today = await repo.listByUser(userId, 'IPL', new Date());
+    expect(today.map((g) => g.roleId)).toEqual([roleIds[0]]);
+  });
+
+  /**
+   * @story   US-ADM01-003
+   * @ac      AC-US003-03
+   * @subtask ST-ADM01-003-BE-05
+   * In plain words: supporting test. Sending the same set again changes nothing, and a new end date is saved on the row that stays.
+   */
+  it('is repeatable and saves a new end date', async () => {
+    const count = () => prisma.raw.userCompanyRole.count({ where: { userId } });
+    const n = await count();
+    await repo.replaceForUser(userId, [row(0, 'IPL'), row(3, 'IPLFB')]);
+    expect(await count()).toBe(n);
+    await repo.replaceForUser(userId, [{ ...row(0, 'IPL'), validTo: new Date('2999-12-31') }, row(3, 'IPLFB')]);
+    expect((await prisma.raw.userCompanyRole.findFirstOrThrow({ where: { userId, roleId: roleIds[0] } })).validTo).toEqual(new Date('2999-12-31'));
+  });
+});

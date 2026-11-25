@@ -11,16 +11,16 @@
  *
  * @story          US-ADM01-011
  * @subtask        ST-ADM01-011-BE-04
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.4
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.4
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/organisation/src/repositories/user-company-role/database.ts
- * @lld-synced     v0.15
+ * @lld-synced     v0.16
  * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@libs/database';
-import { UserCompanyRoleRepository, UserRoleGrant, NewAssignment, RoleHolderRow } from './contract';
+import { DbTransaction, UserCompanyRoleRepository, UserRoleGrant, NewAssignment, RoleHolderRow } from './contract';
 
 /**
  * Database implementation of UserCompanyRoleRepository.
@@ -74,7 +74,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-02
  * @contract  API-ROL-05
  * @ac        AC-US011-02
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db or raw userCompanyRole.findMany
@@ -113,7 +113,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db userCompanyRole.findMany
@@ -146,7 +146,7 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
  * @screen    ADM-02
  * @contract  API-ROL-06
  * @ac        AC-US011-01, AC-US011-03
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.4
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.4
  * @status    built
    *
    * @dependencies PrismaService.db $transaction, userCompanyRole.createMany
@@ -156,8 +156,59 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
    */
   async insertMany(rows: NewAssignment[]): Promise<number> {
     return this.prisma.db.$transaction(async (tx) => {
-      const written = await tx.userCompanyRole.createMany({ data: rows.map((r) => ({ ...r, validTo: null })) });
+      const written = await tx.userCompanyRole.createMany({ data: rows.map((r) => ({ ...r, validTo: r.validTo ?? null })) });
       return written.count;
     });
   }
+
+  /**
+   * Replaces the company roles of a user.
+   *
+   * In plain words: keeps the roles that stay, ends the ones that go (yesterday, or drops them when they never started) and adds the new ones, all together.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-003
+ * @subtask   ST-ADM01-003-BE-05
+ * @frd       FR-042.1, FR-042.3, FR-042.4, FR-042.7
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-02, API-USR-04
+ * @ac        AC-US003-03
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
+   *
+   * @dependencies PrismaService.db $transaction, userCompanyRole.findMany, update, deleteMany, createMany
+   *
+   * @param userId - the user
+   * @param rows - the roles the user must hold
+   * @param tx - the caller's transaction, when there is one
+   * @returns Nothing
+   */
+  async replaceForUser(userId: string, rows: NewAssignment[], tx?: DbTransaction): Promise<void> {
+    const run = (client: DbTransaction) => replaceRows(client, userId, rows);
+    if (tx) return run(tx);
+    return this.prisma.db.$transaction((inner) => run(inner as unknown as DbTransaction));
+  }
+}
+
+const day = (d: Date): number => Math.floor(d.getTime() / 86400000);
+const keyOf = (r: { roleId: string; companyCode: string; validFrom: Date }): string => `${r.roleId}|${r.companyCode}|${day(r.validFrom)}`;
+
+/** Does the work of `replaceForUser` on one client. */
+async function replaceRows(client: DbTransaction, userId: string, rows: NewAssignment[]): Promise<void> {
+  const yesterday = new Date();
+  yesterday.setUTCHours(0, 0, 0, 0);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  const wanted = new Map(rows.map((r) => [keyOf(r), r]));
+  const current = await client.userCompanyRole.findMany({ where: { userId, OR: [{ validTo: null }, { validTo: { gt: yesterday } }] } });
+  for (const row of current) {
+    const want = wanted.get(keyOf(row));
+    wanted.delete(keyOf(row));
+    if (want) {
+      const to = want.validTo ?? null;
+      if ((to?.getTime() ?? null) !== (row.validTo?.getTime() ?? null)) await client.userCompanyRole.update({ where: { id: row.id }, data: { validTo: to } });
+    } else if (row.validFrom > yesterday) await client.userCompanyRole.delete({ where: { id: row.id } });
+    else await client.userCompanyRole.update({ where: { id: row.id }, data: { validTo: yesterday } });
+  }
+  if (wanted.size) await client.userCompanyRole.createMany({ data: [...wanted.values()].map((r) => ({ ...r, userId, validTo: r.validTo ?? null })) });
 }

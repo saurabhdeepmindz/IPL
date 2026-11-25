@@ -11,17 +11,18 @@
  *
  * @story          US-ADM01-001, US-ADM01-003
  * @subtask        ST-ADM01-001-BE-02, ST-ADM01-003-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-query.service.ts
- * @lld-synced     v0.15
- * @status         elaborated
+ * @lld-synced     v0.16
+ * @status         built
  */
 
 import { Injectable } from '@nestjs/common';
 import { AuditService } from '@libs/audit';
 import { UserStatus } from '@libs/database';
 import { UserFilter, UserRecord, UserRepository } from '../repositories/user';
+import { UnknownUserException } from '../errors/unknown-user.exception';
 
 /** The list filters of the call. */
 export interface ListInput {
@@ -70,7 +71,7 @@ export interface UserDetails {
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4, FR-042.6, FR-043.2
  *   contracts: API-USR-01, API-USR-03
- *   lld:       LLD-EPIC-ADM-01 v0.15 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
  */
 @Injectable()
 export class UsersQueryService {
@@ -92,8 +93,8 @@ export class UsersQueryService {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01, AC-US001-02, AC-US001-03
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
    *
    * @dependencies UserRepository.findPage, countByStatus, AuditService.recordChange
    *
@@ -113,5 +114,39 @@ export class UsersQueryService {
       await this.audit.recordChange({ actor: ctx.actor, entity: 'UserList', entityKey: 'ALL', after: { filters }, reason: 'List of every company' });
     }
     return { items: found.rows, counts: { all: counts.ACTIVE + counts.INACTIVE + counts.LOCKED, active: counts.ACTIVE, inactive: counts.INACTIVE, locked: counts.LOCKED }, page, pageSize, total: found.total };
+  }
+
+  /**
+   * Shows one user.
+   *
+   * In plain words: the user, whether they are locked, a plain sentence about their access, and their latest changes.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-003
+ * @subtask   ST-ADM01-003-BE-02
+ * @frd       FR-042.1, FR-042.3, FR-042.4, FR-042.7
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-03
+ * @ac        AC-US003-03
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
+   *
+   * @dependencies UserRepository.findByCode, AuditService.recentChanges
+   *
+   * @param employeeCode - the user
+   * @returns The user details
+   * @throws UnknownUserException - no such user (HTTP 404, USER_NOT_FOUND)
+   */
+  async getDetails(employeeCode: string): Promise<UserDetails> {
+    const user = await this.users.findByCode(employeeCode);
+    if (!user) throw new UnknownUserException();
+    const sentences = user.companies.map((c) => `Company ${c.code}: ${c.roles.join(', ')}.`);
+    return {
+      user,
+      signInLocked: user.status === 'LOCKED',
+      summaryText: sentences.length > 0 ? sentences.join(' ') : 'No company role is assigned.',
+      activity: await this.audit.recentChanges('User', user.id, 10),
+    };
   }
 }

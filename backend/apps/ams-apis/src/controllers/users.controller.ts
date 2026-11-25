@@ -11,20 +11,23 @@
  *
  * @story          US-ADM01-001, US-ADM01-003
  * @subtask        ST-ADM01-001-BE-01, ST-ADM01-003-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.15 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.15.md
+ * @lld            LLD-EPIC-ADM-01 v0.16 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.16.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/users.controller.ts
- * @lld-synced     v0.15
- * @status         elaborated
+ * @lld-synced     v0.16
+ * @status         built
  */
 
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req, UseInterceptors } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { okResponse } from '@libs/common';
 import { RequirePermission, SessionUser } from '@libs/core';
-import { UserRecord, UsersQueryService } from '@libs/users';
+import { UserDetails, UserInput, UserRecord, UsersCommandService, UsersQueryService } from '@libs/users';
 import { ListUsersQueryDto } from '../dtos/users/list-users-query.dto';
-import { UserListItemDto } from '../dtos/users/user-response.dto';
+import { CreateUserDto } from '../dtos/users/create-user.dto';
+import { UpdateUserDto } from '../dtos/users/update-user.dto';
+import { UserDetailsDto, UserListItemDto } from '../dtos/users/user-response.dto';
+import { IdempotencyInterceptor } from '../interceptors/idempotency.interceptor';
 
 /**
  * Users controller.
@@ -37,7 +40,7 @@ import { UserListItemDto } from '../dtos/users/user-response.dto';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.1, FR-042.4, FR-042.6, FR-043.2
  *   contracts: API-USR-01 to API-USR-04
- *   lld:       LLD-EPIC-ADM-01 v0.15 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.16 section 6.1
  */
 /** One user of the list as the screen shows it. */
 const toItem = (u: UserRecord): UserListItemDto => ({
@@ -52,10 +55,34 @@ const toItem = (u: UserRecord): UserListItemDto => ({
   lastSignIn: u.lastSignInAt ? u.lastSignInAt.toISOString() : null,
 });
 
+/** One user with the details screen's extra fields. */
+const toDetails = (d: UserDetails): UserDetailsDto => ({
+  ...toItem(d.user),
+  firstSignInAt: d.user.firstSignInAt ? d.user.firstSignInAt.toISOString() : null,
+  signInLocked: d.signInLocked,
+  summaryText: d.summaryText,
+  activity: d.activity.map((a) => ({ at: a.at.toISOString(), text: a.text })),
+});
+
+/** The body of create or change as the service input (dates become Date). */
+const toInput = (dto: CreateUserDto, employeeCode: string, newEmployeeCode?: string): UserInput => ({
+  employeeCode,
+  ...(newEmployeeCode === undefined ? {} : { newEmployeeCode }),
+  fullName: dto.fullName,
+  email: dto.email,
+  mobile: dto.mobile ?? null,
+  departmentId: dto.departmentId,
+  designationId: dto.designationId,
+  reportingManagerCode: dto.reportingManagerCode ?? null,
+  signIn: dto.signIn,
+  companies: dto.companies.map((c) => ({ companyCode: c.companyCode, roleIds: c.roleIds, validFrom: new Date(c.validFrom), validTo: c.validTo ? new Date(c.validTo) : null })),
+});
+
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly query: UsersQueryService,
+    private readonly command: UsersCommandService,
   ) {}
 
   /**
@@ -71,8 +98,8 @@ export class UsersController {
  * @screen    ADM-01
  * @contract  API-USR-01
  * @ac        AC-US001-01, AC-US001-02, AC-US001-03, AC-US001-05
- * @lld       LLD-EPIC-ADM-01 v0.15 §6.1
- * @status    pseudo
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
    *
    * @dependencies UsersQueryService.search
    *
@@ -88,5 +115,94 @@ export class UsersController {
     const ctx = { sessionCompany: req.user.companyCode, allCompanies: req.allCompanies === true, actor: req.user.userId };
     const out = await this.query.search({ status, q, departmentId, roleId, signIn, page, pageSize, sort }, ctx);
     return okResponse({ items: out.items.map(toItem), counts: out.counts, page: out.page, pageSize: out.pageSize, total: out.total });
+  }
+
+  /**
+   * GET /users/:employeeCode.
+   *
+   * In plain words: one user with the companies, the access sentence and the latest changes.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-003
+ * @subtask   ST-ADM01-003-BE-01
+ * @frd       FR-042.1, FR-042.3, FR-042.4, FR-042.7
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-03
+ * @ac        AC-US003-03
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
+   *
+   * @dependencies UsersQueryService.getDetails
+   *
+   * @param employeeCode - the user
+   * @returns `{ data: details }`
+   */
+  @RequirePermission('users.view')
+  @ApiOperation({ summary: 'Read a user (API-USR-03)' })
+  @Get(':employeeCode')
+  async getOne(@Param('employeeCode') employeeCode: string): Promise<unknown> {
+    return okResponse(toDetails(await this.query.getDetails(employeeCode)));
+  }
+
+  /**
+   * POST /users.
+   *
+   * In plain words: creates a user; a repeated click with the same key returns the first answer.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-003
+ * @subtask   ST-ADM01-003-BE-01
+ * @frd       FR-042.1, FR-042.3, FR-042.4, FR-042.7
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-02
+ * @ac        AC-US003-01, AC-US003-02, AC-US003-05
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
+   *
+   * @dependencies UsersCommandService.create
+   *
+   * @param dto - the user
+   * @param req - the request (the signed-in Administrator)
+   * @returns `{ data: { employeeCode, status, oneTimePassword } }` (HTTP 201)
+   */
+  @RequirePermission('users.manage')
+  @UseInterceptors(IdempotencyInterceptor)
+  @ApiOperation({ summary: 'Create a user (API-USR-02)' })
+  @Post()
+  async create(@Body() dto: CreateUserDto, @Req() req: { user: SessionUser }): Promise<unknown> {
+    return okResponse(await this.command.create(toInput(dto, dto.employeeCode), req.user.userId, req.user.employeeCode));
+  }
+
+  /**
+   * PUT /users/:employeeCode.
+   *
+   * In plain words: changes a user; the employee code can be corrected only before the first sign-in.
+   *
+ * @epic      EPIC-ADM-01
+ * @story     US-ADM01-003
+ * @subtask   ST-ADM01-003-BE-01
+ * @frd       FR-042.1, FR-042.3, FR-042.4, FR-042.7
+ * @workflow  AD-03
+ * @screen    ADM-01
+ * @contract  API-USR-04
+ * @ac        AC-US003-04
+ * @lld       LLD-EPIC-ADM-01 v0.16 §6.1
+ * @status    built
+   *
+   * @dependencies UsersCommandService.update, UsersQueryService.getDetails
+   *
+   * @param employeeCode - the user
+   * @param dto - the user fields and an optional `newEmployeeCode`
+   * @param req - the request (the signed-in Administrator)
+   * @returns `{ data: details }`
+   */
+  @RequirePermission('users.manage')
+  @ApiOperation({ summary: 'Change a user (API-USR-04)' })
+  @Put(':employeeCode')
+  async update(@Param('employeeCode') employeeCode: string, @Body() dto: UpdateUserDto, @Req() req: { user: SessionUser }): Promise<unknown> {
+    const saved = await this.command.update(employeeCode, toInput(dto, employeeCode, dto.newEmployeeCode), req.user.userId, req.user.employeeCode);
+    return okResponse(toDetails(await this.query.getDetails(saved.employeeCode)));
   }
 }

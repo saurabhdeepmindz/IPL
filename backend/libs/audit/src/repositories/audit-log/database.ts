@@ -16,7 +16,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaService } from '@libs/database';
-import { AuditLogRepository, AuditRow } from './contract';
+import { AuditEntry, AuditLogRepository, AuditRow } from './contract';
 
 /**
  * Database implementation of AuditLogRepository.
@@ -54,5 +54,11 @@ export class AuditLogDatabaseRepository extends AuditLogRepository {
       },
     });
     return created.id;
+  }
+
+  /** {@inheritDoc AuditLogRepository.listFor} */
+  async listFor(entity: string, entityKey: string, limit: number): Promise<AuditEntry[]> {
+    const rows = await this.prisma.raw.auditLog.findMany({ where: { kind: 'CHANGE', entity, entityKey }, orderBy: { createdAt: 'desc' }, take: limit });
+    return rows.map((r) => ({ at: r.createdAt, actor: r.actor, reason: r.reason }));
   }
 }
