@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003
  * @subtask        ST-ADM01-003-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
+ * @lld            LLD-EPIC-ADM-01 v0.19 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.19.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/dtos/users/update-user.dto.ts
- * @lld-synced     v0.18
+ * @lld-synced     v0.19
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { CreateUserDto } from './create-user.dto';
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7
  *   contracts: API-USR-04
- *   lld:       LLD-EPIC-ADM-01 v0.18 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.19 section 6.1
  */
 export class UpdateUserDto extends CreateUserDto {
   /** Accepted only while the user has not signed in (decision OP-01). */

@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-014
  * @subtask        ST-ADM01-014-BE-01
- * @lld            LLD-EPIC-ADM-01 v0.18 §6.6
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
+ * @lld            LLD-EPIC-ADM-01 v0.19 §6.6
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.19.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/apps/ams-apis/src/controllers/permission-matrix.controller.ts
- * @lld-synced     v0.18
+ * @lld-synced     v0.19
  * @status         built
  */
 
@@ -38,7 +38,7 @@ import { SaveChangesDto } from '../dtos/permissions/save-changes.dto';
  *   workflows: AD-03
  *   frd:       FR-043.1, FR-043.2, FR-043.3, FR-043.6
  *   contracts: API-PRM-01, API-PRM-02, API-PRM-03
- *   lld:       LLD-EPIC-ADM-01 v0.18 §6.6
+ *   lld:       LLD-EPIC-ADM-01 v0.19 §6.6
  */
 @Controller('roles/permissions')
 export class PermissionMatrixController {
@@ -57,7 +57,7 @@ export class PermissionMatrixController {
  * @screen    ADM-03
  * @contract  API-PRM-01
  * @ac        AC-US014-01
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.6
  * @status    built
    *
    * @dependencies PermissionMatrixService.getMatrix
@@ -85,7 +85,7 @@ export class PermissionMatrixController {
  * @screen    ADM-03
  * @contract  API-PRM-02
  * @ac        AC-US014-03, AC-US014-05
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.6
  * @status    built
    *
    * @dependencies PermissionMatrixService.review
@@ -114,7 +114,7 @@ export class PermissionMatrixController {
  * @screen    ADM-03
  * @contract  API-PRM-03
  * @ac        AC-US014-03, AC-US014-04, AC-US014-05
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.6
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.6
  * @status    built
    *
    * @dependencies PermissionMatrixService.save

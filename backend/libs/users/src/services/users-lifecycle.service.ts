@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-005, US-ADM01-007
  * @subtask        ST-ADM01-005-BE-02, ST-ADM01-007-BE-02
- * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
+ * @lld            LLD-EPIC-ADM-01 v0.19 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.19.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-lifecycle.service.ts
- * @lld-synced     v0.18
+ * @lld-synced     v0.19
  * @status         built
  */
 
@@ -49,7 +49,7 @@ export type DeactivationReason = 'LEFT_COMPANY' | 'TRANSFERRED' | 'LONG_LEAVE' |
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.4
  *   contracts: API-USR-05, API-USR-06, API-USR-07, API-USR-08
- *   lld:       LLD-EPIC-ADM-01 v0.18 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.19 section 6.1
  */
 @Injectable()
 export class UsersLifecycleService {
@@ -98,7 +98,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-05
  * @ac        AC-US005-01, AC-US005-02
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findByCode, isAdministrator, adminCount, WorkflowPort, DelegationPort, UserWriteRepository.setStatus, SessionRevocationPort, AuditService.recordChange
@@ -139,7 +139,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-06
  * @ac        AC-US007-01
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findByCode, setStatus, AuditService.recordChange
@@ -171,7 +171,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-07
  * @ac        AC-US007-02
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findByCode, OneTimePasswordService.issue, AuditService.recordChange
@@ -200,7 +200,7 @@ export class UsersLifecycleService {
  * @screen    ADM-01
  * @contract  API-USR-08
  * @ac        AC-US007-03
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserRepository.findByCode, OneTimePasswordService.issue, AuditService.recordChange

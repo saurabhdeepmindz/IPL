@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-003, US-ADM01-009
  * @subtask        ST-ADM01-003-BE-03, ST-ADM01-009-IN-01
- * @lld            LLD-EPIC-ADM-01 v0.18 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.18.md
+ * @lld            LLD-EPIC-ADM-01 v0.19 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.19.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/users-command.service.ts
- * @lld-synced     v0.18
+ * @lld-synced     v0.19
  * @status         built
  */
 
@@ -65,7 +65,7 @@ export interface BulkResult {
  *   workflows: AD-03
  *   frd:       FR-042.1, FR-042.3, FR-042.4, FR-042.7, FR-042.2
  *   contracts: API-USR-02, API-USR-04, API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.18 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.19 section 6.1
  */
 @Injectable()
 export class UsersCommandService {
@@ -90,7 +90,7 @@ export class UsersCommandService {
  * @screen    ADM-01
  * @contract  API-USR-02
  * @ac        AC-US003-01, AC-US003-02, AC-US003-05
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserInputValidator.validate, UserRepository.findByCode, findByEmail, UserWriteRepository.create, OneTimePasswordService.issue, AuditService.recordChange
@@ -130,7 +130,7 @@ export class UsersCommandService {
  * @screen    ADM-01
  * @contract  API-USR-04
  * @ac        AC-US003-04, AC-US003-05
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserInputValidator.validate, UserRepository.findByCode, findByEmail, update, AuditService.recordChange
@@ -177,7 +177,7 @@ export class UsersCommandService {
  * @screen    ADM-01
  * @contract  API-USR-09
  * @ac        AC-US009-01
- * @lld       LLD-EPIC-ADM-01 v0.18 §6.1
+ * @lld       LLD-EPIC-ADM-01 v0.19 §6.1
  * @status    built
    *
    * @dependencies UserInputValidator.validate, UserRepository.findByCode, findByEmail, UserWriteRepository.create, OneTimePasswordService.issue, AuditService.recordChange
