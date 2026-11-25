@@ -1,0 +1,14 @@
+date,story,file,lld_version,result
+2026-11-25,US-ADM01-017,libs/core/src/authorization/authorization.module.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/company.guard.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/data-scope.filter.spec.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/data-scope.filter.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/index.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/permission-resolver.service.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/permission.cache.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/permission.guard.spec.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/permission.guard.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/public.decorator.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/require-permission.decorator.ts,v0.5,copied
+2026-11-25,US-ADM01-017,libs/core/src/authorization/session-user.interface.ts,v0.5,copied
+2026-11-25,US-ADM01-017,tests/api/test_permission_refusal.py,v0.5,copied
