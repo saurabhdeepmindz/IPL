@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-009
  * @subtask        ST-ADM01-009-IN-01
- * @lld            LLD-EPIC-ADM-01 v0.19 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.19.md
+ * @lld            LLD-EPIC-ADM-01 v0.20 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/errors/bulk-import-failed.exception.ts
- * @lld-synced     v0.19
+ * @lld-synced     v0.20
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { FieldError, ValidationFailedException } from '@libs/common';
  *   workflows: AD-03
  *   frd:       FR-042.2
  *   contracts: API-USR-01 to API-USR-09
- *   lld:       LLD-EPIC-ADM-01 v0.19 section 6.1
+ *   lld:       LLD-EPIC-ADM-01 v0.20 section 6.1
  */
 export class BulkImportFailedException extends ValidationFailedException {
   constructor(fields: FieldError[] = []) {

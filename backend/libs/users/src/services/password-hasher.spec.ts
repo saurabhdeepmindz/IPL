@@ -11,10 +11,10 @@
  *
  * @story          US-ADM01-007
  * @subtask        ST-ADM01-007-BE-05
- * @lld            LLD-EPIC-ADM-01 v0.19 §6.1
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.19.md
+ * @lld            LLD-EPIC-ADM-01 v0.20 §6.1
+ * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.20.md
  * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/libs/users/src/services/password-hasher.spec.ts
- * @lld-synced     v0.19
+ * @lld-synced     v0.20
  * @status         built
  */
 

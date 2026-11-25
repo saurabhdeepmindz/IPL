@@ -27,6 +27,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: z.url().default('http://localhost:3001'),
     NEXT_PUBLIC_APP_ENV: z.enum(['development', 'staging', 'production']).default('development'),
     NEXT_PUBLIC_API_BASE_URL: z.url().default('http://localhost:3000/api/v1'),
+    NEXT_PUBLIC_DEV_SIGN_IN: z.enum(['true', 'false']).default('false'),
   },
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
@@ -34,6 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    NEXT_PUBLIC_DEV_SIGN_IN: process.env.NEXT_PUBLIC_DEV_SIGN_IN,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
