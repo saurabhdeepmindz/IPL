@@ -19,7 +19,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SsoStatusPage } from '@/features/auth/components/SsoStatusPage';
 import { getPublicConfig } from '@/features/auth/services/auth.service';
@@ -60,6 +60,23 @@ describe('User sees what happened when single sign-on does not work (US-LGN01-00
   });
 
   /** @tc TC-LGN01-007-J04 @story US-LGN01-007 @ac AC-US-LGN01-007-04 @subtask ST-LGN01-007-FE-01 */
+  it('TC-LGN01-007-J05 waiting: the steps tick one after another and the last one keeps turning', () => {
+    vi.useFakeTimers();
+    try {
+      show('waiting');
+      const states = () => screen.getAllByRole('listitem').map((li) => li.getAttribute('data-step-state')).filter(Boolean);
+      expect(states()).toEqual(['current', 'waiting', 'waiting']);
+      act(() => { vi.advanceTimersByTime(800); });
+      expect(states()).toEqual(['done', 'current', 'waiting']);
+      act(() => { vi.advanceTimersByTime(800); });
+      expect(states()).toEqual(['done', 'done', 'current']);
+      act(() => { vi.advanceTimersByTime(5000); });
+      expect(states()).toEqual(['done', 'done', 'current']);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('TC-LGN01-007-J04 waiting: a progress state with a way back; an unknown state is shown as failed', () => {
     const { unmount } = show('waiting');
     expect(screen.getByTestId('sso-status')).toHaveTextContent(/signing you in/i);

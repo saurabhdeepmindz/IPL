@@ -21,6 +21,7 @@
  * @status         built
  */
 
+import { useEffect, useState } from 'react';
 import { hf } from '../hf/hf';
 import { Icon, type IconName } from '../hf/Icon';
 import { usePublicConfig } from '../hooks/usePublicConfig';
@@ -28,6 +29,8 @@ import { ssoStartUrl as startUrl } from '../services/auth.service';
 import { AuthShell } from './AuthShell';
 import { ContactBlock } from './ContactBlock';
 
+/** Time each step stays current before the next one starts (as in the high-fidelity design). */
+const STEP_MS = 800;
 const STEPS = ['Opening the IPL sign-in page', 'Checking your IPL network account', 'Finding your AMS access'];
 
 /**
@@ -39,6 +42,13 @@ const STEPS = ['Opening the IPL sign-in page', 'Checking your IPL network accoun
  */
 export function SsoStatusPage(props: { state: string; reference?: string; who?: string }) {
   const { data } = usePublicConfig();
+  const [current, setCurrent] = useState(0);
+  // In plain words: the steps tick one after another while we wait; the last one keeps turning until the answer arrives (the answer comes as a new address, so this screen never claims to be finished).
+  useEffect(() => {
+    if (props.state !== 'waiting') return undefined;
+    const timer = setInterval(() => setCurrent((c) => Math.min(c + 1, STEPS.length - 1)), STEP_MS);
+    return () => clearInterval(timer);
+  }, [props.state]);
   const state = ['waiting', 'failed', 'noaccount', 'cancelled'].includes(props.state) ? props.state : 'failed';
   const contact = data && state !== 'waiting' ? <ContactBlock helpdesk={data.helpdesk} reference={props.reference} /> : null;
   const big = (cls: string, icon: IconName) => (
@@ -56,8 +66,8 @@ export function SsoStatusPage(props: { state: string; reference?: string; who?: 
             <p className={hf('sub')}>Please wait. Do not close this window.</p>
             <ul className={hf('steps-v')}>
               {STEPS.map((s, i) => (
-                <li key={s} className={i === 0 ? hf('cur') : undefined}>
-                  <span className={hf('d')} />
+                <li key={s} className={i < current ? hf('done') : i === current ? hf('cur') : undefined} data-step-state={i < current ? 'done' : i === current ? 'current' : 'waiting'}>
+                  <span className={hf('d')}>{i < current ? '✓' : null}</span>
                   {s}
                 </li>
               ))}
