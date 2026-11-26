@@ -2,7 +2,7 @@
 
 Built fresh from the front-end technical overview (`ProjectStructure`), the team repository `ipl-frontend-develop` and Standard v0.3 section 9.
 
-Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`). No code is written yet: `/prd` copies the pseudo-code of one story at a time into these folders, and `/dev` elaborates it. Files `package.json`, `tsconfig.json` and the framework configuration come from the foundation sub-tasks (see `docs/subtasks/EPIC-ADM-01/`).
+Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`). No code is written yet: `/prd` copies the pseudo-code of one story at a time into these folders, and `/dev` elaborates it. Files `package.json`, `tsconfig.json` and the framework configuration come from the foundation sub-tasks (see `docs/modules/ADM-A1/subtasks/EPIC-ADM-01/`).
 
 ## Differences from the team's structure document
 | Item in the team repository | Here | Why |

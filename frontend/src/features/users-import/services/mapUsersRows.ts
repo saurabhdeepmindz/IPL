@@ -12,8 +12,8 @@
  * @story          US-ADM01-009
  * @subtask        ST-ADM01-009-IN-04
  * @lld            LLD-EPIC-ADM-01 v0.30 §6.2
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/src/features/users-import/services/mapUsersRows.ts
+ * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users-import/services/mapUsersRows.ts
  * @lld-synced     v0.30
  * @status         built
  */

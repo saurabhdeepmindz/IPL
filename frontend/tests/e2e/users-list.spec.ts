@@ -12,8 +12,8 @@
  * @story          US-ADM01-002
  * @subtask        ST-ADM01-002-FE-03
  * @lld            LLD-EPIC-ADM-01 v0.30 §6.3
- * @lld-file       docs/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/lld/EPIC-ADM-01/pseudo-code/tests/e2e/users-list.spec.ts
+ * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/tests/e2e/users-list.spec.ts
  * @lld-synced     v0.30
  * @status         built
  */
