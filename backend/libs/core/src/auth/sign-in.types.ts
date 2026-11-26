@@ -33,6 +33,8 @@ export interface SignInAttempt {
 }
 
 export interface SessionUserInput {
+  /** True when the user must change a temporary password. */
+  mustChange?: boolean;
   id: string;
   employeeCode: string;
   fullName: string;

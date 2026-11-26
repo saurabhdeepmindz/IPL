@@ -12,7 +12,7 @@ Rules: `docs/standards/CODING-AND-DOCUMENTATION-STANDARD` in the documents proje
 | `npm run build` | Build the API (`npm run build:all` builds every application) |
 | `npm test` | Jest unit and end-to-end tests |
 | `npm run lint` | ESLint and the header check |
-| `docker compose up -d` | PostgreSQL and Redis for local work |
+| `docker compose up -d` | PostgreSQL, Redis and the local mail trap (web page and API on http://localhost:8025, SMTP on 1025) for local work |
 
 Copy `.env.example` to `.env`. Never commit real values.
 

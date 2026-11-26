@@ -168,10 +168,74 @@ def local_user(db):
     yield _make
 
     for user_id, code in made_ids:
-        db.run("DELETE FROM audit_log WHERE entity_key = :c", c=code)
+        db.run("DELETE FROM audit_log WHERE entity_key = :c OR entity_key = :u", c=code, u=user_id)
+        db.run("DELETE FROM password_reset_tokens WHERE user_id = CAST(:u AS uuid)", u=user_id)
+        db.run("DELETE FROM password_history WHERE user_id = CAST(:u AS uuid)", u=user_id)
+        db.run("DELETE FROM one_time_passwords WHERE user_id = CAST(:u AS uuid)", u=user_id)
         db.run("DELETE FROM users WHERE id = CAST(:u AS uuid)", u=user_id)
 
 
 def audit_after(db, code: str) -> list[str]:
     """The `after` text of every sign-in audit row written for an employee code, oldest first."""
     return [r[0] for r in db.run("SELECT after::text FROM audit_log WHERE entity_key = :c ORDER BY created_at", c=code)]
+
+
+# ---- Password and mail helpers (EPIC-LGN-02)
+import base64  # noqa: E402
+import email as email_lib  # noqa: E402
+import hashlib  # noqa: E402
+import re  # noqa: E402
+import secrets  # noqa: E402
+import time  # noqa: E402
+
+TRAP = os.environ.get("MAIL_TRAP_URL", "http://localhost:8025")
+
+
+def user_email(db, code: str) -> str:
+    """The e-mail address of a user."""
+    return str(db.run("SELECT email FROM users WHERE employee_code = :c", c=code)[0][0])
+
+
+def make_reset_token(db, user_id: str, age_minutes: int = 0) -> str:
+    """Put a reset link of the user straight into the database (as the request would) and return the token."""
+    token = secrets.token_urlsafe(32)
+    db.run(
+        "INSERT INTO password_reset_tokens (id, user_id, token_hash, issued_at) VALUES (gen_random_uuid(), CAST(:u AS uuid), :h, now() - make_interval(mins => :m))",
+        u=user_id, h=hashlib.sha256(token.encode()).hexdigest(), m=age_minutes,
+    )
+    return token
+
+
+def trap_messages(to: str) -> list[dict]:
+    """Every message the local mail trap holds for an address, newest first."""
+    res = requests.get(f"{TRAP}/api/v2/search", params={"kind": "to", "query": to, "limit": 50}, timeout=5)
+    assert res.status_code == 200, "The mail trap is not running: docker compose up -d mailtrap"
+    return res.json()["items"]
+
+
+def message_text(item: dict) -> str:
+    """The plain text part of a trap message, decoded."""
+    msg = email_lib.message_from_string(item["Raw"]["Data"])
+    for part in msg.walk():
+        if part.get_content_type() == "text/plain":
+            return part.get_payload(decode=True).decode("utf-8")
+    return ""
+
+
+def wait_for_mail(to: str, subject_part: str, timeout: float = 25.0) -> dict:
+    """Wait until the worker has sent a message with the subject to the address; fail with a clear message when it does not come."""
+    end = time.time() + timeout
+    while time.time() < end:
+        for item in trap_messages(to):
+            subject = item["Content"]["Headers"].get("Subject", [""])[0]
+            if subject_part in subject:
+                return item
+        time.sleep(0.5)
+    raise AssertionError(f"No mail with '{subject_part}' reached {to} in {timeout} s. Is the mail worker running (node dist/apps/background-worker/...)?")
+
+
+def link_token(item: dict) -> str:
+    """The reset token inside the link of a reset mail."""
+    found = re.search(r"token=([A-Za-z0-9_-]+)", message_text(item))
+    assert found, "no reset link in the mail"
+    return found.group(1)

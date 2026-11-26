@@ -22,4 +22,6 @@ export interface AccessClaims {
   dept: string | null;
   /** Session id: set on tokens made by the Auth API (US-LGN01-003); absent on development tokens. */
   sid?: string;
+  /** True while the user must change a temporary password (such a token opens only API-PWD-04). */
+  mcp?: boolean;
 }

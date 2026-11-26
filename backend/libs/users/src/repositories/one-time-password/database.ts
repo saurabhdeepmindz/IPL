@@ -67,6 +67,8 @@ export class OneTimePasswordDatabaseRepository extends OneTimePasswordRepository
     await this.prisma.db.$transaction(async (tx) => {
       await tx.oneTimePassword.updateMany({ where: { userId, usedAt: null }, data: { usedAt: new Date() } });
       await tx.oneTimePassword.create({ data: { userId, hash } });
+      // The one-time password is also the password the user signs in with until it is changed (found while building EPIC-LGN-02).
+      await tx.user.update({ where: { id: userId }, data: { passwordHash: hash } });
     });
   }
 

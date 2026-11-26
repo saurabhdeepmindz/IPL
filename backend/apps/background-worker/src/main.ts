@@ -16,16 +16,19 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { BackgroundWorkerModule } from './module';
+import { MailProcessor } from './processors/mail.processor';
 
 /**
  * Starts the application context (no web server yet).
  *
- * In plain words: this application has nothing to do until a later epic gives it work.
+ * In plain words: starts the mail worker, which sends the e-mails that the other applications queue.
  *
  * @async
  */
 async function bootstrap(): Promise<void> {
-  await NestFactory.createApplicationContext(BackgroundWorkerModule);
+  const app = await NestFactory.createApplicationContext(BackgroundWorkerModule);
+  app.enableShutdownHooks();
+  app.get(MailProcessor).start();
 }
 
 void bootstrap();

@@ -116,7 +116,7 @@ export class LocalSignInService {
     }
     await this.writes.clearFailures(user.id);
     await this.writes.setSignInTimes(user.id, now);
-    const session = await this.sessions.create({ id: user.id, employeeCode: user.employeeCode, fullName: user.fullName, departmentId: user.departmentId });
+    const session = await this.sessions.create({ id: user.id, employeeCode: user.employeeCode, fullName: user.fullName, departmentId: user.departmentId, mustChange: user.mustChangePassword });
     await this.audit.record({ kind: 'LOCAL', employeeCode: code, result: 'SUCCESS', address, userId: user.id });
     return { ...session, nextStep: user.mustChangePassword ? 'CHANGE_PASSWORD' : 'CHOOSE_WORK', user: { employeeCode: user.employeeCode, name: user.fullName } };
   }

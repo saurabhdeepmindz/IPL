@@ -89,7 +89,7 @@ export class SessionService {
     await this.redis.setJson('refresh:' + refresh.hash, { sid, used: false } satisfies RefreshRecord, REFRESH_SECONDS);
     const known = (await this.redis.getJson<string[]>('usersessions:' + user.id)) ?? [];
     await this.redis.setJson('usersessions:' + user.id, [...known.slice(-9), sid], REFRESH_SECONDS);
-    const access = await this.tokens.issueAccess({ sub: user.id, emp: user.employeeCode, company: '', dept: user.departmentId, sid });
+    const access = await this.tokens.issueAccess({ sub: user.id, emp: user.employeeCode, company: '', dept: user.departmentId, sid, ...(user.mustChange ? { mcp: true } : {}) });
     return { accessToken: access.accessToken, refreshToken: refresh.token, refreshSeconds: REFRESH_SECONDS, expiresIn: access.expiresIn };
   }
 
@@ -112,6 +112,38 @@ export class SessionService {
    * @returns Promise<{ accessToken: string; refreshToken: string; expiresIn: number }>
    * @throws SessionEndedException
    */
+  /**
+   * Ends one session.
+   *
+   * In plain words: removes the session and its refresh token, so the refresh call fails from now on.
+   *
+   * @epic      EPIC-LGN-02
+   * @story     US-LGN02-004
+   * @subtask   ST-LGN02-004-BE-02
+   * @status    built
+   */
+  async end(sid: string): Promise<void> {
+    const session = await this.redis.getJson<SessionRecord>('session:' + sid);
+    await this.redis.deleteKey('session:' + sid);
+    if (session) await this.redis.deleteKey('refresh:' + session.refreshHash);
+  }
+
+  /**
+   * Ends every session of a user.
+   *
+   * In plain words: after a password reset the user signs in again everywhere.
+   *
+   * @epic      EPIC-LGN-02
+   * @story     US-LGN02-002
+   * @subtask   ST-LGN02-002-BE-02
+   * @status    built
+   */
+  async endAll(userId: string): Promise<void> {
+    const known = (await this.redis.getJson<string[]>('usersessions:' + userId)) ?? [];
+    for (const sid of known) await this.end(sid);
+    await this.redis.deleteKey('usersessions:' + userId);
+  }
+
   async renew(refreshToken: string | undefined): Promise<{ accessToken: string; refreshToken: string; expiresIn: number }> {
     if (!refreshToken) throw new SessionEndedException();
     const hash = this.tokens.hash(refreshToken);

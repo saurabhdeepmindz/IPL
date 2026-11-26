@@ -24,6 +24,7 @@ import { DbTransaction, UserCompanyRoleRepository } from '@libs/organisation';
 import { NewUser, UserAssignment, UserRecord } from '../user';
 import { startOfToday, toUserRecord, userInclude } from '../user/user-helpers';
 import { UserWriteRepository } from './contract';
+import { UserPasswordWrites } from './password.contract';
 
 /**
  * Prisma user write repository.
@@ -39,7 +40,7 @@ import { UserWriteRepository } from './contract';
  *   lld:       LLD-EPIC-ADM-01 v0.29 section 6.1
  */
 @Injectable()
-export class UserWriteDatabaseRepository extends UserWriteRepository {
+export class UserWriteDatabaseRepository extends UserWriteRepository implements UserPasswordWrites {
   constructor(
     private readonly prisma: PrismaService,
     private readonly roles: UserCompanyRoleRepository,
@@ -178,6 +179,17 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
   async clearFailures(userId: string): Promise<void> {
     await this.prisma.db.user.update({ where: { id: userId }, data: { failedAttempts: 0, lockedUntil: null } });
     await this.prisma.db.user.updateMany({ where: { id: userId, status: 'LOCKED' }, data: { status: 'ACTIVE' } });
+  }
+
+  /** Saves the hash, clears the "must change" flag, the failed attempts and the lock (EPIC-LGN-02). */
+  async setPasswordHash(userId: string, hash: string, _hashType: string): Promise<void> {
+    await this.prisma.db.user.update({ where: { id: userId }, data: { passwordHash: hash, mustChangePassword: false } });
+    await this.clearFailures(userId);
+  }
+
+  /** Marks the unused one-time passwords of the user as used (EPIC-LGN-02). */
+  async markOneTimePasswordUsed(userId: string): Promise<void> {
+    await this.prisma.db.oneTimePassword.updateMany({ where: { userId, usedAt: null }, data: { usedAt: new Date() } });
   }
 
   /** Sets the last sign-in time, and the first sign-in time when it is still empty. */

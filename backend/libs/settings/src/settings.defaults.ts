@@ -28,5 +28,12 @@ export const SETTING_DEFAULTS = {
   'signin.limitPerAddress': '10',
   'signin.limitPerCode': '5',
   'signin.windowSeconds': '60',
+  'password.minLength': '8',
+  'password.historyCount': '3',
+  'password.resetMinutes': '30',
+  'password.resetGapSeconds': '60',
+  'password.resetLimitPerCode': '3',
+  'password.resetLimitPerAddress': '10',
+  'password.resetWindowSeconds': '900',
   'landing.order': 'ADMINISTRATOR,FINANCE,INITIATOR,PROCESSOR,AUDITOR,REPORT_VIEWER',
 } as const;

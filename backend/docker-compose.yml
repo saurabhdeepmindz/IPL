@@ -14,5 +14,11 @@ services:
     image: redis:7
     ports:
       - '${REDIS_PORT:-6379}:6379'
+  # Local mail trap (EPIC-LGN-02, ST-LGN02-000-BE-02): catches every e-mail the application sends. Web page and API on 8025, SMTP on 1025. Development, test and UAT only.
+  mailtrap:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - '${MAIL_TRAP_SMTP_PORT:-1025}:1025'
+      - '${MAIL_TRAP_WEB_PORT:-8025}:8025'
 volumes:
   pgdata:

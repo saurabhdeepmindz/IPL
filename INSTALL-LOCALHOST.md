@@ -43,7 +43,7 @@ cd IPL
 
 ```
 cd backend
-docker compose up -d
+docker compose up -d   # also starts a local mail trap: every e-mail the application sends can be read at http://localhost:8025
 ```
 
 3. Check: `docker ps` lists two containers, one with `postgres` and one with `redis`, both "Up".

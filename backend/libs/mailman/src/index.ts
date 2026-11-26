@@ -13,4 +13,8 @@
  * @subtask ST-ADM01-000-BE-01
  */
 
-export * from './module';
+export * from './mail.types';
+export * from './mail-transport';
+export * from './mailman.service';
+export * from './mailman.module';
+export * from './repositories/mail-log/contract';

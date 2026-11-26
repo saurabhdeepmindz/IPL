@@ -128,12 +128,14 @@ model User {
   createdAt          DateTime   @default(now()) @map("created_at")
   updatedAt          DateTime   @updatedAt @map("updated_at")
 
-  department       Department?       @relation(fields: [departmentId], references: [id])
-  designation      Designation?      @relation(fields: [designationId], references: [id])
-  reportingManager User?             @relation("ReportsTo", fields: [reportingManagerId], references: [id])
-  reports          User[]            @relation("ReportsTo")
+  department       Department?          @relation(fields: [departmentId], references: [id])
+  designation      Designation?         @relation(fields: [designationId], references: [id])
+  reportingManager User?                @relation("ReportsTo", fields: [reportingManagerId], references: [id])
+  reports          User[]               @relation("ReportsTo")
   companyRoles     UserCompanyRole[]
   oneTimePasswords OneTimePassword[]
+  resetTokens      PasswordResetToken[]
+  passwordHistory  PasswordHistory[]
 
   @@index([status])
   @@map("users")
@@ -158,6 +160,75 @@ model OneTimePassword {
 
   @@index([userId, issuedAt])
   @@map("one_time_passwords")
+}
+
+// ===== Module: Login, passwords and e-mail (EPIC-LGN-02) =====
+
+/// One link to reset a forgotten password. Only the hash of the token is kept.
+/// @epic EPIC-LGN-02
+/// @story US-LGN02-000
+model PasswordResetToken {
+  /// Internal key
+  id         String    @id @default(uuid()) @db.Uuid
+  /// The user the link was made for
+  userId     String    @map("user_id") @db.Uuid
+  /// SHA-256 of the token (the token itself is never stored)
+  tokenHash  String    @unique @map("token_hash") @db.VarChar(64)
+  /// When the link was made (it lives 30 minutes)
+  issuedAt   DateTime  @default(now()) @map("issued_at")
+  /// When the link was used; empty while unused
+  usedAt     DateTime? @map("used_at")
+  /// When a newer link replaced this one; empty while it is the newest
+  replacedAt DateTime? @map("replaced_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, issuedAt])
+  @@map("password_reset_tokens")
+}
+
+/// The hashes of the last passwords of a user (the last 3 are kept), to refuse a reused password.
+/// @epic EPIC-LGN-02
+/// @story US-LGN02-000
+model PasswordHistory {
+  /// Internal key
+  id       String   @id @default(uuid()) @db.Uuid
+  /// The user
+  userId   String   @map("user_id") @db.Uuid
+  /// Hash of the password
+  hash     String   @db.VarChar(255)
+  /// Hash method, so an older hash can still be checked
+  hashType String   @default("bcrypt") @map("hash_type") @db.VarChar(20)
+  /// When the password was set
+  setAt    DateTime @default(now()) @map("set_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, setAt])
+  @@map("password_history")
+}
+
+/// A record of each e-mail sent (no body, no link): who, which message, the result.
+/// @epic EPIC-LGN-02
+/// @story US-LGN02-000
+model MailLog {
+  /// Internal key
+  id          String    @id @default(uuid()) @db.Uuid
+  /// Name of the message, for example reset-link
+  messageName String    @map("message_name") @db.VarChar(60)
+  /// The address the message went to
+  recipient   String    @db.VarChar(254)
+  /// QUEUED, SENT or FAILED
+  result      String    @db.VarChar(10)
+  /// How many tries were made
+  attempts    Int       @default(0)
+  /// When it was sent; empty until it is
+  sentAt      DateTime? @map("sent_at")
+  /// When the record was made
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([recipient, createdAt])
+  @@map("mail_log")
 }
 
 // ===== Module: Roles and permissions =====

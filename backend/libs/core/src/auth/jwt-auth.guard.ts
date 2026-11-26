@@ -18,7 +18,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
-import { UnauthenticatedAppException } from '@libs/common';
+import { ForbiddenAppException, UnauthenticatedAppException } from '@libs/common';
 import { CompanyContext } from '@libs/database';
 import { SessionUserFactory } from './session-user.factory';
 import { AccessClaims } from './session-user.shape';
@@ -69,11 +69,13 @@ export class JwtAuthGuard implements CanActivate {
     }
     try {
       const claims = await this.jwt.verifyAsync<AccessClaims>(token);
+      if (claims.mcp) throw new ForbiddenAppException('MUST_CHANGE_PASSWORD', 'Change your temporary password first');
       if (!claims.company) throw new Error('not an access token');
       req.user = this.factory.fromClaims(claims);
       CompanyContext.enter(req.user.companyCode);
       return true;
-    } catch {
+    } catch (e) {
+      if (e instanceof ForbiddenAppException) throw e;
       if (open) return true;
       throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Your session is not valid. Sign in again');
     }

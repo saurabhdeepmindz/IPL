@@ -14,6 +14,8 @@
  */
 
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { QueueService } from './queue.service';
 
 /**
  * Nest module of the queues library.
@@ -28,5 +30,5 @@ import { Module } from '@nestjs/common';
  *   contracts: none
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
-@Module({})
+@Module({ imports: [ConfigModule], providers: [QueueService], exports: [QueueService] })
 export class QueuesModule {}

@@ -24,11 +24,13 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { configurations } from '@config';
 import { validateEnv } from '@config/env.validation';
 import { AllFieldsValidationPipe, GlobalExceptionFilter } from '@libs/common';
-import { SignInModule } from '@libs/core';
+import { AuthCoreModule, SignInModule } from '@libs/core';
 import { DatabaseModule } from '@libs/database';
 import { SettingsModule } from '@libs/settings';
 import { AuthController } from './controllers/auth.controller';
 import { HealthController } from './controllers/health.controller';
+import { PasswordController } from './controllers/password.controller';
+import { PendingPasswordGuard } from './guards/pending-password.guard';
 import { PublicConfigTransformer } from './transformer/public-config.transformer';
 import { SignInResponseTransformer } from './transformer/sign-in-response.transformer';
 
@@ -38,10 +40,11 @@ import { SignInResponseTransformer } from './transformer/sign-in-response.transf
  * In plain words: joins the routes and the sign-in services of the Auth API. Later epics add PasswordController (EPIC-LGN-02) and SessionController (EPIC-LGN-04).
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, SignInModule, SettingsModule],
-  controllers: [AuthController, HealthController],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthCoreModule, SignInModule, SettingsModule],
+  controllers: [AuthController, PasswordController, HealthController],
   providers: [
     PublicConfigTransformer,
+    PendingPasswordGuard,
     SignInResponseTransformer,
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_PIPE, useClass: AllFieldsValidationPipe },

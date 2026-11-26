@@ -20,3 +20,4 @@
 
 export * from './contract';
 export * from './database';
+export * from './password.contract';
