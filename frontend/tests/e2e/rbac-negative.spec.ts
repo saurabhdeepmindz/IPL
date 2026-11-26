@@ -46,7 +46,7 @@ const SCREENS: Screen[] = [
   { name: 'user details', permission: 'users.view', open: async (p) => { await pushTo(p, '/users/10001'); }, heading: (p) => p.getByTestId('user-detail').filter({ visible: true }), denied: 'You do not have access to user details.' },
   { name: 'Role Management', permission: 'roles.view', open: async (p) => { await p.getByRole('link', { name: 'Role Management' }).click(); }, heading: (p) => p.getByRole('heading', { name: 'Role Management' }), denied: 'You do not have access to Role Management.' },
   { name: 'role details', permission: 'roles.view', open: async (p, c) => { await pushTo(p, `/roles/${c.initiatorRoleId}`); }, heading: (p) => p.getByTestId('roles-detail').filter({ visible: true }), denied: 'You do not have access to role details.' },
-  { name: 'Permission Management', permission: 'roles.view', open: async (p) => { await p.getByRole('link', { name: 'Permission Management' }).click(); }, heading: (p) => p.getByRole('heading', { name: 'Permission Management' }), denied: 'You do not have access to Permission Management.' },
+  { name: 'Permission Management', permission: 'roles.view', open: async (p) => { await p.getByTestId('layout-menu').getByRole('link', { name: 'Permission Management' }).click(); }, heading: (p) => p.getByRole('heading', { name: 'Permission Management' }), denied: 'You do not have access to Permission Management.' },
 ];
 
 const results: { role: string; screen: string; permission: string; expected: 'opens' | 'no-access'; passed: boolean }[] = [];

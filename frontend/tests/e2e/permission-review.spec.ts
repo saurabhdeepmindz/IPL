@@ -59,7 +59,7 @@ async function give(request: APIRequestContext, roleId: string, key: string, sco
 }
 
 async function openMatrix(page: Page) {
-  await page.getByRole('link', { name: 'Permission Management' }).click();
+  await page.getByTestId('layout-menu').getByRole('link', { name: 'Permission Management' }).click();
   await expect(page.getByTestId('permission-matrix')).toBeVisible();
 }
 

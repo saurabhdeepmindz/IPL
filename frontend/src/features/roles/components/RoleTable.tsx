@@ -1,105 +1,202 @@
+'use client';
+
 /**
  * @file    RoleTable.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * The role table. In plain words: one row per role with name and description, what it allows, type, users, last changed and status; the actions edit, users and deactivate.
+ * Role table. In plain words: the table of the design with role icon, summary, badges and actions.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
  * @story          US-ADM01-012
  * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleTable.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #list
  * @status         built
  */
+
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { StatusBadge } from '@/components/ams';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { formatDay } from '@/lib/utils';
 import type { Role } from '../types/role.types';
 
-/** Props of RoleTable. */
 interface RoleTableProps {
-  /** The roles to show */
   roles: Role[];
-  /** Called when Deactivate is chosen */
   onDeactivate: (role: Role) => void;
+  /** Current order as `field:asc|desc` (client side: the list is short). */
+  sort?: string;
+  onSort?: (field: string) => void;
 }
 
-/** The Administrator role is locked by the server; the screen only shows it. */
 const isLocked = (r: Role): boolean => r.type === 'STANDARD' && r.name === 'Administrator';
+const STATUS_BADGE = { ACTIVE: ['b-success', 'Active'], DRAFT: ['b-warning', 'Draft'], INACTIVE: ['b-neutral', 'Inactive'] } as const;
+const cut = (text: string, n = 60): string => (text.length > n ? `${text.slice(0, n)}…` : text);
+
+/** The "more actions" menu of a role row (view, edit, assign, deactivate); the Administrator role shows a locked line. */
+function RoleRowMenu({ role, onDeactivate }: { role: Role; onDeactivate: (role: Role) => void }) {
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: MouseEvent) => {
+      if (!wrap.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', away);
+    return () => document.removeEventListener('mousedown', away);
+  }, [open]);
+  return (
+    <div ref={wrap} className={hf('menu-wrap')} style={{ display: 'inline-block' }}>
+      <button type="button" className={hf('btn btn-text icon sm')} aria-haspopup="menu" aria-expanded={open} aria-label={`More actions for ${role.name}`} onClick={() => setOpen(!open)}>
+        <HfIcon name="more" size="sm" />
+      </button>
+      {open && (
+        <div role="menu" className={hf('menu', 'open')}>
+          <Link role="menuitem" href={`/roles/${role.roleId}`}>
+            <HfIcon name="eye" size="sm" />
+            View details
+          </Link>
+          {!isLocked(role) && (
+            <Link role="menuitem" href={`/roles/${role.roleId}/edit`}>
+              <HfIcon name="edit" size="sm" />
+              Edit role
+            </Link>
+          )}
+          <Link role="menuitem" href={`/roles/${role.roleId}`}>
+            <HfIcon name="users" size="sm" />
+            Assign users
+          </Link>
+          <hr />
+          {isLocked(role) ? (
+            <button type="button" role="menuitem" disabled style={{ opacity: 0.5 }}>
+              <HfIcon name="lock" size="sm" />
+              System role · locked
+            </button>
+          ) : (
+            role.status !== 'INACTIVE' && (
+              <button
+                type="button"
+                role="menuitem"
+                className={hf('danger')}
+                aria-label={`Deactivate ${role.name}`}
+                onClick={() => {
+                  setOpen(false);
+                  onDeactivate(role);
+                }}
+              >
+                <HfIcon name="ban" size="sm" />
+                Deactivate role
+              </button>
+            )
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 /**
- * Role table. In plain words: one row per role with name and description, type, users, last changed and status; the Administrator role shows a lock and no edit or deactivate.
+ * RoleTable.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-012
- * @subtask   ST-ADM01-012-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-ROL-01
- * @ac        AC-US012-01, AC-US012-04, AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.30 §6.5
- * @status    built
- *
- * @dependencies StatusBadge
- *
- * @returns The rendered table
+ * In plain words: the role table of the high-fidelity design (HF-ADM-02): role icon and name with its description cut at 60 characters, what it allows, type, users, last changed, status, and the edit, assign and more-actions icons.
  */
-export function RoleTable({ roles, onDeactivate }: RoleTableProps) {
+export function RoleTable({ roles, onDeactivate, sort = '', onSort }: RoleTableProps) {
+  const [by, dir] = sort.split(':');
+  const head = (label: string, field?: string, num = false) => {
+    const here = field === by;
+    return (
+      <th
+        scope="col"
+        className={[field && hf('sortable'), num && hf('num')].filter(Boolean).join(' ') || undefined}
+        aria-sort={field ? (here ? (dir === 'desc' ? 'descending' : 'ascending') : 'none') : undefined}
+        tabIndex={field ? 0 : undefined}
+        onClick={field ? () => onSort?.(field) : undefined}
+        onKeyDown={field ? (e) => (e.key === 'Enter' || e.key === ' ') && onSort?.(field) : undefined}
+      >
+        {label}
+        {field && (
+          <span className={hf('sort')}>
+            <HfIcon name={here ? (dir === 'desc' ? 'sortD' : 'sortU') : 'sort'} size="sm" />
+          </span>
+        )}
+      </th>
+    );
+  };
   return (
-    <table className="table align-middle" data-testid="roles-table">
-      <thead>
-        <tr>
-          <th scope="col">Role</th>
-          <th scope="col">Type</th>
-          <th scope="col">Users</th>
-          <th scope="col">Last changed</th>
-          <th scope="col">Status</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {roles.map((r) => (
-          <tr key={r.roleId}>
-            <td>
-              <Link href={`/roles/${r.roleId}`} className="fw-semibold">
-                {r.name}
-              </Link>
-              <div className="small text-body-secondary">{r.description}</div>
-            </td>
-            <td>{r.type === 'STANDARD' ? 'Standard' : 'Custom'}</td>
-            <td>
-              <Link href={`/roles/${r.roleId}`}>{r.userCount}</Link>
-            </td>
-            <td>{formatDay(r.lastChanged)}</td>
-            <td>
-              <StatusBadge status={r.status} />
-            </td>
-            <td>
-              {isLocked(r) ? (
-                <span data-testid={`role-locked-${r.roleId}`}>Locked (system role)</span>
-              ) : (
-                <>
-                  <Link href={`/roles/${r.roleId}/edit`} aria-label={`Edit ${r.name}`} className="me-3">
-                    Edit
-                  </Link>
-                  {r.status !== 'INACTIVE' && (
-                    <button type="button" className="btn btn-link p-0 text-danger" aria-label={`Deactivate ${r.name}`} onClick={() => onDeactivate(r)}>
-                      Deactivate
-                    </button>
-                  )}
-                </>
-              )}
-            </td>
+    <div className={hf('table-wrap')}>
+      <table className={hf('tbl')} data-testid="roles-table">
+        <thead>
+          <tr>
+            {head('Role', 'name')}
+            {head('What it allows')}
+            {head('Type', 'type')}
+            {head('Users', 'users', true)}
+            {head('Last changed', 'changed')}
+            {head('Status', 'status')}
+            <th scope="col" className={hf('act')}>
+              <span className={hf('sr-only')}>Actions</span>
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {roles.map((r) => {
+            const [cls, word] = STATUS_BADGE[r.status];
+            const locked = isLocked(r);
+            return (
+              <tr key={r.roleId}>
+                <td>
+                  <div className={hf('role-name')}>
+                    <span className={hf('role-ico', locked && 'sys')}>
+                      <HfIcon name={locked ? 'lock' : 'shield'} size="sm" />
+                    </span>
+                    <span>
+                      <Link href={`/roles/${r.roleId}`} style={{ fontWeight: 600 }}>
+                        {r.name}
+                      </Link>
+                      <small>{cut(r.description)}</small>
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <small style={{ color: 'var(--neutral-800)', maxWidth: 420 }}>{r.allowsSummary?.join(' · ') ?? ''}</small>
+                </td>
+                <td>
+                  <span className={hf('badge plain', r.type === 'STANDARD' ? 'b-neutral' : 'b-primary')}>{r.type === 'STANDARD' ? 'Standard' : 'Custom'}</span>
+                </td>
+                <td className={hf('num')}>
+                  <Link href={`/roles/${r.roleId}`}>{r.userCount}</Link>
+                </td>
+                <td>{formatDay(r.lastChanged)}</td>
+                <td>
+                  <span className={hf('badge', cls)}>{word}</span>
+                </td>
+                <td className={hf('act')}>
+                  <div className={hf('row-actions')}>
+                    {locked ? (
+                      <span data-testid={`role-locked-${r.roleId}`} className={hf('sr-only')}>
+                        Locked (system role)
+                      </span>
+                    ) : (
+                      <Link className={hf('btn btn-text icon sm')} href={`/roles/${r.roleId}/edit`} aria-label={`Edit ${r.name}`} title="Edit">
+                        <HfIcon name="edit" size="sm" />
+                      </Link>
+                    )}
+                    <Link className={hf('btn btn-text icon sm')} href={`/roles/${r.roleId}`} aria-label={`Assign users to ${r.name}`} title="Assign users">
+                      <HfIcon name="users" size="sm" />
+                    </Link>
+                    <RoleRowMenu role={r} onDeactivate={onDeactivate} />
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }

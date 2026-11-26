@@ -26,6 +26,8 @@ export interface Role {
   userCount: number;
   lastChanged: string;
   status: 'ACTIVE' | 'DRAFT' | 'INACTIVE';
+  /** Plain-words summary of what the role allows (decision UX-ACC-04: the list API gives it once agreed; empty until then). */
+  allowsSummary?: string[];
 }
 
 /** Data scope of a permission cell (the back end knows these three). */

@@ -73,7 +73,9 @@ test.describe('Roles journeys (story 012)', () => {
     await signIn(page);
     await shot(page, 'E01', 'list');
     const all = await roleNames(request, token);
-    await expect(page.getByRole('row')).toHaveCount(all.length + 1);
+    // The list pages its rows (10 a page, as in the design); the pager states the total.
+    await expect(page.getByRole('row')).toHaveCount(Math.min(all.length, 10) + 1);
+    await expect(page.locator('.hf-pager .hf-size')).toContainText(`of ${all.length} roles`);
     await expect(page.getByRole('row', { name: /Administrator/ })).toContainText('Standard');
     await page.getByLabel('Type').selectOption('CUSTOM');
     await expect(page.getByRole('row').filter({ hasText: 'Standard' })).toHaveCount(0);
@@ -161,7 +163,8 @@ test.describe('Roles journeys (story 012)', () => {
     await request.post(`${API}/roles/${roleId}/users`, { headers: { Authorization: `Bearer ${token}` }, data: { employeeCodes: ['10001'], companyCode: 'IPL', validFrom: '2026-01-01', reason: 'Set-up of the journey' } });
     await signIn(page);
     await page.getByLabel('Search roles').fill(name);
-    await page.getByRole('button', { name: `Deactivate ${name}` }).click();
+    await page.getByRole('button', { name: `More actions for ${name}` }).click();
+    await page.getByRole('menuitem', { name: `Deactivate ${name}` }).click();
     await page.getByRole('textbox', { name: /^Reason/ }).fill('Try to deactivate');
     await page.getByTestId('reason-confirm').click();
     await expect(page.getByText(/1 user holds this role/)).toBeVisible();
@@ -199,10 +202,11 @@ test.describe('Roles journeys (story 012)', () => {
    */
   test('E07 shows the final-approver note and no position-based roles', async ({ page, request }) => {
     await signIn(page);
-    await expect(page.getByTestId('roles-final-approver-note')).toContainText('A final approver is not a role');
+    await expect(page.getByTestId('roles-final-approver-note')).toContainText('Final approver (terminator) is not a role');
     const names = await roleNames(request, token);
-    for (const n of names) await expect(page.getByRole('row', { name: new RegExp(n) }).first()).toBeVisible();
-    await expect(page.getByRole('row')).toHaveCount(names.length + 1);
+    // The first page holds the first 10 roles the API returns (10 a page, as in the design).
+    for (const n of names.slice(0, 10)) await expect(page.getByRole('row', { name: new RegExp(n) }).first()).toBeVisible();
+    await expect(page.getByRole('row')).toHaveCount(Math.min(names.length, 10) + 1);
     await shot(page, 'E07', 'note');
   });
 });

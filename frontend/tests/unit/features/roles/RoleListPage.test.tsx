@@ -49,11 +49,11 @@ describe('RoleListPage (J01, J07)', () => {
     expect(within(row).getByText('28-Oct-2026')).toBeInTheDocument();
     expect(within(row).getByText('Active')).toBeInTheDocument();
     expect(screen.getByRole('row', { name: /Plant Head/ })).toHaveTextContent('Draft');
-    await userEvent.selectOptions(screen.getByLabelText('Type'), 'CUSTOM');
+    await userEvent.selectOptions(screen.getByLabelText('Role type'), 'CUSTOM');
     await waitFor(() => expect(listRoles).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'CUSTOM' })));
     await waitFor(() => expect(screen.queryByRole('row', { name: /Initiator/ })).not.toBeInTheDocument());
     expect(screen.getByRole('row', { name: /Plant Head/ })).toBeInTheDocument();
-    await userEvent.selectOptions(screen.getByLabelText('Type'), '');
+    await userEvent.selectOptions(screen.getByLabelText('Role type'), '');
     await userEvent.selectOptions(screen.getByLabelText('Status'), 'ACTIVE');
     await waitFor(() => expect(listRoles).toHaveBeenLastCalledWith(expect.objectContaining({ status: 'ACTIVE' })));
     await waitFor(() => expect(screen.queryByRole('row', { name: /Plant Head/ })).not.toBeInTheDocument());
@@ -68,7 +68,7 @@ describe('RoleListPage (J01, J07)', () => {
    */
   it('J07 shows the final-approver note', async () => {
     renderWithQuery(<RoleListPage />);
-    expect(await screen.findByTestId('roles-final-approver-note')).toHaveTextContent('A final approver is not a role');
+    expect(await screen.findByTestId('roles-final-approver-note')).toHaveTextContent('Final approver (terminator) is not a role');
     expect(screen.getByRole('link', { name: 'Create role' })).toHaveAttribute('href', '/roles/new');
     expect(listRoles).toHaveBeenCalledWith({});
   });

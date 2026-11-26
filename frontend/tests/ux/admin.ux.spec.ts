@@ -87,12 +87,45 @@ async function mockUsersApi(page: Page, context: BrowserContext) {
 //  - the Company filter's closed text: the HF shows "All companies", the application keeps the honest "Current company" (decision UX-ACC-01)
 const MASK_SHELL = ['.bell,.hf-bell'];
 
+/** Reads the demo roles from the HF role page and mocks the role list API with them. */
+async function mockRolesApi(page: Page, context: BrowserContext) {
+  await signedIn(page, context);
+  const browser = context.browser()!;
+  const c = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`file:///${HF_ROOT.replace(/\\/g, '/')}/02-Admin/HF-ADM-02-role-management.html`);
+  await p.waitForTimeout(600);
+  const hfRoles = await p.evaluate(() => {
+    const t = (e: Element | null | undefined) => (e?.textContent ?? '').trim();
+    return [...document.querySelectorAll('#rBody tr')].map((tr) => {
+      const td = tr.querySelectorAll('td');
+      return { name: t(td[0].querySelector('a')), description: t(td[0].querySelector('small')), allows: t(td[1]), type: t(td[2]), users: +t(td[3]), changed: t(td[4]), status: t(td[5]) };
+    });
+  });
+  await c.close();
+  const items = hfRoles.map((r, i) => {
+    const m = r.changed.match(/^(\d\d)-(\w{3})-(\d{4})$/)!;
+    return {
+      roleId: `r${i}`, name: r.name, description: r.description, type: r.type.toUpperCase(), userCount: r.users, lastChanged: new Date(+m[3], MONTHS[m[2]], +m[1], 12, 0).toISOString(), status: r.status.toUpperCase(),
+      allowsSummary: r.allows.split(/\s*·\s*/).map((x) => x.trim()).filter(Boolean),
+    };
+  });
+  await page.route(/\/api\/v1\/roles(\?.*)?$/, (r) => r.fulfill(json({ data: { items } })));
+  await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }, { code: '2000', name: 'IPL Subsidiary' }], canViewAll: false } })));
+}
+
 const SCREENS: UxScreen[] = [
   {
     id: 'UX-ADM-01-user-list',
     hf: { file: '02-Admin/HF-ADM-01-user-management.html' },
     app: { url: '/users', prepare: mockUsersApi, steps: (p) => p.getByTestId('users-table').waitFor() },
     mask: [...MASK_SHELL, '#fCo,[aria-label="Company"]'],
+  },
+  {
+    id: 'UX-ADM-02-role-list',
+    hf: { file: '02-Admin/HF-ADM-02-role-management.html' },
+    app: { url: '/roles', prepare: mockRolesApi, steps: (p) => p.getByTestId('roles-table').waitFor() },
+    mask: MASK_SHELL,
   },
 ];
 

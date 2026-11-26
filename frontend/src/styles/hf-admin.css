@@ -605,3 +605,75 @@
 .hf-admin .hf-hbars .hf-r{grid-template-columns:90px minmax(0,1fr) 40px}
 .hf-admin .hf-drawer.hf-wide{width:100vw}}
 .hf-admin .hf-tbl .hf-mono,.hf-admin .hf-tbl a.hf-mono{white-space:nowrap}
+/* from the <style> of HF-ADM-01-user-management.html */
+.hf-admin .hf-view{display:none}
+.hf-admin .hf-view.hf-on{display:block}
+.hf-admin .hf-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--spacing-xl) var(--spacing-2xl)}
+.hf-admin .hf-form-grid .hf-full{grid-column:1/-1}
+.hf-admin .hf-form-sec{padding:var(--spacing-2xl) var(--spacing-xl);border-bottom:1px solid var(--stroke-100)}
+.hf-admin .hf-form-sec:last-child{border-bottom:0}
+.hf-admin .hf-form-sec h3{font:600 var(--fs-3)/24px var(--font-heading);margin-bottom:4px}
+.hf-admin .hf-form-sec>p{margin:0 0 var(--spacing-xl);font-size:var(--fs-2);color:var(--text-hint)}
+.hf-admin .hf-sticky-foot{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-md);padding:var(--spacing-md) var(--spacing-xl);background:var(--neutral-0-white);border-top:1px solid var(--stroke-200);box-shadow:0 -4px 12px rgba(33,33,33,.06);border-radius:0 0 var(--radius-md) var(--radius-md)}
+.hf-admin .hf-co-tbl td{vertical-align:top}
+.hf-admin .hf-co-tbl .hf-select,.hf-admin .hf-co-tbl .hf-input{min-width:0}
+.hf-admin .hf-radio-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md)}
+.hf-admin .hf-radio-card{display:flex;gap:var(--spacing-md);padding:var(--spacing-lg);border:1px solid var(--stroke-200);border-radius:var(--radius-md);cursor:pointer}
+.hf-admin .hf-radio-card:has(input:checked){border-color:var(--primary-600);background:var(--primary-50)}
+.hf-admin .hf-radio-card input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--primary-600)}
+.hf-admin .hf-radio-card b{display:block;font-size:var(--fs-2)}
+.hf-admin .hf-radio-card small{color:var(--neutral-700);font-size:var(--fs-1);line-height:16px}
+.hf-admin .hf-profile-head{display:flex;align-items:center;gap:var(--spacing-lg);padding:var(--spacing-xl)}
+.hf-admin .hf-profile-head h2{font:600 var(--fs-6)/32px var(--font-heading)}
+.hf-admin .hf-profile-head .hf-meta{display:flex;flex-wrap:wrap;gap:var(--spacing-md);align-items:center;font-size:var(--fs-2);color:var(--neutral-700);margin-top:4px}
+.hf-admin .hf-dz{border:1.5px dashed var(--primary-400);border-radius:var(--radius-md);background:var(--primary-50);padding:var(--spacing-2xl);text-align:center;font-size:var(--fs-2);color:var(--neutral-800)}
+.hf-admin .hf-dz b{display:block;color:var(--primary-700);font-size:var(--fs-3)}
+.hf-admin tr.hf-flash td{animation:fl 2.4s ease-out}
+@keyframes fl{0%,40%{background:var(--success-50)}}
+@media (max-width:767px){.hf-admin .hf-form-grid,.hf-admin .hf-radio-cards{grid-template-columns:1fr}
+.hf-admin .hf-profile-head{flex-wrap:wrap}}
+/* from the <style> of HF-ADM-02-role-management.html */
+.hf-admin .hf-view{display:none}
+.hf-admin .hf-view.hf-on{display:block}
+.hf-admin .hf-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--spacing-xl) var(--spacing-2xl)}
+.hf-admin .hf-form-grid .hf-full{grid-column:1/-1}
+.hf-admin .hf-form-sec{padding:var(--spacing-2xl) var(--spacing-xl);border-bottom:1px solid var(--stroke-100)}
+.hf-admin .hf-form-sec h3{font:600 var(--fs-3)/24px var(--font-heading);margin-bottom:4px}
+.hf-admin .hf-form-sec>p{margin:0 0 var(--spacing-xl);font-size:var(--fs-2);color:var(--text-hint)}
+.hf-admin .hf-sticky-foot{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-md);padding:var(--spacing-md) var(--spacing-xl);background:var(--neutral-0-white);border-top:1px solid var(--stroke-200);box-shadow:0 -4px 12px rgba(33,33,33,.06);border-radius:0 0 var(--radius-md) var(--radius-md)}
+.hf-admin .hf-perm-mod{border:1px solid var(--stroke-100);border-radius:var(--radius-md);margin-bottom:var(--spacing-md);overflow:hidden}
+.hf-admin .hf-perm-mod>header{display:flex;align-items:center;gap:var(--spacing-md);padding:var(--spacing-md) var(--spacing-lg);background:var(--neutral-50);cursor:pointer}
+.hf-admin .hf-perm-mod>header b{font-size:var(--fs-2)}
+.hf-admin .hf-perm-mod>header small{color:var(--text-hint);font-size:var(--fs-1);margin-left:auto}
+.hf-admin .hf-perm-mod>header .hf-chev{transition:transform .15s}
+.hf-admin .hf-perm-mod.hf-open>header .hf-chev{transform:rotate(90deg)}
+.hf-admin .hf-perm-mod .hf-pl{display:none;padding:var(--spacing-xs) var(--spacing-lg)}
+.hf-admin .hf-perm-mod.hf-open .hf-pl{display:block}
+.hf-admin .hf-perm{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-lg);padding:var(--spacing-md) 0;border-bottom:1px solid var(--stroke-100);font-size:var(--fs-2)}
+.hf-admin .hf-perm:last-child{border-bottom:0}
+.hf-admin .hf-perm small{display:block;color:var(--text-hint);font-size:var(--fs-1)}
+.hf-admin .hf-perm .hf-select{width:200px;height:36px}
+.hf-admin .hf-perm.hf-locked{opacity:.55}
+.hf-admin .hf-role-name{display:flex;align-items:center;gap:var(--spacing-md)}
+.hf-admin .hf-role-ico{width:36px;height:36px;border-radius:var(--radius-md);display:grid;place-items:center;background:var(--primary-50);color:var(--primary-600);flex:none}
+.hf-admin .hf-role-ico.hf-sys{background:var(--secondary-50);color:var(--secondary-700)}
+.hf-admin .hf-sumlist{list-style:none;margin:0;padding:0;font-size:var(--fs-2)}
+.hf-admin .hf-sumlist li{display:flex;gap:var(--spacing-sm);padding:6px 0;line-height:20px}
+.hf-admin .hf-sumlist li .hf-ic{color:var(--success-600);margin-top:2px}
+.hf-admin .hf-sumlist li.hf-no .hf-ic{color:var(--neutral-400)}
+.hf-admin .hf-sumlist li.hf-no{color:var(--neutral-600)}
+.hf-admin .hf-pick{display:flex;align-items:center;gap:var(--spacing-md);padding:var(--spacing-sm) 0;border-bottom:1px solid var(--stroke-100)}
+.hf-admin .hf-pick:last-child{border-bottom:0}
+.hf-admin .hf-pick .hf-person{flex:1}
+@media (max-width:767px){.hf-admin .hf-form-grid{grid-template-columns:1fr}
+.hf-admin .hf-perm{flex-wrap:wrap}
+.hf-admin .hf-perm .hf-select{width:100%}}
+/* from the <style> of HF-ADM-03-permission-management.html */
+.hf-admin .hf-matrix td.hf-rc .hf-muted{font-size:var(--fs-1)}
+.hf-admin #mx thead th{z-index:2}
+.hf-admin #mx td.hf-perm small{display:block}
+.hf-admin .hf-lockcol{background:var(--neutral-50) !important}
+/* from the <style> of HF-ADM-05-excel-import.html */
+.hf-admin .hf-sh{font:600 var(--fs-4)/28px var(--font-heading);margin:0 0 var(--spacing-lg)}
+.hf-admin .hf-kpi-ico{width:48px;height:48px;border-radius:var(--radius-md);display:grid;place-items:center;background:var(--success-50);color:var(--success-600)}
+.hf-admin .hf-dz .hf-ic{width:32px;height:32px;color:var(--primary-600)}

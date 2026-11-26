@@ -35,7 +35,7 @@ async function signIn(page: Page) {
 /** Opens Permission Management from the menu and returns the milliseconds until the matrix is on the screen. */
 async function openMatrix(page: Page): Promise<number> {
   const start = Date.now();
-  await page.getByRole('link', { name: 'Permission Management' }).click();
+  await page.getByTestId('layout-menu').getByRole('link', { name: 'Permission Management' }).click();
   await expect(page.getByRole('heading', { name: 'Permission Management' })).toBeVisible();
   await expect(page.getByTestId('permission-matrix')).toBeVisible();
   return Date.now() - start;

@@ -43,14 +43,15 @@ describe('Locked role and deactivate (J04, J05)', () => {
    * @subtask   ST-ADM01-012-FE-02
    * In plain words: the Administrator role shows a lock and offers no edit or deactivate; a locked permission switch is disabled.
    */
-  it('J04 locks the Administrator role', () => {
+  it('J04 locks the Administrator role', async () => {
     render(<RoleTable roles={ROLES} onDeactivate={() => undefined} />);
     const admin = screen.getByRole('row', { name: /Administrator/ });
     expect(within(admin).getByText(/locked/i)).toBeInTheDocument();
     expect(within(admin).queryByRole('button', { name: /Deactivate/ })).not.toBeInTheDocument();
     expect(within(admin).queryByRole('link', { name: /Edit/ })).not.toBeInTheDocument();
     const plant = screen.getByRole('row', { name: /Plant Head/ });
-    expect(within(plant).getByRole('button', { name: /Deactivate Plant Head/ })).toBeEnabled();
+    await userEvent.click(within(plant).getByRole('button', { name: /More actions for Plant Head/ }));
+    expect(within(plant).getByRole('menuitem', { name: /Deactivate Plant Head/ })).toBeEnabled();
     render(<RolePermissionSwitches modules={CATALOG.modules} cells={[{ permissionKey: 'users.manage', allowed: true }]} onChange={() => undefined} lockedKeys={['users.manage']} />);
     expect(screen.getByLabelText('Manage users')).toBeDisabled();
     expect(screen.getByLabelText('View users')).toBeEnabled();

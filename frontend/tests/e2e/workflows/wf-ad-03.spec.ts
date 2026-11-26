@@ -94,7 +94,7 @@ test.describe('Workflow AD-03: roles and permissions', () => {
     await shot(page, '02-role-created');
 
     // Steps 4 and 5: the rights of the new role are changed in the permission matrix.
-    await page.getByRole('link', { name: 'Permission Management' }).click();
+    await page.getByTestId('layout-menu').getByRole('link', { name: 'Permission Management' }).click();
     await expect(matrix(page)).toBeVisible();
     await usersViewScope(page).selectOption('COMPANY');
     await allCompaniesSwitch(page).click();
