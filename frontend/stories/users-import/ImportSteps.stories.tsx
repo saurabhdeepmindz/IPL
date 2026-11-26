@@ -25,7 +25,7 @@ import { ImportStepTemplate } from '@/features/users-import/components/ImportSte
 import { ImportStepUpload } from '@/features/users-import/components/ImportStepUpload';
 import type { Problem } from '@/features/users-import/types/import.types';
 
-const meta = { title: 'UsersImport/ImportSteps', parameters: { layout: 'padded' } } satisfies Meta;
+const meta = { title: 'UsersImport/ImportSteps', parameters: { layout: 'padded', nextjs: { appDirectory: true } } } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

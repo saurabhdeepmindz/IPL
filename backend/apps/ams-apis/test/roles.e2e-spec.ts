@@ -78,7 +78,7 @@ describe('ST-ADM01-010-BE-01 role routes (C01 to C04)', () => {
   it('lists roles with the documented fields', async () => {
     const res = await http().get('/api/v1/roles').query({ q: stamp }).set(auth()).expect(200);
     expect(res.body.data.items.length).toBeGreaterThanOrEqual(2);
-    expect(Object.keys(res.body.data.items[0]).sort()).toEqual(['description', 'lastChanged', 'name', 'roleId', 'status', 'type', 'userCount']);
+    expect(Object.keys(res.body.data.items[0]).sort()).toEqual(['allowsSummary', 'description', 'lastChanged', 'name', 'roleId', 'status', 'type', 'userCount']);
     const holder = res.body.data.items.find((r: { roleId: string }) => r.roleId === holderRoleId);
     expect(holder.userCount).toBe(1);
   });
