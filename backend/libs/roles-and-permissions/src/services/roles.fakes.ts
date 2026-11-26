@@ -78,6 +78,10 @@ export class FakeRoleRepo {
 
 /** In-memory cell repository. */
 export class FakeCellRepo {
+  matrix: { permissions: Array<{ key: string; module: string; label: string }>; cells: Array<{ roleId: string; key: string; allowed: boolean; scope: 'OWN' | 'DEPARTMENT' | 'COMPANY' | null }> } = { permissions: [], cells: [] };
+  async readMatrix() {
+    return this.matrix;
+  }
   byRole: Record<string, Array<{ key: string; allowed: boolean; scope: 'OWN' | 'DEPARTMENT' | 'COMPANY' | null }>> = {};
   async listForRole(roleId: string) {
     return this.byRole[roleId] ?? [];

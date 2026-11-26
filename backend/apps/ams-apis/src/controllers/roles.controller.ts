@@ -79,7 +79,9 @@ export class RolesController {
   @ApiOperation({ summary: 'List roles (API-ROL-01)' })
   @Get()
   async list(@Query() query: ListRolesQueryDto): Promise<unknown> {
-    return okResponse({ items: (await this.roles.list(query)).map(toRoleResponse) });
+    const found = await this.roles.list(query);
+    const summaries = await this.roles.summaries(found);
+    return okResponse({ items: found.map((r) => ({ ...toRoleResponse(r), allowsSummary: summaries[r.id] ?? [] })) });
   }
 
   /**

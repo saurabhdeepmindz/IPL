@@ -68,9 +68,9 @@ function Sidebar({ path }: { path: string }) {
           }
           const active = g.items.some((i) => i.route && (path === i.route || path.startsWith(`${i.route}/`)));
           const isOpen = open[g.key] ?? false;
-          const built = g.items.some((i) => i.route);
           return (
-            <div key={g.key} className={hf('nav-group', isOpen && 'open', active && 'has-active')} aria-disabled={built ? undefined : true}>
+            <div key={g.key} className={hf('nav-group', isOpen && 'open', active && 'has-active')}
+            >
               <button type="button" aria-expanded={isOpen} title={g.label} onClick={() => setOpen({ ...open, [g.key]: !isOpen })}>
                 <HfIcon name={g.icon} />
                 <span>{g.label}</span>
@@ -79,14 +79,12 @@ function Sidebar({ path }: { path: string }) {
               <div className={hf('nav-sub')}>
                 {g.items.map((i) => {
                   const here = !!i.route && (path === i.route || path.startsWith(`${i.route}/`));
-                  return i.route ? (
-                    <Link key={i.label} className={hf('nav-item', here && 'active')} href={i.route} aria-current={here ? 'page' : undefined}>
+                  // A screen of a later release opens the "Coming soon" page (replaced when the screen is built).
+                  const href = i.route ?? `/coming-soon?feature=${encodeURIComponent(i.label)}`;
+                  return (
+                    <Link key={i.label} className={hf('nav-item', here && 'active')} href={href} aria-current={here ? 'page' : undefined}>
                       <span>{i.label}</span>
                     </Link>
-                  ) : (
-                    <span key={i.label} className={hf('nav-item')} aria-disabled="true">
-                      <span>{i.label}</span>
-                    </span>
                   );
                 })}
               </div>
@@ -114,9 +112,9 @@ function TopBar() {
     <header className={hf('topbar')} data-testid="layout-topbar">
       <div className={hf('ctx')}>
         <div className={hf('menu-wrap')}>
-          <button className={hf('btn btn-text icon bell')} type="button" aria-label="Notifications (coming later)" disabled>
+          <Link className={hf('btn btn-text icon bell')} href="/coming-soon?feature=Notifications" aria-label="Notifications (coming soon)" title="Notifications">
             <HfIcon name="bell" />
-          </button>
+          </Link>
         </div>
         <div className={hf('menu-wrap')}>
           <button className={hf('ctx-select')} type="button" aria-haspopup="true">

@@ -83,8 +83,8 @@ async function mockUsersApi(page: Page, context: BrowserContext) {
 }
 
 // Parts that cannot match yet are painted grey in both pictures, each with its reason:
-//  - the notification bell and its count: the notification module is not built (ADM-A2)
-//  - the Company filter's closed text: the HF shows "All companies", the application keeps the honest "Current company" (decision UX-ACC-01)
+//  - UX-ACC-02 · Administration frame, notification bell and its count: the notification module is built in ADM-A2 (the bell opens a Coming soon page until then)
+//  - the Company filter's closed text: the HF shows "All companies", the application keeps the honest "Current company" (UX-ACC-01 · User Management list, Company filter: accepted by the team)
 const MASK_SHELL = ['.bell,.hf-bell'];
 
 /** Reads the demo roles from the HF role page and mocks the role list API with them. */
@@ -188,7 +188,7 @@ const SCREENS: UxScreen[] = [
     id: 'UX-ADM-02-role-view',
     hf: { file: '02-Admin/HF-ADM-02-role-management.html', suffix: '#view/processor' },
     app: { url: '/roles/r1', prepare: mockRoleViewApi, steps: (p) => p.getByTestId('roles-users-table').waitFor() },
-    // The "Remove" buttons of the design (unassign from this screen) are not in the stories (decision UX-ACC-05): the action column is painted grey.
+    // The "Remove" buttons of the design (unassign from this screen) are not in the stories (UX-ACC-05 · Role details, users table): the action column is painted grey.
     // The role name in the breadcrumb comes from the loaded role (the page passes a fixed label today): painted grey.
     mask: [...MASK_SHELL, '#uTbl td.act,#uTbl th.act,.hf-tbl td.hf-act,.hf-tbl th.hf-act', '.crumbs .cur,.hf-crumbs .hf-cur'],
   },

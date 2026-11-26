@@ -54,6 +54,28 @@ describe('RolesService', () => {
   });
 
   /**
+   * @story     US-ADM01-012
+   * @ac        AC-US012-01
+   * @subtask   ST-ADM01-012-BE-01
+   * In plain words: the list can say in plain words what each role allows: permission names with the scope in brackets, at most four and then "+N more" (decision UX-ACC-04, Role Management list).
+   */
+  it('summarises what each role allows', async () => {
+    cells.matrix = {
+      permissions: ['a', 'b', 'c', 'd', 'e'].map((k) => ({ key: k, module: 'M', label: `Do ${k}` })),
+      cells: [
+        { roleId: 'std-0', key: 'a', allowed: true, scope: 'OWN' },
+        { roleId: 'std-0', key: 'b', allowed: false, scope: null },
+        ...['a', 'b', 'c', 'd', 'e'].map((k) => ({ roleId: 'std-1', key: k, allowed: true, scope: null })),
+      ],
+    };
+    const found = await service.list({});
+    const s = await service.summaries(found);
+    expect(s['std-0']).toEqual(['Do a (own only)']);
+    expect(s['std-1']).toEqual(['Do a', 'Do b', 'Do c', 'Do d', '+1 more']);
+    expect(s['std-2']).toEqual([]);
+  });
+
+  /**
    * @tc        TC-ADM01-010-J02
    * @story     US-ADM01-010
    * @ac        AC-US010-02

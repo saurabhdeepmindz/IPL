@@ -47,8 +47,10 @@ describe('AdminShell (supporting tests)', () => {
     expect(screen.getAllByRole('link', { name: 'Role Management' }).some((l) => l.getAttribute('aria-current') === 'page')).toBe(true);
     expect(screen.getByRole('link', { name: 'User Management' })).toHaveAttribute('href', '/users');
     expect(screen.getByRole('link', { name: 'Permission Management' })).toHaveAttribute('href', '/permissions');
+    // The group of a later release is a folding button; its screens open the Coming soon page.
     expect(screen.queryByRole('link', { name: 'Workflow Management' })).not.toBeInTheDocument();
-    expect(screen.getByText('Workflow Management').closest('[aria-disabled="true"]')).not.toBeNull();
+    expect(screen.getByRole('link', { name: 'Workflow Monitor' })).toHaveAttribute('href', '/coming-soon?feature=Workflow%20Monitor');
+    expect(screen.getByRole('link', { name: /Notifications/ })).toHaveAttribute('href', '/coming-soon?feature=Notifications');
   });
 
   /**

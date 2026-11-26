@@ -44,6 +44,8 @@ export class RoleResponseDto {
   /** ISO 8601, UTC. */
   lastChanged!: string;
   status!: RoleStatus;
+  /** Plain-words summary of what the role allows (role list only). */
+  allowsSummary?: string[];
 }
 
 /** One role as the screen shows it (the same mapping for every role route). */

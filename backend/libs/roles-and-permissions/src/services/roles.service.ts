@@ -97,6 +97,30 @@ export class RolesService {
   }
 
   /**
+   * Plain-words summary of what each role allows.
+   *
+   * In plain words: for every role, the names of the permissions that are on, each with its data scope in brackets ("View users (own only)"), at most 4 and then "+N more".
+   * Used by the role list screen (decision UX-ACC-04 of release R13, Role Management list).
+   *
+   * @story     US-ADM01-012
+   * @ac        AC-US012-01
+   * @param roles The roles of the list
+   * @returns A map from role id to its summary
+   * @dependencies RolePermissionRepository.readMatrix
+   */
+  async summaries(roles: RoleRecord[]): Promise<Record<string, string[]>> {
+    const matrix = await this.cells.readMatrix();
+    const label = new Map(matrix.permissions.map((p) => [p.key, p.label]));
+    const scope = { OWN: 'own only', DEPARTMENT: 'own department', COMPANY: 'whole company' } as const;
+    const out: Record<string, string[]> = {};
+    for (const r of roles) {
+      const on = matrix.cells.filter((c) => c.roleId === r.id && c.allowed && label.has(c.key)).map((c) => `${label.get(c.key)}${c.scope ? ` (${scope[c.scope]})` : ''}`);
+      out[r.id] = on.length > 4 ? [...on.slice(0, 4), `+${on.length - 4} more`] : on;
+    }
+    return out;
+  }
+
+  /**
    * Creates a role.
    *
    * In plain words: checks the name is free, saves the role with its cells (copied and/or given), and records who did it and why.

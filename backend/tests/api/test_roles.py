@@ -190,12 +190,12 @@ def test_contract_list_shape(roles_api, api):
     @ac AC-US010-01
     @contract API-ROL-01
     @subtask ST-ADM01-010-BE-06
-    In plain words: the list answer has the documented fields, and a caller with no token gets 401.
+    In plain words: the list answer has the documented fields (with the plain-words summary, decision UX-ACC-04), and a caller with no token gets 401.
     """
     res = roles_api.call("GET", "/roles")
     assert res.status_code == 200
     item = res.json()["data"]["items"][0]
-    assert sorted(item) == ["description", "lastChanged", "name", "roleId", "status", "type", "userCount"]
+    assert sorted(item) == ["allowsSummary", "description", "lastChanged", "name", "roleId", "status", "type", "userCount"]
     assert requests.get(f"{api}/roles", timeout=10).status_code == 401
 
 
@@ -247,3 +247,12 @@ def test_contract_deactivate_shape(roles_api):
     assert roles_api.call("POST", f"/roles/{role_id}/deactivate", json={}).status_code == 422
     done = roles_api.call("POST", f"/roles/{role_id}/deactivate", json={"reason": "pytest"})
     assert done.status_code == 200 and done.json()["data"]["status"] == "INACTIVE"
+
+
+def test_list_gives_a_plain_words_summary(roles_api):
+    """@tc TC-ADM01-012-P05 @story US-ADM01-012 @ac AC-US012-01 @subtask ST-ADM01-012-BE-01
+    Decision UX-ACC-04 (Role Management list): every role of the list carries `allowsSummary`, a list of at most five short phrases (four names and "+N more")."""
+    items = roles_api.call("GET", "/roles").json()["data"]["items"]
+    assert items and all(isinstance(r["allowsSummary"], list) and len(r["allowsSummary"]) <= 5 for r in items)
+    admin = next(r for r in items if r["name"] == "Administrator")
+    assert len(admin["allowsSummary"]) >= 1
