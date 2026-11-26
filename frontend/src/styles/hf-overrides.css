@@ -1,0 +1,22 @@
+/* Font wiring of the ported high-fidelity stylesheet (hand-written; the generated file hf-auth.css is never edited).
+   The application loads Noto Sans through next/font under a generated family name; the design names "Noto Sans". */
+.hf-scope {
+  --font-body: var(--font-noto-sans), "Noto Sans", system-ui, sans-serif;
+  --font-heading: var(--font-noto-sans), "Noto Sans", system-ui, sans-serif;
+}
+.hf-scope .hf-mono,
+.hf-scope .hf-input.hf-mono,
+.hf-scope code {
+  font-family: var(--font-noto-mono), "Noto Sans Mono", ui-monospace, Consolas, monospace;
+}
+
+/* The design page has no scrollbar gutter; the application reserves one on every page (scrollbar-gutter: stable), which moves a centred layout by half a gutter. */
+html:has(.hf-scope) {
+  scrollbar-gutter: auto;
+}
+
+/* The application's reset (Bootstrap-style) sets vertical-align: middle on images and icons; the design page has no such reset. */
+.hf-scope svg,
+.hf-scope img {
+  vertical-align: baseline;
+}

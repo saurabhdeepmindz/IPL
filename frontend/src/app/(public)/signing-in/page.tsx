@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-007
  * @subtask        ST-LGN01-007-FE-02
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/src/app/(public)/signing-in/page.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -32,7 +32,7 @@ export const metadata: Metadata = { title: 'Single sign-on' };
  * @story US-LGN01-007
  * @subtask ST-LGN01-007-FE-02
  */
-type SigningInSearch = Promise<{ state?: string; ref?: string }>;
+type SigningInSearch = Promise<{ state?: string; ref?: string; who?: string }>;
 
 export default function SigningInPage(props: { searchParams: SigningInSearch }) {
   return (
@@ -43,6 +43,6 @@ export default function SigningInPage(props: { searchParams: SigningInSearch }) 
 }
 
 async function SigningInContent(props: { searchParams: SigningInSearch }) {
-  const { state, ref } = await props.searchParams;
-  return <SsoStatusPage state={state ?? 'waiting'} reference={ref} />;
+  const { state, ref, who } = await props.searchParams;
+  return <SsoStatusPage state={state ?? 'waiting'} reference={ref} who={who} />;
 }

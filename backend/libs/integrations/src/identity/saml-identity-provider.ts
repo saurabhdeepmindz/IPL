@@ -12,10 +12,10 @@
  * @story          US-LGN01-002
  * @subtask        ST-LGN01-002-BE-03
  * @contract       API-AUTH-02, API-AUTH-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/integrations/src/identity/saml-identity-provider.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import { IdentityProviderUnavailableException } from './identity-errors';
    *   workflows: UF-01
    *   contracts: API-AUTH-02, API-AUTH-03
    *   ac:        AC-US-LGN01-002-01, AC-US-LGN01-002-03
-   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.2
+   *   lld:       LLD-EPIC-LGN-01 v0.5 section 6.2
  */
 @Injectable()
 export class SamlIdentityProvider extends IdentityProviderPort {
@@ -54,7 +54,7 @@ export class SamlIdentityProvider extends IdentityProviderPort {
    * @workflow  UF-01
    * @contract  API-AUTH-02, API-AUTH-03
    * @ac        AC-US-LGN01-002-01, AC-US-LGN01-002-03
-   * @lld       LLD-EPIC-LGN-01 v0.4 §6.2
+   * @lld       LLD-EPIC-LGN-01 v0.5 §6.2
    * @status    built
    *
    * @returns Promise<string>
@@ -76,7 +76,7 @@ export class SamlIdentityProvider extends IdentityProviderPort {
    * @workflow  UF-01
    * @contract  API-AUTH-02, API-AUTH-03
    * @ac        AC-US-LGN01-002-01, AC-US-LGN01-002-03
-   * @lld       LLD-EPIC-LGN-01 v0.4 §6.2
+   * @lld       LLD-EPIC-LGN-01 v0.5 §6.2
    * @status    built
    *
    * @returns Promise<{ employeeCode: string }>

@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-006
  * @subtask        ST-LGN01-006-FE-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/e2e/sign-in-errors.spec.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -29,7 +29,7 @@ test.describe('User sees why a password sign-in failed (US-LGN01-006)', () => {
     const code = makeLocalUser();
     await page.goto('/login');
     await submitPassword(page, code, 'not-the-password');
-    await expect(tid(page, 'sign-in-error')).toContainText('Employee code or password is not right');
+    await expect(tid(page, 'sign-in-error')).toContainText('The employee code or password is not correct');
     await expect(tid(page, 'sign-in-error')).toContainText('4 attempts left');
     await expect(tid(page, 'employee-code')).toHaveValue(code);
     await expect(tid(page, 'password')).toHaveValue('');
@@ -65,9 +65,9 @@ test.describe('User sees why a password sign-in failed (US-LGN01-006)', () => {
     const code = makeLocalUser('INACTIVE');
     await page.goto('/login');
     await submitPassword(page, code, PASSWORD);
-    await expect(tid(page, 'sign-in-error')).toContainText(/not active/i);
+    await expect(tid(page, 'sign-in-error')).toContainText(/inactive/i);
     await expect(tid(page, 'sign-in-error')).toContainText(/INA-\d{4}-[A-Z0-9]{4}/);
-    await expect(tid(page, 'helpdesk')).toContainText('IT helpdesk');
+    await expect(tid(page, 'helpdesk')).toContainText('Contact the IT team');
     await shot(page, 'TC-LGN01-006-E04_inactive');
   });
 });

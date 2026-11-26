@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-001, US-LGN01-002
  * @subtask        ST-LGN01-001-BE-02
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/core/src/auth/sign-in-audit.writer.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -46,7 +46,7 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
    *   stories:   US-LGN01-001, US-LGN01-002
    *   workflows: UF-01
    *   ac:        AC-US-LGN01-001-02
-   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.1
+   *   lld:       LLD-EPIC-LGN-01 v0.5 section 6.1
  */
 @Injectable()
 export class SignInAuditWriter {
@@ -64,7 +64,7 @@ export class SignInAuditWriter {
    * @subtask   ST-LGN01-001-BE-02
    * @workflow  UF-01
    * @ac        AC-US-LGN01-001-02
-   * @lld       LLD-EPIC-LGN-01 v0.4 §6.1
+   * @lld       LLD-EPIC-LGN-01 v0.5 §6.1
    * @status    built
    *
    * @dependencies AuditService.recordChange

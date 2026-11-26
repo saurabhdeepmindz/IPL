@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-005
  * @subtask        ST-LGN01-005-FE-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/e2e/sign-in.spec.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -41,7 +41,7 @@ test.describe('User signs in on the sign-in page (US-LGN01-005)', () => {
     await page.goto('/login');
     await tid(page, 'password').fill(PASSWORD);
     await expect(tid(page, 'password')).toHaveAttribute('type', 'password');
-    await tid(page, 'show-password').check();
+    await tid(page, 'show-password').click();
     await expect(tid(page, 'password')).toHaveAttribute('type', 'text');
     await shot(page, 'TC-LGN01-005-E02_1-filled');
     await submitPassword(page, code, PASSWORD);

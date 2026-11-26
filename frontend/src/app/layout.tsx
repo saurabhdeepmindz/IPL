@@ -13,7 +13,7 @@
  */
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { Noto_Sans } from 'next/font/google';
+import { Noto_Sans, Noto_Sans_Mono } from 'next/font/google';
 import { AppProviders } from '@/providers';
 import { APP_CONFIG } from '@/constants/config';
 import { UX4G_ASSETS } from '@/constants/ux4g';
@@ -24,6 +24,13 @@ import '@/styles/brand-tokens.css';
 const notoSans = Noto_Sans({
   variable: '--font-noto-sans',
   subsets: ['latin', 'devanagari'],
+  display: 'swap',
+});
+
+const notoMono = Noto_Sans_Mono({
+  variable: '--font-noto-mono',
+  subsets: ['latin'],
+  weight: ['500'],
   display: 'swap',
 });
 
@@ -43,7 +50,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" data-theme="brand" className={notoSans.variable} suppressHydrationWarning>
+    <html lang="en" data-theme="brand" className={`${notoSans.variable} ${notoMono.variable}`} suppressHydrationWarning>
       <head>
         {/* UX4G component styles — must load before app CSS */}
         <link rel="stylesheet" href={UX4G_ASSETS.css} precedence="default" />

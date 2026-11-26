@@ -5,73 +5,141 @@
  * @module  Auth
  *
  * @description
- * The password form. In plain words: employee code, password with show / hide, and the remember-code tick box.
+ * Password form. In plain words: the form of the design with Show, Caps Lock hint and the remembered employee code.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
+ * @version 0.2.0
  * @since   2026-11-26
  *
  * @story          US-LGN01-005
- * @subtask        ST-LGN01-005-FE-02
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @subtask        ST-LGN01-005-FE-01
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/src/features/auth/components/LocalSignInForm.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
+ * @hf             LGN-01
  * @status         built
  */
 
-import { useSignIn } from '../hooks/useSignIn';
-import { signInSchema } from '../schemas/signInSchema';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Input } from '@/components/ui';
+import { z } from 'zod';
 import type { ApiError } from '@/lib/errors';
-import type { z } from 'zod';
+import { hf } from '../hf/hf';
+import { Icon } from '../hf/Icon';
+import { useSignIn } from '../hooks/useSignIn';
+import { signInSchema } from '../schemas/signInSchema';
+
+const REMEMBER_KEY = 'ams-rem-code';
+const formSchema = signInSchema.extend({ remember: z.boolean() });
+type Values = z.infer<typeof formSchema>;
+
+/** Field message line of the design: icon and words under the field. */
+function FieldError({ text }: { text?: string }) {
+  return (
+    <span className={hf('err')}>
+      <span>
+        <Icon name="alertC" />
+      </span>
+      <span>{text}</span>
+    </span>
+  );
+}
 
 /**
  * LocalSignInForm.
  *
- * In plain words: the AMS password form
+ * In plain words: the employee code and password form of the high-fidelity design: code in the mono field with the hint, password with Show inside the field and Forgot password beside the label, Caps Lock hint, "Remember my employee code on this device", and the outlined "Sign in with employee code" button.
  *
- * @epic      EPIC-LGN-01
- * @story     US-LGN01-005
- * @subtask   ST-LGN01-005-FE-02
- * @workflow  UF-01
- * @screen    LGN-01
- * @contract  API-AUTH-01
- * @ac        AC-US-LGN01-005-02
- * @lld       LLD-EPIC-LGN-01 v0.4 §6.4
- * @status    built
- *
- * @returns nothing
+ * @ac AC-US-LGN01-005-02
  */
-export function LocalSignInForm(props: { onError: (e: ApiError) => void; onAttempt?: () => void }) {
+export function LocalSignInForm(props: { onError: (e: ApiError) => void; onAttempt?: () => void; failed?: boolean }) {
   const signIn = useSignIn();
   const [show, setShow] = useState(false);
-  const { register, handleSubmit, resetField, formState: { errors } } = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema), defaultValues: { employeeCode: '', password: '' } });
+  const [caps, setCaps] = useState(false);
+  const { register, handleSubmit, resetField, setValue, formState: { errors } } = useForm<Values>({ resolver: zodResolver(formSchema), defaultValues: { employeeCode: '', password: '', remember: false } });
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBER_KEY);
+      if (saved) {
+        setValue('employeeCode', saved);
+        setValue('remember', true);
+      }
+    } catch {
+      /* private window: nothing remembered */
+    }
+  }, [setValue]);
   const submit = handleSubmit((values) => {
     props.onAttempt?.();
-    signIn.mutate(values, {
+    try {
+      if (values.remember) localStorage.setItem(REMEMBER_KEY, values.employeeCode);
+      else localStorage.removeItem(REMEMBER_KEY);
+    } catch {
+      /* ignore */
+    }
+    signIn.mutate({ employeeCode: values.employeeCode, password: values.password }, {
       onError: (error) => {
         resetField('password');
         props.onError(error);
       },
     });
   });
+  const password = register('password');
   return (
     <form onSubmit={submit} noValidate data-testid="local-sign-in-form" aria-label="Sign in with your AMS password">
-      <Input label="Employee code" inputMode="numeric" autoComplete="username" maxLength={5} data-testid="employee-code" error={errors.employeeCode?.message} {...register('employeeCode')} />
-      <Input label="Password" type={show ? 'text' : 'password'} autoComplete="current-password" data-testid="password" error={errors.password?.message} {...register('password')} />
-      <div className="form-check mb-3">
-        <input id="show-password" type="checkbox" className="form-check-input" checked={show} onChange={(e) => setShow(e.target.checked)} data-testid="show-password" />
-        <label htmlFor="show-password" className="form-check-label">
-          Show password
+      <div className={hf('field', errors.employeeCode && 'invalid')}>
+        <label htmlFor="code">
+          Employee code<span className={hf('req')}>*</span>
         </label>
+        <input id="code" className={hf('input mono')} inputMode="numeric" maxLength={5} autoComplete="username" placeholder="5-digit code, e.g. 10002" data-testid="employee-code" {...register('employeeCode')} />
+        <FieldError text={errors.employeeCode?.message} />
       </div>
-      <Button type="submit" className="w-100" isLoading={signIn.isPending} data-testid="sign-in-submit">
-        Sign in
-      </Button>
+      <div className={hf('field', (errors.password || props.failed) && 'invalid')}>
+        <div className={hf('row-sb')}>
+          <label htmlFor="pw">
+            Password<span className={hf('req')}>*</span>
+          </label>
+          <a href="/forgot-password" style={{ fontSize: 'var(--fs-2)' }}>
+            Forgot password?
+          </a>
+        </div>
+        <div className={hf('pw')}>
+          <input
+            id="pw"
+            className={hf('input')}
+            type={show ? 'text' : 'password'}
+            autoComplete="current-password"
+            data-testid="password"
+            {...password}
+            onKeyUp={(e) => setCaps(e.getModifierState?.('CapsLock') ?? false)}
+          />
+          <button className={hf('eye')} type="button" aria-label={show ? 'Hide password' : 'Show password'} aria-pressed={show} onClick={() => setShow(!show)} data-testid="show-password">
+            {show ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        {caps && (
+          <span className={hf('help')}>
+            <span>
+              <Icon name="alert" />
+            </span>
+            Caps Lock is on.
+          </span>
+        )}
+        <FieldError text={errors.password?.message ?? (props.failed ? 'Check the password. It is case-sensitive.' : undefined)} />
+      </div>
+      <label className={hf('check')}>
+        <input type="checkbox" data-testid="remember" {...register('remember')} /> Remember my employee code on this device
+      </label>
+      <button className={hf('btn btn-outline')} type="submit" disabled={signIn.isPending} data-testid="sign-in-submit">
+        {signIn.isPending ? (
+          <>
+            <span className={hf('spinner')} style={{ width: 18, height: 18, borderWidth: 3, margin: 0 }} /> Signing in…
+          </>
+        ) : (
+          'Sign in with employee code'
+        )}
+      </button>
     </form>
   );
 }

@@ -15,10 +15,10 @@
  * @subtask        ST-LGN01-003-BE-01
  * @subtask        ST-LGN01-004-BE-01
  * @contract       API-AUTH-01, API-AUTH-02, API-AUTH-03, API-AUTH-04, API-AUTH-05
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/apps/auth-apis/src/controllers/auth.controller.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -81,7 +81,7 @@ export class AuthController {
   @Get('sso/callback')
   async ssoCallback(@Query() query: Record<string, string>, @Res() res: Response): Promise<void> {
     const result = await this.sso.complete(query);
-    if (!result.ok) return res.redirect(this.web(`/signing-in?state=${result.kind}&ref=${encodeURIComponent(result.reference)}`));
+    if (!result.ok) return res.redirect(this.web(`/signing-in?state=${result.kind}&ref=${encodeURIComponent(result.reference)}${result.who ? `&who=${encodeURIComponent(result.who)}` : ''}`));
     setRefreshCookie(res, result.refreshToken, result.refreshSeconds);
     const next = result.returnTo ? `${STEP_PATH[result.nextStep]}?next=${encodeURIComponent(result.returnTo)}` : STEP_PATH[result.nextStep];
     res.redirect(this.web(next));

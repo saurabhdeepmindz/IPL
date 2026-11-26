@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-001
  * @subtask        ST-LGN01-001-BE-02
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/core/src/auth/sign-in.types.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -53,4 +53,4 @@ export interface SignInResult extends SessionTokens {
 
 export type SsoResult =
   | (SessionTokens & { ok: true; nextStep: NextStep; returnTo?: string })
-  | { ok: false; kind: 'failed' | 'noaccount' | 'cancelled'; reference: string };
+  | { ok: false; kind: 'failed' | 'noaccount' | 'cancelled'; reference: string; who?: string };

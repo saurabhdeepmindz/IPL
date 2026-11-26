@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-002
  * @subtask        ST-LGN01-002-BE-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/integrations/src/identity/identity.module.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -51,7 +51,7 @@ export function chooseProvider(config: ConfigService, appEnv: string): IdentityP
    *   stories:   US-LGN01-002
    *   workflows: UF-01
    *   ac:        AC-US-LGN01-002-03, AC-US-LGN01-002-08
-   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.2
+   *   lld:       LLD-EPIC-LGN-01 v0.5 section 6.2
  */
 @Module({
   providers: [{ provide: IdentityProviderPort, useFactory: (config: ConfigService) => chooseProvider(config, config.get<string>('APP_ENV') ?? 'dev'), inject: [ConfigService] }],

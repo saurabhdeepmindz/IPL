@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-005, US-LGN01-006, US-LGN01-007
  * @subtask        ST-LGN01-005-FE-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/stories/auth/SignInStates.stories.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 

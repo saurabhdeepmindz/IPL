@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-005
  * @subtask        ST-LGN01-005-FE-01
- * @lld            LLD-EPIC-LGN-01 v0.4 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/unit/features/auth/SignInPage.test.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -66,7 +66,7 @@ describe('User signs in on the sign-in page (US-LGN01-005)', () => {
     vi.mocked(getPublicConfig).mockResolvedValue(config({ ssoAvailable: false }));
     renderPage();
     await screen.findByTestId('local-sign-in-form');
-    expect(screen.queryByTestId('sso-button')).toBeNull();
+    await waitFor(() => expect(screen.queryByTestId('sso-button')).toBeNull());
   });
 
   /** @tc TC-LGN01-005-J02 @story US-LGN01-005 @ac AC-US-LGN01-005-02 @subtask ST-LGN01-005-FE-01 */

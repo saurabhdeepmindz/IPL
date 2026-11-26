@@ -12,10 +12,10 @@
  * @story          US-LGN01-002
  * @subtask        ST-LGN01-002-BE-03
  * @contract       API-AUTH-02, API-AUTH-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/integrations/src/identity/test-identity-provider.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import { IdentityProviderUnavailableException, NoAmsAccountException, SignInCanc
    *   workflows: UF-01
    *   contracts: API-AUTH-02, API-AUTH-03
    *   ac:        AC-US-LGN01-002-08
-   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.2
+   *   lld:       LLD-EPIC-LGN-01 v0.5 section 6.2
  */
 @Injectable()
 export class TestIdentityProvider extends IdentityProviderPort {
@@ -54,7 +54,7 @@ export class TestIdentityProvider extends IdentityProviderPort {
    * @workflow  UF-01
    * @contract  API-AUTH-02, API-AUTH-03
    * @ac        AC-US-LGN01-002-08
-   * @lld       LLD-EPIC-LGN-01 v0.4 §6.2
+   * @lld       LLD-EPIC-LGN-01 v0.5 §6.2
    * @status    built
    *
    * @returns Promise<string>
@@ -75,7 +75,7 @@ export class TestIdentityProvider extends IdentityProviderPort {
    * @workflow  UF-01
    * @contract  API-AUTH-02, API-AUTH-03
    * @ac        AC-US-LGN01-002-08
-   * @lld       LLD-EPIC-LGN-01 v0.4 §6.2
+   * @lld       LLD-EPIC-LGN-01 v0.5 §6.2
    * @status    built
    *
    * @returns Promise<{ employeeCode: string }>
@@ -83,7 +83,7 @@ export class TestIdentityProvider extends IdentityProviderPort {
   async complete(response: Record<string, string>): Promise<{ employeeCode: string }> {
     const account = response.account ?? '';
     if (account === 'fail') throw new IdentityProviderUnavailableException('The test provider did not answer');
-    if (account === 'noaccount') throw new NoAmsAccountException();
+    if (account === 'noaccount') throw new NoAmsAccountException('s.krishnan@ipl.example');
     if (account === 'cancel') throw new SignInCancelledException();
     const m = /^ok-(\d{5})$/.exec(account);
     if (!m) throw new IdentityProviderUnavailableException('The test account is not known');

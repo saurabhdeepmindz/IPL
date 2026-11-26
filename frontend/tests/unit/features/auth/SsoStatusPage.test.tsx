@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-007
  * @subtask        ST-LGN01-007-FE-01
- * @lld            LLD-EPIC-LGN-01 v0.4 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/unit/features/auth/SsoStatusPage.test.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -38,7 +38,7 @@ describe('User sees what happened when single sign-on does not work (US-LGN01-00
     expect(screen.getByTestId('sso-status')).toHaveTextContent(/did not work/i);
     expect(screen.getByTestId('sso-try-again')).toHaveAttribute('href', 'http://auth.test/api/v1/auth/sso/start');
     expect(screen.getByTestId('sso-password-instead')).toHaveAttribute('href', '/login');
-    expect(screen.getByTestId('reference')).toHaveTextContent('FAI-1234-ABCD');
+    expect(await screen.findByTestId('reference')).toHaveTextContent('FAI-1234-ABCD');
     expect(await screen.findByTestId('helpdesk')).toHaveTextContent('it@ipl.example');
   });
 
@@ -48,7 +48,7 @@ describe('User sees what happened when single sign-on does not work (US-LGN01-00
     expect(screen.getByTestId('sso-status')).toHaveTextContent(/not set up/i);
     expect(screen.getByTestId('sso-close')).toHaveAttribute('href', '/login');
     expect(screen.queryByTestId('sso-try-again')).toBeNull();
-    expect(screen.getByTestId('reference')).toHaveTextContent('NOA-9911-WXYZ');
+    expect(await screen.findByTestId('reference')).toHaveTextContent('NOA-9911-WXYZ');
     expect(await screen.findByTestId('helpdesk')).toBeInTheDocument();
   });
 
@@ -63,7 +63,7 @@ describe('User sees what happened when single sign-on does not work (US-LGN01-00
   it('TC-LGN01-007-J04 waiting: a progress state with a way back; an unknown state is shown as failed', () => {
     const { unmount } = show('waiting');
     expect(screen.getByTestId('sso-status')).toHaveTextContent(/signing you in/i);
-    expect(screen.getByRole('link', { name: /back to sign-in/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /cancel and go back/i })).toHaveAttribute('href', '/login');
     unmount();
     show('nonsense');
     expect(screen.getByTestId('sso-status')).toHaveTextContent(/did not work/i);

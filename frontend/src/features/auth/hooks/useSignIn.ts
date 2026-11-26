@@ -12,10 +12,10 @@
  * @story          US-LGN01-005, US-LGN01-006
  * @subtask        ST-LGN01-005-FE-01
  * @contract       API-AUTH-01
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/src/features/auth/hooks/useSignIn.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -49,7 +49,7 @@ function localPath(path: string | null): string | undefined {
  * @workflow  UF-01
  * @contract  API-AUTH-01
  * @ac        AC-US-LGN01-005-02
- * @lld       LLD-EPIC-LGN-01 v0.4 §6.4
+ * @lld       LLD-EPIC-LGN-01 v0.5 §6.4
  * @status    built
  *
  * @returns UseMutationResult<SignInResponse, ApiError, SignInInput>

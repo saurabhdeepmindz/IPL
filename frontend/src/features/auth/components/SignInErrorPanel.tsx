@@ -5,83 +5,97 @@
  * @module  Auth
  *
  * @description
- * Sign-in failures. In plain words: shows wrong credentials with the attempts left, the lock with its end time, an inactive account and the rate-limit wait.
+ * Sign-in failure alert. In plain words: wrong password, locked and inactive alerts in the words of the design.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
+ * @version 0.2.0
  * @since   2026-11-26
  *
  * @story          US-LGN01-006
  * @subtask        ST-LGN01-006-FE-02
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/src/features/auth/components/SignInErrorPanel.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
+ * @hf             LGN-01 (states error, locked, inactive)
  * @status         built
  */
 
+import type { ReactNode } from 'react';
+import { hf } from '../hf/hf';
+import { Icon } from '../hf/Icon';
 import { usePublicConfig } from '../hooks/usePublicConfig';
 import type { ApiError } from '@/lib/errors';
+import { ContactBlock } from './ContactBlock';
 
-function Contact({ phone, email, hours }: { phone: string; email: string; hours: string }) {
-  return (
-    <p className="mb-0 mt-2" data-testid="helpdesk">
-      IT helpdesk: {phone}, <a href={`mailto:${email}`}>{email}</a> ({hours}).
-    </p>
-  );
+type Details = { attemptsLeft?: number; lockedUntil?: string; reference?: string; retryAfterSeconds?: number };
+
+/** Time as HH:MM on a 24-hour clock, as the design shows it. */
+function clock(iso?: string): string {
+  const d = iso ? new Date(iso) : new Date(Date.now() + 15 * 60_000);
+  return d.toTimeString().slice(0, 5);
 }
 
 /**
  * SignInErrorPanel.
  *
- * In plain words: LGN-03
+ * In plain words: the alert above the password form (high-fidelity LGN-01 states "Wrong password", "Locked" and "Inactive"). It uses the words of the design, an icon and a title, never colour alone.
  *
- * @epic      EPIC-LGN-01
- * @story     US-LGN01-006
- * @subtask   ST-LGN01-006-FE-02
- * @workflow  UF-01
- * @screen    LGN-03
- * @contract  API-AUTH-01, API-AUTH-05
- * @ac        AC-US-LGN01-006-01, AC-US-LGN01-006-02, AC-US-LGN01-006-03, AC-US-LGN01-006-04
- * @lld       LLD-EPIC-LGN-01 v0.4 §6.4
- * @status    built
- *
- * @returns nothing
+ * @ac AC-US-LGN01-006-01, AC-US-LGN01-006-02, AC-US-LGN01-006-04
  */
 export function SignInErrorPanel(props: { error: ApiError }) {
   const { data } = usePublicConfig();
   const { error } = props;
-  const d = error.details as { attemptsLeft?: number; lockedUntil?: string; reference?: string; retryAfterSeconds?: number };
-  let text: string;
-  let showContact = false;
+  const d = error.details as Details;
+  let kind = 'danger';
+  let title = 'We could not sign you in';
+  let body: ReactNode;
+  let contact = false;
   if (error.status === 401) {
     const n = d.attemptsLeft;
-    text = 'Employee code or password is not right.' + (typeof n === 'number' ? ` ${n} ${n === 1 ? 'attempt' : 'attempts'} left before the account is locked.` : '');
+    body = (
+      <>
+        The employee code or password is not correct.
+        {typeof n === 'number' && (
+          <>
+            {' '}
+            <b>
+              {n} {n === 1 ? 'attempt' : 'attempts'} left
+            </b>{' '}
+            before the account is locked for 15 minutes.
+          </>
+        )}
+      </>
+    );
   } else if (error.status === 423) {
-    const at = d.lockedUntil ? new Date(d.lockedUntil).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : 'later';
-    text = `This account is locked for 15 minutes. It opens again at ${at}. The IT team can unlock it sooner.`;
-    showContact = true;
+    kind = 'warning';
+    title = 'Your account is locked';
+    contact = true;
+    body = (
+      <>
+        After 5 sign-in attempts that did not work, this account is locked for 15 minutes, until <b>{clock(d.lockedUntil)}</b>. The IT team can unlock it sooner.
+      </>
+    );
   } else if (error.status === 403) {
-    text = 'This account is not active. Please contact the IT helpdesk and quote the reference.';
-    showContact = true;
+    title = 'Your AMS account is inactive';
+    contact = true;
+    body = <>Your access was ended by the IT team. If you need AMS again, contact them.</>;
   } else if (error.status === 429) {
-    text = `Too many attempts. Wait ${d.retryAfterSeconds ?? 60} seconds and try again.`;
+    title = 'Too many attempts';
+    body = <>Wait {d.retryAfterSeconds ?? 60} seconds and try again.</>;
   } else {
-    text = error.status === 0 ? error.message : 'Sign-in did not work. Please try again.';
+    body = <>{error.status === 0 ? error.message : 'Sign-in did not work. Please try again.'}</>;
   }
   return (
-    <div role="alert" className="alert alert-danger mt-3" data-testid="sign-in-error">
-      <span aria-hidden="true" data-testid="error-icon" className="me-2">
-        ⚠
+    <div className={hf('alert', kind)} role="alert" data-testid="sign-in-error" style={{ marginBottom: 'var(--spacing-lg)' }}>
+      <span data-testid="error-icon">
+        <Icon name="alertC" />
       </span>
-      <strong className="visually-hidden">Error: </strong>
-      {text}
-      {d.reference && (
-        <p className="mb-0 mt-2" data-testid="reference">
-          Reference: {d.reference}
-        </p>
-      )}
-      {showContact && data && <Contact {...data.helpdesk} />}
+      <div>
+        <b>{title}</b>
+        <span>{body}</span>
+        {contact && data && <ContactBlock helpdesk={data.helpdesk} reference={d.reference} />}
+      </div>
     </div>
   );
 }

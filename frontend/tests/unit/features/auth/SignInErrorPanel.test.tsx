@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-006
  * @subtask        ST-LGN01-006-FE-01
- * @lld            LLD-EPIC-LGN-01 v0.4 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/unit/features/auth/SignInErrorPanel.test.tsx
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -37,7 +37,7 @@ describe('User sees why a password sign-in failed (US-LGN01-006)', () => {
   it('TC-LGN01-006-J01 a 401 gives one message for a wrong code and a wrong password, with the attempts left', async () => {
     show(new ApiError(401, 'INVALID_CREDENTIALS', 'x', {}, { attemptsLeft: 3 }));
     const panel = await screen.findByTestId('sign-in-error');
-    expect(panel).toHaveTextContent('Employee code or password is not right');
+    expect(panel).toHaveTextContent('The employee code or password is not correct');
     expect(panel).toHaveTextContent('3 attempts left');
     expect(panel).not.toHaveTextContent(/which one/i);
   });
@@ -55,9 +55,9 @@ describe('User sees why a password sign-in failed (US-LGN01-006)', () => {
     show(new ApiError(423, 'ACCOUNT_LOCKED', 'x', {}, { lockedUntil: '2026-11-26T10:15:00.000Z', reference: 'LCK-1002-8H3K' }));
     const panel = await screen.findByTestId('sign-in-error');
     expect(panel).toHaveTextContent(/locked for 15 minutes/i);
-    expect(panel).toHaveTextContent(/opens again at/i);
+    expect(panel).toHaveTextContent(/until \d\d:\d\d/i);
     expect(panel).toHaveTextContent(/IT team can unlock it sooner/i);
-    expect(panel).toHaveTextContent('LCK-1002-8H3K');
+    expect(await screen.findByTestId('reference')).toHaveTextContent('LCK-1002-8H3K');
   });
 
   /** @tc TC-LGN01-006-J03 @story US-LGN01-006 @ac AC-US-LGN01-006-03 @subtask ST-LGN01-006-FE-02 */
@@ -70,8 +70,8 @@ describe('User sees why a password sign-in failed (US-LGN01-006)', () => {
   it('TC-LGN01-006-J04 a 403 says the account is inactive with the IT contact and the reference', async () => {
     show(new ApiError(403, 'ACCOUNT_INACTIVE', 'x', {}, { reference: 'INA-4411-Q7ZP' }));
     const panel = await screen.findByTestId('sign-in-error');
-    expect(panel).toHaveTextContent(/not active/i);
-    expect(panel).toHaveTextContent('INA-4411-Q7ZP');
+    expect(panel).toHaveTextContent(/inactive/i);
+    expect(await screen.findByTestId('reference')).toHaveTextContent('INA-4411-Q7ZP');
     expect(await screen.findByTestId('helpdesk')).toHaveTextContent('+91 11 2345 6789');
     expect(screen.getByTestId('helpdesk')).toHaveTextContent('it@ipl.example');
   });

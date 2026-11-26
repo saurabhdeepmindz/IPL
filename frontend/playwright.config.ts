@@ -9,11 +9,12 @@
 import { defineConfig } from '@playwright/test';
 
 /** E2E=1 runs the journeys (`tests/e2e`) against Next on port 3001 and the built API on port 3100; otherwise the visual suite runs on the static Storybook. */
-const journeys = process.env.E2E === '1';
+const ux = process.env.UX === '1';
+const journeys = process.env.E2E === '1' || ux;
 
 export default defineConfig({
   testDir: './tests',
-  testMatch: journeys ? ['e2e/**/*.spec.ts'] : ['visual/**/*.spec.ts'],
+  testMatch: ux ? ['ux/**/*.spec.ts'] : journeys ? ['e2e/**/*.spec.ts'] : ['visual/**/*.spec.ts'],
   outputDir: journeys ? './test-results/e2e' : './test-results/playwright',
   reporter: [['list'], ['html', { outputFolder: './test-results/playwright-report', open: 'never' }]],
   workers: journeys ? 1 : undefined,

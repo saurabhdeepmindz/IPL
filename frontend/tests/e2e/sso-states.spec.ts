@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-007
  * @subtask        ST-LGN01-007-FE-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/e2e/sso-states.spec.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -58,7 +58,7 @@ test.describe('User sees what happened when single sign-on does not work (US-LGN
   test('TC-LGN01-007-E04 while the answer has not come, a waiting state with a way back is shown', async ({ page }) => {
     await page.goto('/signing-in');
     await expect(tid(page, 'sso-status')).toContainText(/signing you in/i);
-    await page.getByRole('link', { name: /back to sign-in/i }).filter({ visible: true }).click();
+    await page.getByRole('link', { name: /cancel and go back/i }).filter({ visible: true }).click();
     await expect(page).toHaveURL(/\/login/);
     await shot(page, 'TC-LGN01-007-E04_waiting');
   });

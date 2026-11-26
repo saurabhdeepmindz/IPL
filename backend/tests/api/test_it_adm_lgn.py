@@ -8,10 +8,10 @@
 
 @story          US-LGN01-009
 @subtask        ST-LGN01-009-IN-01
-@lld            LLD-EPIC-LGN-01 v0.4 10
-@lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+@lld            LLD-EPIC-LGN-01 v0.5 10
+@lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
 @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/api/test_it_adm_lgn.py
-@lld-synced     v0.4
+@lld-synced     v0.5
 @status         built
 """
 

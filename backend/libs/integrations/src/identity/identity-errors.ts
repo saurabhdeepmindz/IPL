@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-002
  * @subtask        ST-LGN01-002-BE-03
- * @lld            LLD-EPIC-LGN-01 v0.4 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
+ * @lld            LLD-EPIC-LGN-01 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/integrations/src/identity/identity-errors.ts
- * @lld-synced     v0.4
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -29,7 +29,8 @@ export class IdentityProviderUnavailableException extends AppException {
 
 /** The provider confirmed a person who has no AMS user. @story US-LGN01-002 @ac AC-US-LGN01-002-06 */
 export class NoAmsAccountException extends AppException {
-  constructor() {
+  /** @param identity what the provider confirmed about the person (for example the e-mail), shown on the no-account screen */
+  constructor(readonly identity?: string) {
     super(403, 'NO_AMS_ACCOUNT', 'There is no active AMS user for this person');
   }
 }
