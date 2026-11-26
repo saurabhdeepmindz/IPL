@@ -41,7 +41,7 @@ import { UserDetailRoute } from '@/features/users/components/UserDetailRoute';
  */
 export default function Page({ params }: { params: Promise<{ employeeCode: string }> }) {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'User Management', href: '/users' }, { label: 'User details' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User Management', href: '/users' }, { label: 'User details' }]}>
       <UserDetailRoute params={params} />
     </AdminShell>
   );

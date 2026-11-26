@@ -86,7 +86,7 @@ test.describe('Workflow AD-02: add, change and deactivate users', () => {
     await shot(page, '01-user-list');
     await page.getByRole('link', { name: 'Add user' }).click();
     await expect(page.getByRole('heading', { name: 'Add user' })).toBeVisible();
-    await expect(page.getByRole('option', { name: 'IPL', exact: true }).first()).toBeAttached();
+    await expect(page.getByRole('option', { name: /· IPL$/ }).first()).toBeAttached();
 
     // Steps 3, 6 and 8: fill the form; the code is already used (decision "unique?" = no), fix it, give company, role and validity.
     const fill = async (code: string) => {
@@ -99,7 +99,7 @@ test.describe('Workflow AD-02: add, change and deactivate users', () => {
     await lab(page, /^Designation/).selectOption({ label: plain.name });
     await lab(page, /Reporting manager/).selectOption('10001');
     await page.locator('select#company-0').selectOption('IPL');
-    await page.getByRole('group', { name: 'Roles for company 1' }).getByRole('checkbox', { name: 'Initiator' }).check();
+    await page.getByRole('group', { name: 'Roles for company 1' }).getByRole('combobox', { name: 'Add role' }).selectOption({ label: 'Initiator' });
     await page.locator('#from-0').fill('2026-01-01');
     await page.getByTestId('user-save-button').click();
     await expect(page.getByText('This employee code is already used')).toBeVisible();
@@ -127,9 +127,11 @@ test.describe('Workflow AD-02: add, change and deactivate users', () => {
     const desigCode = plain.code;
     ws.addRow([imported, `WF Imported ${imported}`, `wfimported${imported}@example.invalid`, '9876543210', deptCode, desigCode, '10001', 'LOCAL', 'IPL', 'Initiator', '', '']);
     await page.getByLabel('Filled template (.xlsx)').setInputFiles({ name: 'users.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: Buffer.from(await wb.xlsx.writeBuffer()) });
+    await page.getByRole('button', { name: 'Check file' }).click();
     await expect(page.getByText('Step 3 of 4')).toBeVisible();
     await shot(page, '04-import-check');
-    await page.getByRole('button', { name: 'Import the rows that passed' }).click();
+    await page.getByRole('button', { name: /^Import 1 good row$/ }).click();
+    await page.getByTestId('import-confirm').click();
     await expect(page.getByTestId('import-result')).toContainText('Import finished: 1 created');
     await shot(page, '05-import-finished');
     expect((await request.get(`${API}/users/${imported}`, { headers: await bearer(request) })).status()).toBe(200);

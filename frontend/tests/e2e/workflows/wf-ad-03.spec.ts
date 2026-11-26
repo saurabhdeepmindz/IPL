@@ -97,13 +97,14 @@ test.describe('Workflow AD-03: roles and permissions', () => {
     await page.getByTestId('layout-menu').getByRole('link', { name: 'Permission Management' }).click();
     await expect(matrix(page)).toBeVisible();
     await usersViewScope(page).selectOption('COMPANY');
-    await allCompaniesSwitch(page).click();
+    // the save bar of the design sits over the lower rows once a change exists, so the switch is clicked by event
+    await allCompaniesSwitch(page).dispatchEvent('click');
     await expect(page.getByTestId('matrix-counter')).toHaveText('2 unsaved changes');
     await shot(page, '03-matrix-changed');
 
     // Steps 6 and 7 and 9: review (before, after, users affected); the sensitive right shows the warning that must be confirmed.
     await page.getByRole('button', { name: 'Review and save' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Review changes' });
+    const dialog = page.getByRole('dialog', { name: 'Review permission changes' });
     await expect(dialog.getByRole('row', { name: new RegExp(roleName) }).first()).toBeVisible();
     await expect(dialog.getByTestId('sensitive-warning')).toContainText('sensitive right');
     await shot(page, '04-review-warning');

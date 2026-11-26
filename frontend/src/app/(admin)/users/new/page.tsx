@@ -39,7 +39,7 @@ import { UserForm } from '@/features/users/components/UserForm';
  */
 export default function Page() {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'User Management', href: '/users' }, { label: 'Add user' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User Management', href: '/users' }, { label: 'Add user' }]}>
       <UserForm />
     </AdminShell>
   );

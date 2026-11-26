@@ -19,12 +19,12 @@
  */
 'use client';
 
-import { Button, Input, Select } from '@/components/ui';
 import { useRoles } from '@/features/roles';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { useCompanies } from '../hooks/useMasters';
 import type { CompanyRoleInput } from '../types/user.types';
 
-/** Props of CompanyRoleTable. */
 interface CompanyRoleTableProps {
   /** The rows of the form */
   rows: CompanyRoleInput[];
@@ -35,65 +35,97 @@ interface CompanyRoleTableProps {
 }
 
 /**
- * Company rows. In plain words: one row per company with its roles, valid-from, valid-to and Remove; Add company appends a row; a company cannot be chosen twice and the last row cannot be removed.
+ * CompanyRoleTable.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-004
- * @subtask   ST-ADM01-004-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-01
- * @contract  API-MST-03, API-ROL-01
- * @ac        AC-US004-01, AC-US004-03
- * @lld       LLD-EPIC-ADM-01 v0.19 §6.3
- * @status    built
- *
- * @dependencies useCompanies, useRoles
- *
- * @returns The rendered table
+ * In plain words: the "Company access and roles" table of the design: a company list, the roles as chips with a "+ Add role" list, valid from and to, and a remove button; "Add company" adds a row.
  */
 export function CompanyRoleTable({ rows, onChange, errors = {} }: CompanyRoleTableProps) {
   const companies = useCompanies().data?.items ?? [];
   const roles = useRoles({ status: 'ACTIVE' }).data?.items ?? [];
   const set = (i: number, patch: Partial<CompanyRoleInput>) => onChange(rows.map((r, n) => (n === i ? { ...r, ...patch } : r)));
-  const toggle = (i: number, id: string) => set(i, { roleIds: rows[i].roleIds.includes(id) ? rows[i].roleIds.filter((x) => x !== id) : [...rows[i].roleIds, id] });
+  const nameOf = (id: string) => roles.find((r) => r.roleId === id)?.name ?? id;
 
   return (
     <div data-testid="user-company-rows">
-      {rows.map((r, i) => (
-        <div key={i} className="border rounded p-3 mb-3">
-          <div className="row g-2">
-            <div className="col-md-4">
-              <Select id={`company-${i}`} label="Company" placeholder="Select a company" value={r.companyCode} error={errors[`companies.${i}.companyCode`]} onChange={(e) => set(i, { companyCode: e.target.value })}
-                options={companies.map((c) => ({ value: c.code, label: c.code, disabled: rows.some((x, n) => n !== i && x.companyCode === c.code) }))} />
-            </div>
-            <div className="col-md-3">
-              <Input id={`from-${i}`} label="Valid from" type="date" required value={r.validFrom} error={errors[`companies.${i}.validFrom`]} onChange={(e) => set(i, { validFrom: e.target.value })} />
-            </div>
-            <div className="col-md-3">
-              <Input id={`to-${i}`} label="Valid to" type="date" value={r.validTo ?? ''} error={errors[`companies.${i}.validTo`]} onChange={(e) => set(i, { validTo: e.target.value || undefined })} />
-            </div>
-            <div className="col-md-2 d-flex align-items-center">
-              <Button variant="danger" outline size="sm" disabled={rows.length === 1} aria-label={`Remove company ${i + 1}`} onClick={() => onChange(rows.filter((_, n) => n !== i))}>
-                Remove
-              </Button>
-            </div>
-          </div>
-          <fieldset>
-            <legend className="form-label">{`Roles for company ${i + 1}`}</legend>
-            {roles.map((role) => (
-              <label key={role.roleId} className="me-3">
-                <input type="checkbox" className="form-check-input me-1" checked={r.roleIds.includes(role.roleId)} onChange={() => toggle(i, role.roleId)} />
-                {role.name}
-              </label>
+      <div className={hf('table-wrap')}>
+        <table className={hf('tbl co-tbl')}>
+          <thead>
+            <tr>
+              <th style={{ minWidth: 220 }}>Company</th>
+              <th style={{ minWidth: 280 }}>Roles</th>
+              <th>Valid from</th>
+              <th>Valid to</th>
+              <th className={hf('act')}>
+                <span className={hf('sr-only')}>Remove</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i}>
+                <td>
+                  <select id={`company-${i}`} className={hf('select')} aria-label="Company" value={r.companyCode} onChange={(e) => set(i, { companyCode: e.target.value })}>
+                    <option value="">Select a company</option>
+                    {companies.map((c) => (
+                      <option key={c.code} value={c.code} disabled={rows.some((x, n) => n !== i && x.companyCode === c.code)}>
+                        {`${c.name} · ${c.code}`}
+                      </option>
+                    ))}
+                  </select>
+                  {errors[`companies.${i}.companyCode`] && <div style={{ color: 'var(--text-error)', fontSize: 'var(--fs-1)' }}>{errors[`companies.${i}.companyCode`]}</div>}
+                </td>
+                <td>
+                  <div role="group" aria-label={`Roles for company ${i + 1}`}>
+                    <div className={hf('chips')} style={{ marginBottom: 6 }}>
+                      {r.roleIds.map((id) => (
+                        <span key={id} className={hf('chip sel')}>
+                          {nameOf(id)}
+                          <button type="button" className={hf('x')} aria-label={`Remove ${nameOf(id)}`} onClick={() => set(i, { roleIds: r.roleIds.filter((x) => x !== id) })}>
+                            <HfIcon name="x" size="sm" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    <select className={hf('select')} aria-label="Add role" value="" onChange={(e) => e.target.value && set(i, { roleIds: [...r.roleIds, e.target.value] })}>
+                      <option value="">+ Add role</option>
+                      {roles.filter((x) => !r.roleIds.includes(x.roleId)).map((x) => (
+                        <option key={x.roleId} value={x.roleId}>
+                          {x.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <input id={`from-${i}`} className={hf('input')} type="date" aria-label="Valid from" value={r.validFrom} style={{ width: 150 }} onChange={(e) => set(i, { validFrom: e.target.value })} />
+                  {errors[`companies.${i}.validFrom`] && <div style={{ color: 'var(--text-error)', fontSize: 'var(--fs-1)' }}>{errors[`companies.${i}.validFrom`]}</div>}
+                </td>
+                <td>
+                  <input id={`to-${i}`} className={hf('input')} type="date" aria-label="Valid to" value={r.validTo ?? ''} style={{ width: 150 }} onChange={(e) => set(i, { validTo: e.target.value || undefined })} />
+                  {errors[`companies.${i}.validTo`] && <div style={{ color: 'var(--text-error)', fontSize: 'var(--fs-1)' }}>{errors[`companies.${i}.validTo`]}</div>}
+                </td>
+                <td className={hf('act')}>
+                  <button type="button" className={hf('btn btn-text icon sm')} disabled={rows.length === 1} aria-label={`Remove company ${i + 1}`} onClick={() => onChange(rows.filter((_, n) => n !== i))}>
+                    <HfIcon name="trash" size="sm" />
+                  </button>
+                </td>
+              </tr>
             ))}
-          </fieldset>
-        </div>
-      ))}
-      {errors.companies && <p role="alert" className="text-danger">{errors.companies}</p>}
-      <Button variant="link" onClick={() => onChange([...rows, { companyCode: '', roleIds: [], validFrom: '' }])}>
+          </tbody>
+        </table>
+      </div>
+      <div className={hf('field', errors.companies && 'invalid')} style={{ marginTop: 'var(--spacing-md)' }}>
+        <span className={hf('err')} role={errors.companies ? 'alert' : undefined}>
+          <span>
+            <HfIcon name="alertC" />
+          </span>
+          <span>{errors.companies}</span>
+        </span>
+      </div>
+      <button type="button" className={hf('btn btn-text')} style={{ marginTop: 'var(--spacing-sm)' }} onClick={() => onChange([...rows, { companyCode: '', roleIds: [], validFrom: '' }])}>
+        <HfIcon name="plus" />
         Add company
-      </Button>
+      </button>
     </div>
   );
 }

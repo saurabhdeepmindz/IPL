@@ -48,7 +48,7 @@ async function fill(over: { code?: string; designation?: string; manager?: strin
   if (over.manager !== null) await userEvent.selectOptions(screen.getByLabelText(/Reporting manager/), over.manager ?? '10050');
   await userEvent.click(screen.getByLabelText('Local password'));
   await userEvent.selectOptions(screen.getByLabelText('Company', { selector: '#company-0' }), 'IPL');
-  await userEvent.click(within(screen.getByRole('group', { name: 'Roles for company 1' })).getByRole('checkbox', { name: 'Initiator' }));
+  await userEvent.selectOptions(within(screen.getByRole('group', { name: 'Roles for company 1' })).getByRole('combobox', { name: 'Add role' }), 'Initiator');
   await userEvent.type(screen.getAllByLabelText(/Valid from/)[0], '2026-12-01');
 }
 
@@ -115,7 +115,7 @@ describe('UserForm (J01 to J05)', () => {
     await fill();
     await userEvent.click(screen.getByRole('button', { name: 'Add company' }));
     await userEvent.selectOptions(screen.getByLabelText('Company', { selector: '#company-1' }), 'IPLFB');
-    await userEvent.click(within(screen.getByRole('group', { name: 'Roles for company 2' })).getByRole('checkbox', { name: 'Auditor' }));
+    await userEvent.selectOptions(within(screen.getByRole('group', { name: 'Roles for company 2' })).getByRole('combobox', { name: 'Add role' }), 'Auditor');
     await userEvent.type(screen.getAllByLabelText(/Valid from/)[1], '2026-12-02');
     expect(screen.getByTestId('user-access-summary')).toHaveTextContent('IPL: Initiator');
     expect(screen.getByTestId('user-access-summary')).toHaveTextContent('IPLFB: Auditor');

@@ -19,96 +19,145 @@
  */
 'use client';
 
-import { Tabs } from '@/components/ui';
+import { useState } from 'react';
+import Link from 'next/link';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { formatDay } from '@/lib/utils';
+import { useCompanies } from '../hooks/useMasters';
+import { useUser } from '../hooks/useUser';
 import type { UserDetails } from '../types/user.types';
 
-/** Props of UserDetailTabs. */
 interface UserDetailTabsProps {
   /** The user with the data of API-USR-03 */
   user: UserDetails;
 }
 
+/** The reporting manager as the design shows it: name, code and designation (the code alone while the name is not known). */
+function ManagerLine({ code }: { code: string | null | undefined }) {
+  const manager = useUser(code ?? undefined).data;
+  if (!code) return <>-</>;
+  return <>{manager ? `${manager.name} (${code})${manager.designation ? ` · ${manager.designation}` : ''}` : code}</>;
+}
+
+const TABS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'companies', label: 'Companies and roles' },
+  { id: 'activity', label: 'Activity' },
+];
+
 /**
- * Details tabs. In plain words: Overview lists code, e-mail, department, designation, reporting manager (code only) and sign-in; Companies and roles lists company, roles, valid from and valid to; Activity lists the recent changes.
+ * UserDetailTabs.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-006
- * @subtask   ST-ADM01-006-FE-02
- * @frd       FR-042.1, FR-042.4
- * @workflow  AD-02
- * @screen    ADM-01
- * @contract  API-USR-03
- * @ac        AC-US006-01
- * @lld       LLD-EPIC-ADM-01 v0.30 §6.3
- * @status    built
- *
- * @dependencies Tabs
- *
- * @returns The rendered output
+ * In plain words: the three tabs of the user details in the design: Overview (the facts), Companies and roles (a table with the roles as links and the valid dates) and Activity (the feed of changes).
  */
 export function UserDetailTabs({ user }: UserDetailTabsProps) {
+  const [tab, setTab] = useState('overview');
+  const companyNames = Object.fromEntries((useCompanies().data?.items ?? []).map((c) => [c.code, `${c.name} · ${c.code}`]));
   const dates = new Map((user.form?.companies ?? []).map((c) => [c.companyCode, c]));
-  const overview = (
-    <dl className="row mt-3" data-testid="user-overview">
-      <dt className="col-sm-3">Employee code</dt>
-      <dd className="col-sm-9">{user.employeeCode}</dd>
-      <dt className="col-sm-3">Official e-mail</dt>
-      <dd className="col-sm-9">{user.email}</dd>
-      <dt className="col-sm-3">Department</dt>
-      <dd className="col-sm-9">{user.department ?? '-'}</dd>
-      <dt className="col-sm-3">Designation</dt>
-      <dd className="col-sm-9">{user.designation ?? '-'}</dd>
-      <dt className="col-sm-3">Reporting manager</dt>
-      <dd className="col-sm-9">{user.form?.reportingManagerCode ?? '-'}</dd>
-      <dt className="col-sm-3">Sign-in</dt>
-      <dd className="col-sm-9">
-        {user.signIn === 'SSO' ? 'IPL single sign-on' : 'Local password'} · last sign-in {user.lastSignIn ? formatDay(user.lastSignIn) : 'Never'}
-      </dd>
-    </dl>
-  );
-  const companies = (
-    <table className="table mt-3">
-      <thead>
-        <tr>
-          <th scope="col">Company</th>
-          <th scope="col">Roles</th>
-          <th scope="col">Valid from</th>
-          <th scope="col">Valid to</th>
-        </tr>
-      </thead>
-      <tbody>
-        {user.companies.map((c) => (
-          <tr key={c.code}>
-            <td>{c.code}</td>
-            <td>{c.roles.join(', ')}</td>
-            <td>{dates.get(c.code)?.validFrom ?? '-'}</td>
-            <td>{dates.get(c.code)?.validTo ?? 'No end date'}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-  const activity = user.activity.length === 0 ? (
-    <p className="mt-3">No changes recorded yet.</p>
-  ) : (
-    <ul className="mt-3">
-      {user.activity.map((a) => (
-        <li key={`${a.at}-${a.text}`}>
-          {formatDay(a.at)} · {a.text}
-        </li>
-      ))}
-    </ul>
-  );
   return (
-    <Tabs
-      ariaLabel="User details"
-      defaultValue="overview"
-      tabs={[
-        { id: 'overview', label: 'Overview', panel: overview },
-        { id: 'companies', label: 'Companies and roles', panel: companies },
-        { id: 'activity', label: 'Activity', panel: activity },
-      ]}
-    />
+    <>
+      <div className={hf('tabs')} role="tablist" aria-label="User details">
+        {TABS.map((t) => (
+          <button key={t.id} type="button" role="tab" id={`tab-${t.id}`} aria-selected={tab === t.id} aria-controls={`panel-${t.id}`} onClick={() => setTab(t.id)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {tab === 'overview' && (
+        <div id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" className={hf('card-body')}>
+          <dl className={hf('dl')} data-testid="user-overview">
+            <dt>Employee code</dt>
+            <dd className={hf('mono')}>{user.employeeCode}</dd>
+            <dt>Official e-mail</dt>
+            <dd>{user.email}</dd>
+            <dt>Department</dt>
+            <dd>{user.department ?? '-'}</dd>
+            <dt>Designation</dt>
+            <dd>{user.designation ?? '-'}</dd>
+            <dt>Reporting manager</dt>
+            <dd>
+              <ManagerLine code={user.form?.reportingManagerCode} />
+            </dd>
+            <dt>Sign-in</dt>
+            <dd>
+              {user.signIn === 'SSO' ? 'IPL single sign-on' : 'Local password'} · last sign-in {user.lastSignIn ? formatDay(user.lastSignIn) : 'Never'}
+            </dd>
+            <dt>Delegation</dt>
+            <dd>Coming soon</dd>
+          </dl>
+        </div>
+      )}
+      {tab === 'companies' && (
+        <div id="panel-companies" role="tabpanel" aria-labelledby="tab-companies" className={hf('card-body')}>
+          {user.companies.length === 0 ? (
+            <div className={hf('empty')} style={{ padding: 'var(--spacing-3xl)' }}>
+              <span className={hf('art')}>
+                <HfIcon name="key" size="lg" />
+              </span>
+              <b>No company access yet</b>
+              <p>This user can sign in but cannot see any company until a role is given.</p>
+              <Link className={hf('btn btn-primary')} href={`/users/${user.employeeCode}/edit`}>
+                Give access
+              </Link>
+            </div>
+          ) : (
+            <div className={hf('table-wrap')}>
+              <table className={hf('tbl')}>
+                <thead>
+                  <tr>
+                    <th scope="col">Company</th>
+                    <th scope="col">Roles</th>
+                    <th scope="col">Valid from</th>
+                    <th scope="col">Valid to</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {user.companies.map((c) => (
+                    <tr key={c.code}>
+                      <td>
+                        <b>{companyNames[c.code] ?? c.code}</b>
+                      </td>
+                      <td>
+                        <div className={hf('chips')}>
+                          {c.roles.map((r) => (
+                            <span key={r} className={hf('chip sel')}>
+                              {r}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td>{dates.get(c.code)?.validFrom ?? '-'}</td>
+                      <td>{dates.get(c.code)?.validTo ?? 'No end date'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+      {tab === 'activity' && (
+        <div id="panel-activity" role="tabpanel" aria-labelledby="tab-activity" className={hf('card-body')}>
+          {user.activity.length === 0 ? (
+            <p>No changes recorded yet.</p>
+          ) : (
+            <ul className={hf('feed')}>
+              {user.activity.map((a) => (
+                <li key={`${a.at}-${a.text}`}>
+                  <span className={hf('fi')}>
+                    <HfIcon name="shield" size="sm" />
+                  </span>
+                  <div>
+                    {a.text}
+                    <time>{formatDay(a.at)}</time>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </>
   );
 }

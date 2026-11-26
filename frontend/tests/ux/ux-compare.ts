@@ -61,7 +61,7 @@ async function settle(page: Page): Promise<void> {
 
 async function paintMasks(page: Page, masks: string[] | undefined): Promise<void> {
   if (!masks?.length) return;
-  await page.addStyleTag({ content: masks.map((m) => `${m}{background:#888!important;color:#888!important;border-color:#888!important}${m} *{color:#888!important}`).join('\n') });
+  await page.addStyleTag({ content: masks.flatMap((entry) => entry.split(',').map((x) => x.trim()).filter(Boolean)).map((m) => `${m}{background:#888!important;color:#888!important;border-color:#888!important}${m} *{background:#888!important;color:#888!important;border-color:#888!important}`).join('\n') });
 }
 
 /** Takes the picture of the HF page. */

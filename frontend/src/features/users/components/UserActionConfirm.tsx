@@ -19,12 +19,12 @@
  */
 'use client';
 
-import { Button, Modal } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfModal } from '@/hf/HfModal';
 import type { UserActionKind } from '../types/user.types';
 
-/** Props of UserActionConfirm. */
 interface UserActionConfirmProps {
-  /** The action to confirm; null closes the modal */
+  /** The action to confirm; null closes the window */
   action: UserActionKind | null;
   /** The name of the user */
   userName: string;
@@ -38,50 +38,36 @@ interface UserActionConfirmProps {
   busy?: boolean;
 }
 
-/**
- * Confirmation modal. In plain words: "Unlock <name>?" or "Reset the password of <name>?" with the e-mail sentence for the two password actions.
- *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-008
- * @subtask   ST-ADM01-008-FE-02
- * @frd       FR-042.1, FR-042.4
- * @workflow  AD-02
- * @screen    ADM-01
- * @contract  API-USR-06, API-USR-07, API-USR-08
- * @ac        AC-US008-01, 02, 03
- * @lld       LLD-EPIC-ADM-01 v0.30 §6.3
- * @status    built
- *
- * @dependencies Modal, Button
- *
- * @returns The rendered output
- */
 const TITLE: Record<UserActionKind, (name: string) => string> = {
   unlock: (name) => `Unlock ${name}`,
   'reset-password': (name) => `Reset the password of ${name}`,
   'resend-otp': (name) => `Resend the one-time password to ${name}`,
 };
 
+/**
+ * UserActionConfirm.
+ *
+ * In plain words: the small window that asks "are you sure" before Unlock, Reset password or Resend one-time password, in the look of the design.
+ */
 export function UserActionConfirm({ action, userName, email, onConfirm, onCancel, busy = false }: UserActionConfirmProps) {
   if (!action) return null;
   return (
-    <Modal
+    <HfModal
       open
       onClose={onCancel}
       title={TITLE[action](userName)}
-      closeOnBackdrop={false}
       footer={
         <>
-          <Button variant="secondary" outline onClick={onCancel}>
+          <button type="button" className={hf('btn btn-outline')} onClick={onCancel}>
             Cancel
-          </Button>
-          <Button onClick={onConfirm} disabled={busy}>
+          </button>
+          <button type="button" className={hf('btn btn-primary')} onClick={onConfirm} disabled={busy}>
             Confirm
-          </Button>
+          </button>
         </>
       }
     >
-      <p className="mb-0">{action === 'unlock' ? `${userName} will be able to sign in again.` : `A new one-time password will be e-mailed to ${email}.`}</p>
-    </Modal>
+      <p style={{ margin: 0 }}>{action === 'unlock' ? `${userName} will be able to sign in again.` : `A new one-time password will be e-mailed to ${email}.`}</p>
+    </HfModal>
   );
 }

@@ -48,7 +48,7 @@ async function openAddForm(page: Page) {
   await page.getByRole('link', { name: 'User Management' }).click();
   await page.getByRole('link', { name: 'Add user' }).click();
   await expect(page.getByRole('heading', { name: 'Add user' })).toBeVisible();
-  await expect(page.getByRole('option', { name: 'IPL', exact: true }).first()).toBeAttached();
+  await expect(page.getByRole('option', { name: /· IPL$/ }).first()).toBeAttached();
 }
 
 type Names = { dept: string; plain: string; top: string };
@@ -61,7 +61,7 @@ async function fillForm(page: Page, names: Names, code: string, over: { designat
   await lab(page, /^Designation/).selectOption({ label: over.designation ?? names.plain });
   if (over.manager !== false) await lab(page, /Reporting manager/).selectOption('10001');
   await page.locator('select#company-0').selectOption('IPL');
-  await page.getByRole('group', { name: 'Roles for company 1' }).getByRole('checkbox', { name: 'Initiator' }).check();
+  await page.getByRole('group', { name: 'Roles for company 1' }).getByRole('combobox', { name: 'Add role' }).selectOption({ label: 'Initiator' });
   await page.locator('#from-0').fill('2026-01-01');
 }
 
@@ -133,7 +133,7 @@ test.describe('User form journeys (story 004)', () => {
     await fillForm(page, names, code);
     await page.getByRole('button', { name: 'Add company' }).click();
     await page.locator('select#company-1').selectOption('IPLFB');
-    await page.getByRole('group', { name: 'Roles for company 2' }).getByRole('checkbox', { name: 'Auditor' }).check();
+    await page.getByRole('group', { name: 'Roles for company 2' }).getByRole('combobox', { name: 'Add role' }).selectOption({ label: 'Auditor' });
     await page.locator('#from-1').fill('2026-01-01');
     await expect(page.getByTestId('user-access-summary')).toContainText('IPLFB: Auditor');
     await shot(page, 'E03', 'two-companies');

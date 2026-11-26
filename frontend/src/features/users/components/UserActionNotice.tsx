@@ -19,7 +19,8 @@
  */
 'use client';
 
-import { Button } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import type { UserActionKind } from '../types/user.types';
 
 /** The result to show. */
@@ -36,7 +37,6 @@ export interface UserActionResult {
   error?: string;
 }
 
-/** Props of UserActionNotice. */
 interface UserActionNoticeProps {
   /** The result; null shows nothing */
   result: UserActionResult | null;
@@ -47,26 +47,14 @@ interface UserActionNoticeProps {
 }
 
 /**
- * Notice. In plain words: "User 20001 unlocked.", "A new one-time password was e-mailed to <e-mail>.", or "The e-mail was not sent." with Resend; a refused call shows the message of the API.
+ * UserActionNotice.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-008
- * @subtask   ST-ADM01-008-FE-02
- * @frd       FR-042.1, FR-042.4
- * @workflow  AD-02
- * @screen    ADM-01
- * @contract  API-USR-06, API-USR-07, API-USR-08
- * @ac        AC-US008-01, 02, 03
- * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
- * @status    built
- *
- * @dependencies Button
- *
- * @returns The rendered output
+ * In plain words: the notice after Unlock, Reset password or Resend one-time password, as an alert of the design: green when it worked, amber when it was refused or the e-mail was not sent (with Resend), always with Dismiss.
  */
 export function UserActionNotice({ result, onRepeat, onDismiss }: UserActionNoticeProps) {
   if (!result) return null;
   const failed = result.emailStatus === 'FAILED';
+  const bad = Boolean(result.error) || failed;
   const text = result.error
     ? result.error
     : result.action === 'unlock'
@@ -75,16 +63,19 @@ export function UserActionNotice({ result, onRepeat, onDismiss }: UserActionNoti
         ? 'The e-mail was not sent.'
         : `A new one-time password was e-mailed to ${result.email}.`;
   return (
-    <div className={`alert ${result.error || failed ? 'alert-warning' : 'alert-success'} d-flex align-items-center gap-3`} role={result.error || failed ? 'alert' : 'status'} data-testid="user-action-notice">
-      <span className="flex-grow-1">{text}</span>
+    <div className={hf('alert', bad ? 'warning' : 'success')} role={bad ? 'alert' : 'status'} data-testid="user-action-notice" style={{ margin: 'var(--spacing-lg) 0', alignItems: 'center' }}>
+      <span>
+        <HfIcon name={bad ? 'alert' : 'checkC'} />
+      </span>
+      <div style={{ flex: 1 }}>{text}</div>
       {failed && (
-        <Button variant="primary" outline size="sm" onClick={() => onRepeat(result.action, result.employeeCode)}>
+        <button type="button" className={hf('btn btn-outline sm')} onClick={() => onRepeat(result.action, result.employeeCode)}>
           Resend
-        </Button>
+        </button>
       )}
-      <Button variant="secondary" outline size="sm" onClick={onDismiss}>
+      <button type="button" className={hf('btn btn-text sm')} onClick={onDismiss}>
         Dismiss
-      </Button>
+      </button>
     </div>
   );
 }

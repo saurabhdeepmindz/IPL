@@ -50,8 +50,8 @@ describe('AccessSummary and CompanyRoleTable (supporting tests)', () => {
   it('AccessSummary says it in plain words', () => {
     const { rerender } = render(<AccessSummary signIn="SSO" companies={rows} roleNames={names} />);
     expect(screen.getByText(/single sign-on/i)).toBeInTheDocument();
-    expect(screen.getByText('IPL: Initiator, Auditor')).toBeInTheDocument();
-    expect(screen.getByText('IPLFB: Initiator')).toBeInTheDocument();
+    expect(screen.getByText('IPL').closest('li')).toHaveTextContent('IPL: Initiator, Auditor');
+    expect(screen.getByText('IPLFB').closest('li')).toHaveTextContent('IPLFB: Initiator');
     rerender(<AccessSummary signIn="LOCAL" companies={[]} roleNames={names} />);
     expect(screen.getByText(/local password/i)).toBeInTheDocument();
     expect(screen.getByText('No company access yet.')).toBeInTheDocument();
@@ -70,7 +70,7 @@ describe('AccessSummary and CompanyRoleTable (supporting tests)', () => {
     expect(screen.getByRole('button', { name: 'Remove company 1' })).toBeDisabled();
     await userEvent.click(screen.getByRole('button', { name: 'Add company' }));
     expect(screen.getByTestId('rows')).toHaveTextContent('2');
-    expect(await screen.findAllByRole('option', { name: 'IPLFB' })).toHaveLength(2);
+    expect(await screen.findAllByRole('option', { name: /IPLFB/ })).toHaveLength(2);
     expect(screen.getByLabelText('Company', { selector: '#company-1' }).querySelector('option[value="IPL"]')).toBeDisabled();
     await userEvent.click(screen.getByRole('button', { name: 'Remove company 2' }));
     expect(screen.getByTestId('rows')).toHaveTextContent('1');

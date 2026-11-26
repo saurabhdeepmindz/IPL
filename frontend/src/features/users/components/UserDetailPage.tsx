@@ -21,8 +21,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui';
-import { isForbidden, NoAccess, StatusBadge } from '@/components/ams';
+import { isForbidden, NoAccess } from '@/components/ams';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { ApiError } from '@/lib/errors';
 import { useRunUserAction } from '../hooks/useUserActions';
 import { useUser } from '../hooks/useUser';
@@ -31,29 +32,17 @@ import { UserActionNotice, type UserActionResult } from './UserActionNotice';
 import { UserDetailTabs } from './UserDetailTabs';
 import { UserRowMenu } from './UserRowMenu';
 
-/** Props of UserDetailPage. */
 interface UserDetailPageProps {
   /** The employee code of the user to show */
   employeeCode: string;
 }
 
+const STATUS: Record<string, [string, string]> = { ACTIVE: ['b-success', 'Active'], INACTIVE: ['b-neutral', 'Inactive'], LOCKED: ['b-danger', 'Locked'] };
+
 /**
- * Details page. In plain words: loads the user, shows the header and tabs, opens the deactivate dialog and shows "User deactivated" afterwards; 404 shows a message and a link to the list.
+ * UserDetailPage.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-006
- * @subtask   ST-ADM01-006-FE-02
- * @frd       FR-042.1, FR-042.4
- * @workflow  AD-02
- * @screen    ADM-01
- * @contract  API-USR-03, API-USR-05
- * @ac        AC-US006-01, 02
- * @lld       LLD-EPIC-ADM-01 v0.25 §6.3
- * @status    built
- *
- * @dependencies useUser, UserDetailTabs, DeactivateUserDialog, StatusBadge
- *
- * @returns The rendered output
+ * In plain words: the user details of the design (HF-ADM-01 #view): one card with the profile head (avatar, name, code, designation and department, status and sign-in badges, Edit user, Deactivate and the more-actions menu) and the three tabs below it; the action notice shows between them.
  */
 export function UserDetailPage({ employeeCode }: UserDetailPageProps) {
   const { data: user, isPending, error } = useUser(employeeCode);
@@ -73,39 +62,59 @@ export function UserDetailPage({ employeeCode }: UserDetailPageProps) {
       </div>
     );
   }
-  const initials = user.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+  const initials = user.name.replace(/[^A-Z]/g, '').slice(0, 2) || user.name.slice(0, 2).toUpperCase();
+  const [cls, word] = STATUS[user.status] ?? ['b-neutral', user.status];
 
   return (
     <section data-testid="user-detail">
-      <div className="d-flex justify-content-between align-items-start">
-        <div className="d-flex gap-3 align-items-center">
-          <span className="badge text-bg-light fs-5" aria-hidden="true">{initials}</span>
-          <div>
-            <h1 className="h3 mb-1">{user.name}</h1>
-            <p className="mb-0">
-              {user.employeeCode} · {user.designation ?? '-'}, {user.department ?? '-'} <StatusBadge status={user.status} /> <span className="badge text-bg-light border">{user.signIn === 'SSO' ? 'SSO' : 'Local'}</span>
-            </p>
+      <div className={hf('card')} style={{ marginBottom: 'var(--spacing-2xl)' }}>
+        <div className={hf('profile-head')}>
+          <span className={hf('avatar lg')} aria-hidden="true">
+            {initials}
+          </span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h1 style={{ font: '600 var(--fs-6)/32px var(--font-heading)', margin: 0 }}>{user.name}</h1>
+            <div className={hf('meta')}>
+              <span className={hf('mono')}>{user.employeeCode}</span>
+              <span>·</span>
+              <span>
+                {user.designation ?? '-'}, {user.department ?? '-'}
+              </span>
+              <span className={hf('badge', cls)} data-testid="status-badge">
+                {word}
+              </span>
+              <span className={hf('badge plain', user.signIn === 'SSO' ? 'b-primary' : 'b-neutral')}>{user.signIn === 'SSO' ? 'SSO' : 'Local'}</span>
+            </div>
+          </div>
+          <div className={hf('page-actions')}>
+            <UserRowMenu user={user} place="details" onResult={setResult} onDeactivated={() => setDone(true)} />
+            <Link href={`/users/${user.employeeCode}/edit`} className={hf('btn btn-outline')}>
+              <HfIcon name="edit" size="sm" />
+              Edit user
+            </Link>
+            {user.status !== 'INACTIVE' && (
+              <button type="button" className={hf('btn btn-danger-outline')} onClick={() => setDeactivating(true)}>
+                <HfIcon name="ban" size="sm" />
+                Deactivate
+              </button>
+            )}
           </div>
         </div>
-        <div className="d-flex gap-2 align-items-start">
-          <UserRowMenu user={user} place="details" onResult={setResult} onDeactivated={() => setDone(true)} />
-          <Link href={`/users/${user.employeeCode}/edit`} className="btn btn-outline-primary">
-            Edit user
-          </Link>
-          {user.status !== 'INACTIVE' && (
-            <Button variant="danger" outline onClick={() => setDeactivating(true)}>
-              Deactivate
-            </Button>
-          )}
-        </div>
+        {(done || result) && (
+          <div style={{ padding: '0 var(--spacing-xl)' }}>
+            {done && (
+              <div className={hf('alert success')} role="status" style={{ margin: 'var(--spacing-lg) 0' }}>
+                <span>
+                  <HfIcon name="checkC" />
+                </span>
+                <div>User deactivated</div>
+              </div>
+            )}
+            <UserActionNotice result={result} onRepeat={(action, code) => void run({ employeeCode: code, email: user.email }, action)} onDismiss={() => setResult(null)} />
+          </div>
+        )}
+        <UserDetailTabs user={user} />
       </div>
-      {done && (
-        <p className="alert alert-success mt-3" role="status">
-          User deactivated
-        </p>
-      )}
-      <UserActionNotice result={result} onRepeat={(action, code) => void run({ employeeCode: code, email: user.email }, action)} onDismiss={() => setResult(null)} />
-      <UserDetailTabs user={user} />
       <DeactivateUserDialog user={deactivating ? user : null} onClose={() => setDeactivating(false)} onDone={() => setDone(true)} />
     </section>
   );

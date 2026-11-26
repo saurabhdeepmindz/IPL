@@ -124,10 +124,11 @@ describe('US-ADM01-006 user details (J01, J02 and supporting)', () => {
     expect(screen.getByRole('link', { name: 'Edit user' })).toHaveAttribute('href', '/users/20001/edit');
     expect(screen.getByText('anil@example.invalid')).toBeInTheDocument();
     expect(screen.getAllByText('Information Technology').length).toBeGreaterThan(0);
-    expect(screen.getByText('10012')).toBeInTheDocument();
+    expect(screen.getByText(/10012/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('tab', { name: 'Companies and roles' }));
     const row = screen.getByRole('row', { name: /IPL/ });
-    expect(row).toHaveTextContent('Initiator, Auditor');
+    expect(row).toHaveTextContent('Initiator');
+    expect(row).toHaveTextContent('Auditor');
     expect(row).toHaveTextContent('2026-01-01');
     expect(row).toHaveTextContent('2026-12-31');
     await userEvent.click(screen.getByRole('tab', { name: 'Activity' }));

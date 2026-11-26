@@ -201,6 +201,33 @@ async function mockMatrixApi(page: Page, context: BrowserContext) {
   await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }], canViewAll: false } })));
 }
 
+/** Mocks the Add user form: the lists the form needs, read from the HF form (departments, designations, managers) and roles/companies. */
+async function mockUserFormApi(page: Page, context: BrowserContext) {
+  await signedIn(page, context);
+  const hf = await readHfUsers(context);
+  await page.route('**/masters/departments', (r) => r.fulfill(json({ data: { items: hf.depts.map((n) => ({ id: n, code: n, name: n })) } })));
+  await page.route('**/masters/designations', (r) => r.fulfill(json({ data: { items: ['General Manager', 'Senior Manager', 'Manager'].map((n) => ({ id: n, code: n, name: n, isHighest: false })) } })));
+  await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }, { code: '2000', name: 'IPL Subsidiary' }], canViewAll: false } })));
+  await page.route(/\/api\/v1\/roles(\?.*)?$/, (r) => r.fulfill(json({ data: { items: hf.roles.map((n) => ({ roleId: n, name: n, description: '', type: 'STANDARD', userCount: 0, lastChanged: '2026-01-01T00:00:00Z', status: 'ACTIVE' })) } })));
+  await page.route(/\/api\/v1\/users(\?.*)?$/, (r) => r.fulfill(json({ data: { items: [], counts: { all: 0, active: 0, inactive: 0, locked: 0 }, page: 1, pageSize: 100, total: 0 } })));
+}
+
+/** Mocks the user details with the HF first HF user (10002, A. Kumar) and the manager line of the HF overview. */
+async function mockUserViewApi(page: Page, context: BrowserContext) {
+  await signedIn(page, context);
+  const hf = await readHfUsers(context);
+  const u = hf.rows[0];
+  const detail = (over: Record<string, unknown>) => ({
+    employeeCode: u.code, name: u.name, email: u.email, department: u.dept, designation: u.desig, signIn: u.signIn === 'SSO' ? 'SSO' : 'LOCAL', status: u.status.toUpperCase(), lastSignIn: lastIso(u.last),
+    companies: u.roles.filter((x) => x.code).map((x) => ({ code: x.code, roles: x.roles })), firstSignInAt: '2026-04-02T10:00:00Z', signInLocked: false, summaryText: '', activity: [],
+    form: { mobile: null, departmentId: null, designationId: null, reportingManagerCode: '10012', companies: u.roles.filter((x) => x.code).map((x) => ({ companyCode: x.code, roleIds: [], validFrom: '2026-04-01', validTo: null })) }, ...over,
+  });
+  await page.route(/\/api\/v1\/users\/10012$/, (r) => r.fulfill(json({ data: detail({ employeeCode: '10012', name: 'S. Menon', designation: 'General Manager', form: null }) })));
+  await page.route(new RegExp(`/api/v1/users/${u.code}$`), (r) => r.fulfill(json({ data: detail({}) })));
+  await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }, { code: '2000', name: 'IPL Subsidiary' }], canViewAll: false } })));
+  return u.code;
+}
+
 const SCREENS: UxScreen[] = [
   {
     id: 'UX-ADM-01-user-list',
@@ -244,6 +271,20 @@ const SCREENS: UxScreen[] = [
     },
     // UX-ACC-10 · Excel Import, tab "Import history" (HF-ADM-05): the design shows a count (7) of earlier imports; the application has no import history yet (the tab opens the Coming soon page), so no count is shown.
     mask: [...MASK_SHELL],
+  },
+  {
+    id: 'UX-ADM-01-user-form-new',
+    hf: { file: '02-Admin/HF-ADM-01-user-management.html', suffix: '#new' },
+    app: { url: '/users/new', prepare: mockUserFormApi, steps: (p) => p.getByTestId('user-form').waitFor() },
+    // UX-ACC-14 · Add user form, Organisation (HF-ADM-01 #new): the design has a Sub-department list; no master or API has it, so the field is not shown and the grid is painted grey.
+    // UX-ACC-15 · Add user form, Company access table (HF-ADM-01 #new): the design starts with company 1000 chosen and dates typed as text; the application starts empty and uses date pickers: the company row is painted grey.
+    mask: [...MASK_SHELL, '.form-sec:has(#f-dept) .form-grid,.hf-form-sec:has(#f-dept) .hf-form-grid', '.co-tbl tbody tr,.hf-co-tbl tbody tr'],
+  },
+  {
+    id: 'UX-ADM-01-user-view',
+    hf: { file: '02-Admin/HF-ADM-01-user-management.html', suffix: '#view/10002' },
+    app: { url: '/users/10002', prepare: async (p, c) => { const code = await mockUserViewApi(p, c); if (code !== '10002') throw new Error(`first HF user is ${code}`); }, steps: (p) => p.getByTestId('user-overview').waitFor() },
+    mask: [...MASK_SHELL, '.crumbs .cur,.hf-crumbs .hf-cur'],
   },
   {
     id: 'UX-ADM-03-permission-matrix',

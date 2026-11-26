@@ -17,50 +17,60 @@
  * @lld-synced     v0.30
  * @status         built
  */
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import type { CompanyRoleInput } from '../types/user.types';
 
-/** Props of AccessSummary. */
 interface AccessSummaryProps {
+  /** The name typed in the form */
+  name?: string;
   /** The chosen sign-in method */
   signIn: 'SSO' | 'LOCAL';
   /** The rows of the form */
   companies: CompanyRoleInput[];
   /** Name of each role id */
   roleNames: Record<string, string>;
+  /** "Company name · code" of each company code (the code alone when not known) */
+  companyNames?: Record<string, string>;
 }
 
 /**
- * Access summary. In plain words: says how the user signs in and where they can work, computed on the screen (decision L-72).
+ * AccessSummary.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-004
- * @subtask   ST-ADM01-004-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-01
- * @ac        AC-US004-03
- * @lld       LLD-EPIC-ADM-01 v0.19 §6.3
- * @status    built
- *
- * @returns The rendered panel
+ * In plain words: the "Access summary" card beside the form: who signs in how, and the companies with their roles; a warning while no company has a role.
  */
-export function AccessSummary({ signIn, companies, roleNames }: AccessSummaryProps) {
-  const lines = companies.filter((c) => c.companyCode && c.roleIds.length > 0).map((c) => `${c.companyCode}: ${c.roleIds.map((id) => roleNames[id] ?? id).join(', ')}`);
+export function AccessSummary({ name, signIn, companies, roleNames, companyNames = {} }: AccessSummaryProps) {
+  const lines = companies.filter((c) => c.companyCode && c.roleIds.length > 0).map((c) => ({ company: companyNames[c.companyCode] ?? c.companyCode, roles: c.roleIds.map((id) => roleNames[id] ?? id).join(', ') }));
   return (
-    <aside className="card p-3" aria-label="Access summary" data-testid="user-access-summary">
-      <h2 className="h5">Access summary</h2>
-      <p>
-        This user will sign in with <strong>{signIn === 'SSO' ? 'IPL single sign-on' : 'a local password'}</strong> and can work in:
-      </p>
-      {lines.length === 0 ? (
-        <p className="alert alert-warning mb-0">No company access yet.</p>
-      ) : (
-        <ul className="list-unstyled mb-0">
-          {lines.map((l) => (
-            <li key={l}>{l}</li>
-          ))}
-        </ul>
-      )}
+    <aside className={hf('card')} aria-label="Access summary" data-testid="user-access-summary" style={{ position: 'sticky', top: 96 }}>
+      <div className={hf('card-head')}>
+        <h3>Access summary</h3>
+      </div>
+      <div className={hf('card-body')} style={{ fontSize: 'var(--fs-2)' }}>
+        <p style={{ margin: '0 0 var(--spacing-md)' }}>
+          <b>{name?.trim() || 'This user'}</b> will sign in with <b>{signIn === 'SSO' ? 'IPL single sign-on' : 'a local password'}</b> and can work in:
+        </p>
+        {lines.length === 0 ? (
+          <div className={hf('alert warning')} style={{ marginBottom: 'var(--spacing-md)' }}>
+            <span>
+              <HfIcon name="alert" size="sm" />
+            </span>
+            <div>No company access yet.</div>
+          </div>
+        ) : (
+          <ul style={{ margin: '0 0 var(--spacing-md)', paddingLeft: 18, lineHeight: '22px' }}>
+            {lines.map((l) => (
+              <li key={l.company}>
+                <b>{l.company}</b>: {l.roles}
+              </li>
+            ))}
+          </ul>
+        )}
+        <hr className={hf('divider')} style={{ margin: 'var(--spacing-md) 0' }} />
+        <div className={hf('muted')} style={{ fontSize: 'var(--fs-1)', lineHeight: '18px' }}>
+          What each role can do is set in Role Management and Permission Management. Being a final approver comes from the DoA matrix, not from a role.
+        </div>
+      </div>
     </aside>
   );
 }

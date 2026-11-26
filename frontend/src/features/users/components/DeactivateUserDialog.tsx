@@ -20,7 +20,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Input, Modal, Select } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfField } from '@/hf/HfField';
+import { HfIcon } from '@/hf/HfIcon';
+import { HfModal } from '@/hf/HfModal';
 import { ApiError } from '@/lib/errors';
 import { useDeactivateUser } from '../hooks/useDeactivateUser';
 import { readHolds } from '../services/users.service';
@@ -34,7 +37,6 @@ const REASONS: { value: DeactivationReason; label: string }[] = [
   { value: 'OTHER', label: 'Other' },
 ];
 
-/** Props of DeactivateUserDialog. */
 interface DeactivateUserDialogProps {
   /** The user to deactivate; null closes the dialog */
   user: { employeeCode: string; name: string } | null;
@@ -45,22 +47,9 @@ interface DeactivateUserDialogProps {
 }
 
 /**
- * Deactivate dialog. In plain words: reason list and note; 409 HOLDS_PROPOSALS shows the count and Continue; 422 LAST_ADMINISTRATOR shows its message.
+ * DeactivateUserDialog.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-006
- * @subtask   ST-ADM01-006-FE-02
- * @frd       FR-042.1, FR-042.4
- * @workflow  AD-02
- * @screen    ADM-01
- * @contract  API-USR-05
- * @ac        AC-US006-01, 02
- * @lld       LLD-EPIC-ADM-01 v0.25 §6.3
- * @status    built
- *
- * @dependencies useDeactivateUser, Modal, Select, Input
- *
- * @returns The rendered output
+ * In plain words: the "Deactivate user?" window of the design: the reason list and a note; when proposals wait with the user a warning shows them and Continue deactivates anyway.
  */
 export function DeactivateUserDialog({ user, onClose, onDone }: DeactivateUserDialogProps) {
   const deactivate = useDeactivateUser();
@@ -108,43 +97,66 @@ export function DeactivateUserDialog({ user, onClose, onDone }: DeactivateUserDi
   };
 
   return (
-    <Modal
+    <HfModal
       open
       onClose={onClose}
       title={`Deactivate ${user.name}`}
-      closeOnBackdrop={false}
       footer={
         <>
-          <Button variant="secondary" outline onClick={onClose}>
+          <button type="button" className={hf('btn btn-outline')} onClick={onClose}>
             Cancel
-          </Button>
-          {held ? (
-            <Button variant="danger" onClick={() => send(true)} disabled={deactivate.isPending}>
-              Continue
-            </Button>
-          ) : (
-            <Button variant="danger" onClick={() => send(false)} disabled={deactivate.isPending}>
-              Confirm
-            </Button>
-          )}
+          </button>
+          <button type="button" className={hf('btn btn-danger')} onClick={() => send(Boolean(held))} disabled={deactivate.isPending}>
+            <HfIcon name="ban" />
+            {held ? 'Continue' : 'Confirm'}
+          </button>
         </>
       }
     >
-      <Select label="Reason" required placeholder="Select a reason" value={reason} error={reasonError} options={REASONS} onChange={(e) => { setReason(e.target.value); setReasonError(undefined); }} />
-      <Input label="Note (optional)" value={note} maxLength={500} onChange={(e) => setNote(e.target.value)} />
+      <p style={{ marginTop: 0 }}>They will no longer be able to sign in. History in proposals and the audit trail is kept.</p>
       {held && (
-        <div role="alert" className="alert alert-warning mt-3">
-          <p className="mb-1">{held.count === 1 ? '1 proposal is waiting with this user' : `${held.count} proposals are waiting with this user`}</p>
-          {held.hasDelegate && <p className="mb-1">The user has an active delegate.</p>}
-          <a href={held.workflowMonitorUrl}>Open the Workflow Monitor</a>
-          <p className="mb-0 mt-1">Continue deactivates the user anyway.</p>
+        <div role="alert" className={hf('alert warning')} style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <span>
+            <HfIcon name="alert" />
+          </span>
+          <div>
+            <b>{held.count === 1 ? '1 proposal is waiting with this user' : `${held.count} proposals are waiting with this user`}</b>
+            They will be flagged as workflow exceptions. {held.hasDelegate && 'The user has an active delegate. '}
+            <a href={held.workflowMonitorUrl}>Open the Workflow Monitor</a>. Continue deactivates the user anyway.
+          </div>
         </div>
       )}
+      <div style={{ display: 'grid', gap: 'var(--spacing-lg)' }}>
+        <HfField label="Reason" htmlFor="deact-reason" required error={reasonError}>
+          <select
+            id="deact-reason"
+            className={hf('select')}
+            value={reason}
+            onChange={(e) => {
+              setReason(e.target.value);
+              setReasonError(undefined);
+            }}
+          >
+            <option value="">Select a reason</option>
+            {REASONS.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </HfField>
+        <HfField label="Note (optional)" htmlFor="deact-note">
+          <input id="deact-note" className={hf('input')} value={note} maxLength={500} onChange={(e) => setNote(e.target.value)} />
+        </HfField>
+      </div>
       {failure && (
-        <p role="alert" className="alert alert-danger mt-3 mb-0">
-          {failure}
-        </p>
+        <div role="alert" className={hf('alert danger')} style={{ marginTop: 'var(--spacing-lg)' }}>
+          <span>
+            <HfIcon name="alertC" />
+          </span>
+          <div>{failure}</div>
+        </div>
       )}
-    </Modal>
+    </HfModal>
   );
 }
