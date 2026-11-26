@@ -39,7 +39,7 @@ import { UserEditRoute } from '@/features/users/components/UserEditRoute';
  */
 export default function Page({ params }: { params: Promise<{ employeeCode: string }> }) {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration' }, { label: 'User Management', href: '/users' }, { label: 'Edit user' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'User Management', href: '/users' }, { label: 'Edit user' }]}>
       <UserEditRoute params={params} />
     </AdminShell>
   );

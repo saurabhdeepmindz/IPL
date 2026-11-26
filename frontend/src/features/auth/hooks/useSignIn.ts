@@ -61,7 +61,7 @@ export function useSignIn(): UseMutationResult<SignInResponse, ApiError, SignInI
     mutationFn: (input) => signIn(input),
     onSuccess: (result) => {
       setAccessToken(result.accessToken);
-      useSessionStore.getState().signIn({ userId: '', employeeCode: result.user.employeeCode, companyCode: '' });
+      useSessionStore.getState().signIn({ userId: '', employeeCode: result.user.employeeCode, name: result.user.name, companyCode: '' });
       if (result.nextStep === 'CHANGE_PASSWORD') router.push('/choose-password');
       else router.push(next ? `/choose-work?next=${encodeURIComponent(next)}` : '/choose-work');
     },

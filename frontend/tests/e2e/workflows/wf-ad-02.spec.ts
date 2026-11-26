@@ -112,7 +112,7 @@ test.describe('Workflow AD-02: add, change and deactivate users', () => {
     await lab(page, 'Search users').fill(added);
     const addedRow = page.getByRole('row', { name: new RegExp(added) });
     await expect(addedRow).toContainText('Active');
-    await expect(addedRow).toContainText('IPL: Initiator');
+    await expect(addedRow).toContainText('IPL· Initiator');
     await shot(page, '03-added-in-list');
     expect((await devToken(request, added)).ok()).toBe(true);
 

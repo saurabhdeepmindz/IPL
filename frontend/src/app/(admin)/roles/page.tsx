@@ -39,7 +39,7 @@ import { AdminShell } from '@/components/layout/AdminShell';
  */
 export default function Page() {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration' }, { label: 'Role Management' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'Role Management' }]}>
       <RoleListPage />
     </AdminShell>
   );

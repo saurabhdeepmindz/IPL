@@ -41,7 +41,7 @@ import { PermissionManagementPage } from '@/features/permissions/components/Perm
  */
 export default function Page() {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration' }, { label: 'User & Access Management' }, { label: 'Permission Management' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'Permission Management' }]}>
       <PermissionManagementPage />
     </AdminShell>
   );

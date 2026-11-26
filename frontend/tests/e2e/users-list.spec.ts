@@ -65,7 +65,7 @@ test.describe('User list journeys (story 002)', () => {
     // Test users from other journeys can fill the first page, so the Administrator is found by search.
     await page.getByLabel('Search users').filter({ visible: true }).fill('System');
     const row = page.getByRole('row', { name: /System Administrator/ });
-    await expect(row).toContainText('IPL: Administrator');
+    await expect(row).toContainText('IPL· Administrator');
     await expect(row).toContainText('Active');
     await shot(page, 'E01', 'list');
     await page.getByRole('tab', { name: /^Inactive/ }).click();

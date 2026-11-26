@@ -1,0 +1,108 @@
+/**
+ * @file    admin.ux.spec.ts
+ * @module  Tests (UX fidelity)
+ *
+ * @description
+ * Pixel comparison of the Administration screens with the high-fidelity (HF) mock-up. In plain words: for each screen the HF page and the application are opened at the same size and in the same state, the application is fed
+ * the same demo rows the HF page shows (read from the HF page itself, API answers mocked), both are photographed and the pictures are compared pixel by pixel.
+ *
+ * @author  Deepmindz AMS team
+ * @version 1.0.0
+ * @since   2026-11-26
+ *
+ * @epic       EPIC-ADM-01
+ * @story      US-ADM01-001
+ * @workflow   AD-02
+ * @tc         UX-ADM-01
+ * @status     built
+ */
+import { expect, test, type BrowserContext, type Page } from '@playwright/test';
+import { compareScreen, HF_ROOT, type UxScreen } from './ux-compare';
+
+const BASE = 'http://localhost:3001';
+const MONTHS: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+const json = (body: unknown, status = 200) => ({ status, contentType: 'application/json', body: JSON.stringify(body) });
+
+/** Signs the browser in as the HF demo Administrator without calling the API: the marker cookie and the stored user. */
+async function signedIn(page: Page, context: BrowserContext) {
+  await context.addCookies([{ name: 'ams_session', value: '1', url: BASE }]);
+  await page.addInitScript(() => {
+    sessionStorage.setItem('ams-session', JSON.stringify({ state: { status: 'signedIn', user: { userId: 'u1', employeeCode: '10002', name: 'A. Kumar', team: 'IT team', companyCode: '1000' } }, version: 0 }));
+  });
+}
+
+interface HfRow {
+  code: string; name: string; email: string; dept: string; desig: string; roles: { code: string; roles: string[] }[]; signIn: string; status: string; last: string;
+}
+
+/** Reads the demo rows, counts and filter lists from the HF page (the page builds them with its own script). */
+async function readHfUsers(context: BrowserContext) {
+  const browser = context.browser()!;
+  const c = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`file:///${HF_ROOT.replace(/\\/g, '/')}/02-Admin/HF-ADM-01-user-management.html`);
+  await p.waitForTimeout(600);
+  const data = await p.evaluate(() => {
+    const t = (e: Element | null | undefined) => (e?.textContent ?? '').trim();
+    const rows = [...document.querySelectorAll('#uBody tr')].map((tr) => {
+      const td = tr.querySelectorAll('td');
+      return {
+        code: t(td[0]), name: t(td[1].querySelector('b')), email: t(td[1].querySelector('small')),
+        dept: (td[2].childNodes[0]?.textContent ?? '').trim(), desig: t(td[2].querySelector('small')),
+        roles: [...td[3].querySelectorAll('.chip')].map((ch) => ({ code: t(ch.querySelector('b')), roles: (ch.textContent ?? '').replace(t(ch.querySelector('b')), '').replace(/[ ·]/g, ' ').trim().split(/,\s*/) })),
+        signIn: t(td[4].querySelector('.badge')), status: t(td[5].querySelector('.badge')), last: t(td[5].querySelector('small')).replace('Last sign-in:', '').trim(),
+      };
+    });
+    const opts = (id: string) => [...document.querySelectorAll(`#${id} option`)].slice(1).map((o) => t(o));
+    return { rows, counts: { all: +t(document.getElementById('c-all')), active: +t(document.getElementById('c-act')), inactive: +t(document.getElementById('c-ina')), locked: +t(document.getElementById('c-lck')) }, depts: opts('fDept'), roles: opts('fRole') };
+  });
+  await c.close();
+  return data as { rows: HfRow[]; counts: { all: number; active: number; inactive: number; locked: number }; depts: string[]; roles: string[] };
+}
+
+function lastIso(label: string): string | null {
+  if (label === 'Never') return null;
+  const today = label.match(/^Today (\d\d):(\d\d)$/);
+  if (today) return new Date(2026, 10, 26, +today[1], +today[2]).toISOString();
+  if (label === 'Yesterday') return new Date(2026, 10, 25, 12, 0).toISOString();
+  const d = label.match(/^(\d\d)-(\w{3})-(\d{4})$/);
+  return d ? new Date(+d[3], MONTHS[d[2]], +d[1], 12, 0).toISOString() : null;
+}
+
+async function mockUsersApi(page: Page, context: BrowserContext) {
+  await signedIn(page, context);
+  const hf = await readHfUsers(context);
+  const items = hf.rows.map((r) => ({
+    employeeCode: r.code, name: r.name, email: r.email, department: r.dept, designation: r.desig, companies: r.roles.filter((x) => x.code).map((x) => ({ code: x.code, roles: x.roles })),
+    signIn: r.signIn === 'SSO' ? 'SSO' : 'LOCAL', status: r.status.toUpperCase(), lastSignIn: lastIso(r.last),
+  }));
+  await page.route(/\/api\/v1\/users(\?.*)?$/, (r) => r.fulfill(json({ data: { items, counts: hf.counts, page: 1, pageSize: 10, total: hf.counts.all } })));
+  await page.route('**/masters/departments', (r) => r.fulfill(json({ data: { items: hf.depts.map((n) => ({ id: n, code: n, name: n })) } })));
+  await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }, { code: '2000', name: 'IPL Subsidiary' }], canViewAll: false } })));
+  await page.route(/\/api\/v1\/roles(\?.*)?$/, (r) => r.fulfill(json({ data: { items: hf.roles.map((n) => ({ roleId: n, name: n, description: '', type: 'STANDARD', userCount: 0, lastChanged: '2026-01-01T00:00:00Z', status: 'ACTIVE' })) } })));
+}
+
+// Parts that cannot match yet are painted grey in both pictures, each with its reason:
+//  - the notification bell and its count: the notification module is not built (ADM-A2)
+//  - the Company filter's closed text: the HF shows "All companies", the application keeps the honest "Current company" (decision UX-ACC-01)
+const MASK_SHELL = ['.bell,.hf-bell'];
+
+const SCREENS: UxScreen[] = [
+  {
+    id: 'UX-ADM-01-user-list',
+    hf: { file: '02-Admin/HF-ADM-01-user-management.html' },
+    app: { url: '/users', prepare: mockUsersApi, steps: (p) => p.getByTestId('users-table').waitFor() },
+    mask: [...MASK_SHELL, '#fCo,[aria-label="Company"]'],
+  },
+];
+
+test.describe('UX fidelity: Administration screens against the high-fidelity design', () => {
+  for (const s of SCREENS) {
+    test(s.id, async ({ browser }) => {
+      const r = await compareScreen(browser, BASE, s);
+      console.warn(`${r.id}: ${r.passed ? 'PASS' : 'FAIL'} size HF ${r.hfSize.join('x')} app ${r.appSize.join('x')} diff ${r.diffPixels} px (${(r.ratio * 100).toFixed(2)} %)`);
+      expect(r.sameSize, `page size HF ${r.hfSize} vs app ${r.appSize}`).toBe(true);
+      expect(r.ratio, `${r.diffPixels} of ${r.totalPixels} pixels differ`).toBeLessThanOrEqual(s.maxDiffRatio ?? 0.005);
+    });
+  }
+});

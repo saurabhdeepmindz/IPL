@@ -97,7 +97,7 @@ test.describe('User form journeys (story 004)', () => {
     await lab(page, 'Search users').fill(code);
     const row = page.getByRole('row', { name: new RegExp(code) });
     await expect(row).toContainText('Active');
-    await expect(row).toContainText('IPL: Initiator');
+    await expect(row).toContainText('IPL· Initiator');
     await shot(page, 'E01', 'in-list');
   });
 
@@ -141,8 +141,8 @@ test.describe('User form journeys (story 004)', () => {
     await expect(page.getByTestId('users-notice')).toContainText(code);
     await lab(page, 'Search users').fill(code);
     const row = page.getByRole('row', { name: new RegExp(code) });
-    await expect(row).toContainText('IPL: Initiator');
-    await expect(row).toContainText('IPLFB: Auditor');
+    await expect(row).toContainText('IPL· Initiator');
+    await expect(row).toContainText('IPLFB· Auditor');
     await shot(page, 'E03', 'two-chips');
   });
 

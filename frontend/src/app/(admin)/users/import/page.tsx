@@ -24,7 +24,7 @@ import { ImportWizard } from '@/features/users-import/components/ImportWizard';
 /** Route page: the admin shell around the import wizard. */
 export default function Page() {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration' }, { label: 'User Management', href: '/users' }, { label: 'Import users' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'User Management', href: '/users' }, { label: 'Import users' }]}>
       <h1 className="h3">Import users</h1>
       <p className="text-body-secondary">Add many users at once from an Excel file. Nothing is saved until the file has been checked and you confirm.</p>
       <ImportWizard />

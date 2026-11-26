@@ -39,7 +39,7 @@ import { UserListPage } from '@/features/users/components/UserListPage';
  */
 export default function Page() {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration' }, { label: 'User Management' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'User Management' }]}>
       <UserListPage />
     </AdminShell>
   );

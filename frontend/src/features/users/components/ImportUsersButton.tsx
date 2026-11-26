@@ -1,39 +1,35 @@
-'use client';
-
 /**
  * @file    ImportUsersButton.tsx
  * @module  Users
  *
  * @description
- * The Import users button. In plain words: a link styled as a button on the user list that goes to /users/import; the page and the server decide who may use it.
+ * Import users button. In plain words: the outlined button with the upload icon.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
+ * @version 0.2.0
  * @since   2026-11-26
  *
  * @story          US-ADM01-009
- * @subtask        ST-ADM01-009-IN-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.2
+ * @subtask        ST-ADM01-009-FE-05
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/ImportUsersButton.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-01 #list
  * @status         built
  */
 
 import Link from 'next/link';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 
 /**
- * Import users button.
+ * ImportUsersButton.
  *
- * In plain words: a link styled as a button; the page and the server decide who may use it (decision L-128).
- *
- * @story    US-ADM01-009
- * @subtask  ST-ADM01-009-IN-02
- * @ac       AC-US009-02
+ * In plain words: the outlined "Import users" button with the upload icon (high-fidelity page head).
  */
 export function ImportUsersButton() {
   return (
-    <Link href="/users/import" className="btn btn-outline-secondary">
+    <Link href="/users/import" className={hf('btn btn-outline')}>
+      <HfIcon name="upload" />
       Import users
     </Link>
   );

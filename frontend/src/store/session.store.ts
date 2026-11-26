@@ -13,11 +13,16 @@
  * @subtask ST-ADM01-000-FE-02
  */
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 /** The signed-in user as the screens need it. */
 export interface SessionUser {
   userId: string;
   employeeCode: string;
+  /** Name as in the user record, when the sign-in gave it. */
+  name?: string;
+  /** Team or department of the user, when the sign-in or the who-am-I call gave it. */
+  team?: string;
   companyCode: string;
 }
 
@@ -31,10 +36,15 @@ interface SessionState {
   signOut: () => void;
 }
 
-/** Session store (memory only; nothing is persisted). */
-export const useSessionStore = create<SessionState>((set) => ({
-  status: 'signedOut',
-  user: null,
-  signIn: (user) => set({ status: 'signedIn', user }),
-  signOut: () => set({ status: 'signedOut', user: null }),
-}));
+/** Session store. The user is kept in the browser tab (session storage) so a reload still shows who is signed in; tokens are never stored here. */
+export const useSessionStore = create<SessionState>()(
+  persist(
+    (set) => ({
+      status: 'signedOut',
+      user: null,
+      signIn: (user) => set({ status: 'signedIn', user }),
+      signOut: () => set({ status: 'signedOut', user: null }),
+    }),
+    { name: 'ams-session', storage: createJSONStorage(() => sessionStorage), partialize: (s) => ({ status: s.status, user: s.user }) },
+  ),
+);

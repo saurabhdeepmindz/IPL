@@ -63,6 +63,7 @@ export function orderFor(sort: string): Prisma.UserOrderByWithRelationInput[] {
     name: { fullName: d },
     employeeCode: { employeeCode: d },
     status: { status: d },
+    signIn: { authType: d },
     department: { department: { name: d } },
   };
   return [by[field] ?? { fullName: 'asc' }, { employeeCode: 'asc' }];

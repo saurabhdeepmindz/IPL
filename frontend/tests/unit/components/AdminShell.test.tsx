@@ -18,12 +18,16 @@
  * @status         built
  */
 
-import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render as rtlRender, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminShell } from '@/components/layout/AdminShell';
 import { useSessionStore } from '@/store/session.store';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/roles/abc' }));
+vi.mock('@/features/users/services/masters.service', () => ({ getCompanies: vi.fn().mockResolvedValue({ items: [], canViewAll: false }) }));
+const render = (ui: ReactElement) => rtlRender(<QueryClientProvider client={new QueryClient()}>{ui}</QueryClientProvider>);
 
 const crumbs = [{ label: 'Administration' }, { label: 'Role Management', href: '/roles' }, { label: 'Create role' }];
 

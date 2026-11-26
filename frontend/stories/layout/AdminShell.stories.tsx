@@ -18,6 +18,7 @@
  * @status         built
  */
 import type { Meta, StoryObj } from '@storybook/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AdminShell } from '@/components/layout/AdminShell';
 import { useSessionStore } from '@/store/session.store';
 import { expect, within } from 'storybook/test';
@@ -29,7 +30,11 @@ const meta = {
   decorators: [
     (Story) => {
       useSessionStore.getState().signIn({ userId: 'u1', employeeCode: '10002', companyCode: 'IPL' });
-      return <Story />;
+      return (
+        <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+          <Story />
+        </QueryClientProvider>
+      );
     },
   ],
 } satisfies Meta<typeof AdminShell>;

@@ -1,57 +1,42 @@
-/**
- * @file    UserFilters.tsx
- * @module  UsersFeature
- *
- * @description
- * The user filters. In plain words: the search box, the department, role, company and sign-in filters and Clear filters.
- *
- * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
- *
- * @story          US-ADM01-002
- * @subtask        ST-ADM01-002-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.3
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserFilters.tsx
- * @lld-synced     v0.30
- * @status         built
- */
 'use client';
 
+/**
+ * @file    UserFilters.tsx
+ * @module  Users
+ *
+ * @description
+ * User toolbar. In plain words: search, department, role, company, sign-in method and Clear filters, as in the design.
+ *
+ * @author  Deepmindz AMS team
+ * @version 0.2.0
+ * @since   2026-11-26
+ *
+ * @story          US-ADM01-001
+ * @subtask        ST-ADM01-001-FE-02
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
+ * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @hf             HF-ADM-01 #list
+ * @status         built
+ */
+
 import { useEffect, useRef, useState } from 'react';
-import { Button, Input, Select } from '@/components/ui';
 import { useRoles } from '@/features/roles';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { useCompanies, useDepartments } from '../hooks/useMasters';
 import type { UserFilters as Filters } from '../types/user.types';
 
-/** Props of UserFilters. */
 interface UserFiltersProps {
-  /** The current filters */
   value: Filters;
-  /** Called with the new filters (empty values are removed) */
   onChange: (value: Filters) => void;
 }
 
 const clean = (f: Filters): Filters => Object.fromEntries(Object.entries(f).filter(([, v]) => v !== undefined && v !== '')) as Filters;
 
 /**
- * Filters. In plain words: the search box, the department, role, company and sign-in filters and Clear filters. "All companies" is offered only when the companies answer says `canViewAll` (decision L-71).
+ * UserFilters.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-002
- * @subtask   ST-ADM01-002-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-MST-01, API-MST-03
- * @ac        AC-US002-02
- * @lld       LLD-EPIC-ADM-01 v0.19 §6.5
- * @status    built
- *
- * @dependencies useDepartments, useCompanies, useRoles
- *
- * @returns The rendered filters
+ * In plain words: the toolbar of the high-fidelity design: search with its icon, department, role, company and sign-in method, and Clear filters. The empty choice of Company means the current company (the design shows "All companies" here; the application keeps the honest word, decision recorded as UX-ACC-01).
  */
 export function UserFilters({ value, onChange }: UserFiltersProps) {
   const departments = useDepartments().data ?? [];
@@ -77,27 +62,46 @@ export function UserFilters({ value, onChange }: UserFiltersProps) {
   const set = (patch: Partial<Filters>) => onChange(clean({ ...value, ...patch, page: 1 }));
 
   return (
-    <div className="row g-2 mb-3 align-items-end" data-testid="users-filters">
-      <div className="col-md-4">
-        <Input label="Search users" placeholder="Search code, name or e-mail" value={text} onChange={(e) => setText(e.target.value)} />
+    <div className={hf('toolbar')} data-testid="users-filters">
+      <div className={hf('search')} style={{ flex: 1, maxWidth: 420 }}>
+        <HfIcon name="search" />
+        <input className={hf('input')} type="search" placeholder="Search employee code, name or e-mail" aria-label="Search users" value={text} onChange={(e) => setText(e.target.value)} />
       </div>
-      <div className="col-md-2">
-        <Select label="Department" placeholder="All departments" options={departments.map((d) => ({ value: d.id, label: d.name }))} value={value.departmentId ?? ''} onChange={(e) => set({ departmentId: e.target.value })} />
-      </div>
-      <div className="col-md-2">
-        <Select label="Role" placeholder="All roles" options={roles.map((r) => ({ value: r.roleId, label: r.name }))} value={value.roleId ?? ''} onChange={(e) => set({ roleId: e.target.value })} />
-      </div>
-      <div className="col-md-2">
-        <Select label="Company" placeholder="Current company" options={[...(companies?.items ?? []).map((c) => ({ value: c.code, label: c.name })), ...(companies?.canViewAll ? [{ value: 'ALL', label: 'All companies' }] : [])]} value={value.companyCode ?? ''} onChange={(e) => set({ companyCode: e.target.value })} />
-      </div>
-      <div className="col-md-2">
-        <Select label="Sign-in" placeholder="Any sign-in" options={[{ value: 'SSO', label: 'SSO' }, { value: 'LOCAL', label: 'Local' }]} value={value.signIn ?? ''} onChange={(e) => set({ signIn: e.target.value as Filters['signIn'] })} />
-      </div>
-      <div className="col-12">
-        <Button variant="secondary" outline size="sm" onClick={() => onChange({})}>
-          Clear filters
-        </Button>
-      </div>
+      <select className={hf('select')} aria-label="Department" value={value.departmentId ?? ''} onChange={(e) => set({ departmentId: e.target.value })}>
+        <option value="">All departments</option>
+        {departments.map((d) => (
+          <option key={d.id} value={d.id}>
+            {d.name}
+          </option>
+        ))}
+      </select>
+      <select className={hf('select')} aria-label="Role" value={value.roleId ?? ''} onChange={(e) => set({ roleId: e.target.value })}>
+        <option value="">All roles</option>
+        {roles.map((r) => (
+          <option key={r.roleId} value={r.roleId}>
+            {r.name}
+          </option>
+        ))}
+      </select>
+      <select className={hf('select')} aria-label="Company" value={value.companyCode ?? ''} onChange={(e) => set({ companyCode: e.target.value })}>
+        <option value="">Current company</option>
+        {(companies?.items ?? []).map((c) => (
+          <option key={c.code} value={c.code}>
+            {c.name}
+            {' · '}
+            {c.code}
+          </option>
+        ))}
+        {companies?.canViewAll && <option value="ALL">All companies</option>}
+      </select>
+      <select className={hf('select')} aria-label="Sign-in method" value={value.signIn ?? ''} onChange={(e) => set({ signIn: e.target.value as Filters['signIn'] })}>
+        <option value="">Any sign-in</option>
+        <option value="SSO">SSO</option>
+        <option value="LOCAL">Local</option>
+      </select>
+      <button className={hf('btn btn-text')} type="button" onClick={() => onChange({})}>
+        Clear filters
+      </button>
     </div>
   );
 }

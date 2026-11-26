@@ -1,83 +1,67 @@
+'use client';
+
 /**
  * @file    UserRowMenu.tsx
  * @module  Users
  *
  * @description
- * Row menu. In plain words: a keyboard-accessible menu of the actions that fit the user; it also runs the confirmation and the call (decisions L-87 to L-89).
+ * Row actions menu. In plain words: the three-dots menu of a user row.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
- * @story          US-ADM01-008
- * @subtask        ST-ADM01-008-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.3
+ * @story          US-ADM01-001
+ * @subtask        ST-ADM01-001-FE-02
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserRowMenu.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-01 #list
  * @status         built
  */
-'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
+import type { HfIconName } from '@/hf/icons.generated';
 import { useRunUserAction } from '../hooks/useUserActions';
 import type { UserActionKind, UserDetails, UserListItem } from '../types/user.types';
 import { DeactivateUserDialog } from './DeactivateUserDialog';
 import { UserActionConfirm } from './UserActionConfirm';
 import type { UserActionResult } from './UserActionNotice';
 
-type Item = { key: UserActionKind | 'deactivate'; label: string };
+type Item = { key: UserActionKind | 'deactivate'; label: string; icon: HfIconName };
 
-/** The items that fit the user (decision L-89). */
 function itemsFor(user: UserListItem | UserDetails, place: 'list' | 'details'): Item[] {
   if (user.status === 'INACTIVE') return [];
   const items: Item[] = [];
-  if (user.status === 'LOCKED') items.push({ key: 'unlock', label: 'Unlock' });
+  if (user.status === 'LOCKED') items.push({ key: 'unlock', label: 'Unlock', icon: 'unlock' });
   if (user.signIn === 'LOCAL') {
-    items.push({ key: 'reset-password', label: 'Reset password' });
+    items.push({ key: 'reset-password', label: 'Reset password', icon: 'refresh' });
     const signedIn = 'firstSignInAt' in user && user.firstSignInAt;
-    if (!signedIn) items.push({ key: 'resend-otp', label: 'Resend one-time password' });
+    if (!signedIn) items.push({ key: 'resend-otp', label: 'Resend one-time password', icon: 'mail' });
   }
-  if (place === 'list') items.push({ key: 'deactivate', label: 'Deactivate' });
+  if (place === 'list') items.push({ key: 'deactivate', label: 'Deactivate', icon: 'power' });
   return items;
 }
 
-/** Props of UserRowMenu. */
 interface UserRowMenuProps {
-  /** The user; the details page also gives the first sign-in date */
   user: UserListItem | UserDetails;
-  /** Where the menu is shown: the list shows Resend for every local user */
   place: 'list' | 'details';
-  /** Called with the result of an action, for the notice */
   onResult: (result: UserActionResult) => void;
-  /** Called after a deactivation */
   onDeactivated: () => void;
 }
 
 /**
- * Row menu. In plain words: button "Actions for <name>"; Enter opens, arrows move, Escape closes; items Unlock, Reset password, Resend one-time password, Deactivate as the user allows; none for an Inactive user.
+ * UserRowMenu.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-008
- * @subtask   ST-ADM01-008-FE-02
- * @frd       FR-042.1, FR-042.4
- * @workflow  AD-02
- * @screen    ADM-01
- * @contract  API-USR-05, API-USR-06, API-USR-07, API-USR-08
- * @ac        AC-US008-01, 02, 03
- * @lld       LLD-EPIC-ADM-01 v0.26 §6.3
- * @status    built
- *
- * @dependencies useUserActions, UserActionConfirm, DeactivateUserDialog
- *
- * @returns The rendered output
+ * In plain words: the "more actions" menu of a user row in the design (three dots, a panel with the actions that fit the user's state).
  */
 export function UserRowMenu({ user, place, onResult, onDeactivated }: UserRowMenuProps) {
   const [open, setOpen] = useState(false);
   const [asking, setAsking] = useState<UserActionKind | null>(null);
   const [deactivating, setDeactivating] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
-  const list = useRef<HTMLUListElement>(null);
+  const list = useRef<HTMLDivElement>(null);
   const { run, busy } = useRunUserAction(onResult);
   const items = itemsFor(user, place);
 
@@ -115,20 +99,19 @@ export function UserRowMenu({ user, place, onResult, onDeactivated }: UserRowMen
   };
 
   return (
-    <span className="position-relative d-inline-block">
-      <button ref={button} type="button" className="btn btn-outline-secondary btn-sm" aria-haspopup="menu" aria-expanded={open} aria-label={`Actions for ${user.name}`} onClick={() => setOpen(!open)}>
-        <span aria-hidden="true">⋮</span>
+    <div className={hf('menu-wrap')} style={{ display: 'inline-block' }}>
+      <button ref={button} type="button" className={hf('btn btn-text icon sm')} aria-haspopup="menu" aria-expanded={open} aria-label={`Actions for ${user.name}`} onClick={() => setOpen(!open)}>
+        <HfIcon name="more" size="sm" />
       </button>
       {open && (
-        <ul ref={list} role="menu" aria-label={`Actions for ${user.name}`} className="list-unstyled position-absolute end-0 bg-white border rounded shadow-sm p-1 m-0" style={{ zIndex: 10, minWidth: '14rem' }} onKeyDown={move}>
+        <div ref={list} role="menu" aria-label={`Actions for ${user.name}`} className={hf('menu', 'open')} onKeyDown={move}>
           {items.map((item) => (
-            <li key={item.key} role="none">
-              <button type="button" role="menuitem" className="btn btn-link text-start w-100 text-decoration-none" onClick={() => choose(item)}>
-                {item.label}
-              </button>
-            </li>
+            <button key={item.key} type="button" role="menuitem" className={item.key === 'deactivate' ? hf('danger') : undefined} onClick={() => choose(item)}>
+              <HfIcon name={item.icon} size="sm" />
+              {item.label}
+            </button>
           ))}
-        </ul>
+        </div>
       )}
       <UserActionConfirm
         action={asking}
@@ -143,6 +126,6 @@ export function UserRowMenu({ user, place, onResult, onDeactivated }: UserRowMen
         }}
       />
       <DeactivateUserDialog user={deactivating ? user : null} onClose={() => setDeactivating(false)} onDone={onDeactivated} />
-    </span>
+    </div>
   );
 }

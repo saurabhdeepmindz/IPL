@@ -66,8 +66,8 @@ describe('UserListPage (J01 to J03)', () => {
     expect(screen.getByRole('tab', { name: /Active/ })).toHaveTextContent('2');
     expect(screen.getByRole('tab', { name: /Inactive/ })).toHaveTextContent('1');
     expect(screen.getByRole('tab', { name: /Locked/ })).toHaveTextContent('0');
-    expect(within(row).getByText('IPL: Auditor')).toBeInTheDocument();
-    expect(within(row).getByText('IPLFB: Initiator')).toBeInTheDocument();
+    expect(within(row).getByText((_, el) => String(el?.className).includes('chip') && el?.textContent === 'IPL· Auditor')).toBeInTheDocument();
+    expect(within(row).getByText((_, el) => String(el?.className).includes('chip') && el?.textContent === 'IPLFB· Initiator')).toBeInTheDocument();
     expect(within(row).getByText('Local')).toBeInTheDocument();
     expect(within(row).getByText(/Inactive/)).toBeInTheDocument();
     expect(within(screen.getByRole('row', { name: /User 3/ })).getByText(/Locked/)).toBeInTheDocument();
@@ -130,7 +130,7 @@ describe('UserListPage (J01 to J03)', () => {
   it('offers All companies only to a caller who may see all', async () => {
     const { unmount } = renderPage();
     const company = await screen.findByLabelText('Company');
-    await screen.findByRole('option', { name: 'Indian Potash' });
+    await screen.findByRole('option', { name: 'Indian Potash · IPL' });
     expect(within(company).queryByRole('option', { name: 'All companies' })).not.toBeInTheDocument();
     unmount();
     vi.mocked(getCompanies).mockResolvedValue({ items: [{ code: 'IPL', name: 'Indian Potash' }], canViewAll: true });
