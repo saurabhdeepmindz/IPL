@@ -1,56 +1,41 @@
+'use client';
+
 /**
  * @file    DeactivateRoleDialog.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * The deactivate role dialog. In plain words: asks for a reason, then deactivates; a role that users hold shows how many and is not deactivated.
+ * Deactivate role dialog. In plain words: HF-ADM-02 deactivate modal.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
- * @story          US-ADM01-012
- * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @story          US-ADM01-015
+ * @subtask        ST-ADM01-015-FE-03
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/DeactivateRoleDialog.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #deactModal
  * @status         built
  */
-'use client';
 
 import { useState } from 'react';
 import { ReasonDialog } from '@/components/ams';
-import { Button, Modal } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfModal } from '@/hf/HfModal';
 import { toApiError } from '@/lib/errors';
 import { useDeactivateRole } from '../hooks/useDeactivateRole';
 import type { Role } from '../types/role.types';
 
-/** Props of DeactivateRoleDialog. */
 interface DeactivateRoleDialogProps {
-  /** The role to deactivate; null closes the dialog */
   role: Role | null;
-  /** Called when the dialog closes */
   onClose: () => void;
 }
 
 /**
- * Deactivate dialog. In plain words: asks for a reason, then deactivates; a role that users hold shows how many and stays (ROLE_IN_USE).
+ * DeactivateRoleDialog.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-012
- * @subtask   ST-ADM01-012-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-ROL-04
- * @ac        AC-US012-04, AC-US012-05
- * @lld       LLD-EPIC-ADM-01 v0.30 §6.5
- * @status    built
- *
- * @dependencies useDeactivateRole, ReasonDialog
- *
- * @returns The rendered dialogs
+ * In plain words: the "Deactivate role?" dialog of the design: asks for a reason; a role that people still hold is refused with the number of holders.
  */
 export function DeactivateRoleDialog({ role, onClose }: DeactivateRoleDialogProps) {
   const deactivate = useDeactivateRole();
@@ -74,10 +59,19 @@ export function DeactivateRoleDialog({ role, onClose }: DeactivateRoleDialogProp
 
   return (
     <>
-      <ReasonDialog open={held === null && failure === null} title={`Deactivate ${role.name}`} onConfirm={confirm} onCancel={onClose} busy={deactivate.isPending} />
-      <Modal open={held !== null || failure !== null} onClose={onClose} title="The role was not deactivated" footer={<Button onClick={onClose}>OK</Button>}>
+      <ReasonDialog open={held === null && failure === null} title={`Deactivate ${role.name}`} text="A deactivated role can no longer be given to users." onConfirm={confirm} onCancel={onClose} busy={deactivate.isPending} />
+      <HfModal
+        open={held !== null || failure !== null}
+        onClose={onClose}
+        title="The role was not deactivated"
+        footer={
+          <button type="button" className={hf('btn btn-primary')} onClick={onClose}>
+            OK
+          </button>
+        }
+      >
         <p role="alert">{held !== null ? message : failure}</p>
-      </Modal>
+      </HfModal>
     </>
   );
 }

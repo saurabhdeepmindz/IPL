@@ -1,59 +1,47 @@
-/**
- * @file    ReasonDialog.tsx
- * @module  Ui
- *
- * @description
- * The reason dialog. In plain words: asks for a reason before a save, deactivate or assign, and sends nothing until a reason is typed (decision L-69).
- *
- * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
- *
- * @story          US-ADM01-012, US-ADM01-013
- * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/components/ams/ReasonDialog.tsx
- * @lld-synced     v0.30
- * @status         built
- */
 'use client';
 
-import { useState } from 'react';
-import { Button, Input, Modal } from '@/components/ui';
+/**
+ * @file    ReasonDialog.tsx
+ * @module  Ams
+ *
+ * @description
+ * Reason dialog. In plain words: the save-with-a-reason dialog of the design.
+ *
+ * @author  Deepmindz AMS team
+ * @version 0.2.0
+ * @since   2026-11-26
+ *
+ * @story          US-ADM01-017
+ * @subtask        ST-ADM01-017-FE-04
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
+ * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @hf             HF-ADM-02 #saveModal
+ * @status         built
+ */
 
-/** Props of ReasonDialog. */
+import { useState } from 'react';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
+import { HfModal } from '@/hf/HfModal';
+
 interface ReasonDialogProps {
-  /** True to show the dialog */
   open: boolean;
-  /** Heading of the dialog */
   title: string;
-  /** Called with the trimmed reason */
   onConfirm: (reason: string) => void;
-  /** Called when the user cancels */
   onCancel: () => void;
-  /** True while the call is running; the button is disabled */
   busy?: boolean;
+  /** One sentence above the field (what is about to happen). */
+  text?: string;
+  /** Text of the confirm button. Default "Confirm". */
+  confirmLabel?: string;
 }
 
 /**
- * Reason dialog. In plain words: a Modal with one required text field (up to 500 characters) and Cancel and Confirm buttons; nothing is sent until a reason is typed.
+ * ReasonDialog.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-012, US-ADM01-013
- * @subtask   ST-ADM01-012-FE-04
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @ac        AC-US012-06
- * @lld       LLD-EPIC-ADM-01 v0.30 §6.5
- * @status    built
- *
- * @dependencies Modal, Input, Button
- *
- * @returns The rendered dialog
+ * In plain words: the "save with a reason" dialog of the high-fidelity design: the title, a sentence, the field "Reason for the change" with the note that it is saved in the audit trail, and Back / Confirm. An empty reason is refused.
  */
-export function ReasonDialog({ open, title, onConfirm, onCancel, busy = false }: ReasonDialogProps) {
+export function ReasonDialog({ open, title, onConfirm, onCancel, busy = false, text, confirmLabel = 'Confirm' }: ReasonDialogProps) {
   const [reason, setReason] = useState('');
   const [error, setError] = useState<string | undefined>();
 
@@ -77,23 +65,48 @@ export function ReasonDialog({ open, title, onConfirm, onCancel, busy = false }:
   };
 
   return (
-    <Modal
+    <HfModal
       open={open}
       onClose={onCancel}
       title={title}
-      closeOnBackdrop={false}
       footer={
         <>
-          <Button variant="secondary" outline onClick={onCancel} data-testid="reason-cancel">
-            Cancel
-          </Button>
-          <Button onClick={confirm} disabled={busy} data-testid="reason-confirm">
-            Confirm
-          </Button>
+          <button type="button" className={hf('btn btn-danger-outline')} onClick={onCancel} data-testid="reason-cancel">
+            Back
+          </button>
+          <button type="button" className={hf('btn btn-primary')} onClick={confirm} disabled={busy} data-testid="reason-confirm">
+            {confirmLabel}
+          </button>
         </>
       }
     >
-      <Input label="Reason" required value={reason} maxLength={500} error={error} onChange={(e) => setReason(e.target.value)} />
-    </Modal>
+      {text && <p style={{ marginTop: 0 }}>{text}</p>}
+      <form
+        noValidate
+        onSubmit={(e) => {
+          e.preventDefault();
+          confirm();
+        }}
+      >
+        <div className={hf('field', error && 'invalid')}>
+          <label htmlFor="reason-input">
+            Reason for the change<span className={hf('req')}>*</span>
+          </label>
+          <input id="reason-input" className={hf('input')} value={reason} maxLength={500} placeholder="e.g. Approved by CIO, mail of 28-Oct" onChange={(e) => setReason(e.target.value)} />
+          <span className={hf('help')}>
+            <span>
+              <HfIcon name="info" />
+            </span>
+            Saved in the audit trail with your name and the time.
+          </span>
+          <span className={hf('err')} role={error ? 'alert' : undefined}>
+            <span>
+              <HfIcon name="alertC" />
+            </span>
+            <span>{error}</span>
+          </span>
+        </div>
+      </form>
+    </HfModal>
   );
 }

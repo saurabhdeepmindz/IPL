@@ -1,40 +1,38 @@
+'use client';
+
 /**
  * @file    AssignUsersDialog.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * The assign users dialog. In plain words: pick users by search, choose the company and the first day, then give the reason and assign.
+ * Assign users drawer. In plain words: HF-ADM-02 assign drawer.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
  * @story          US-ADM01-013
- * @subtask        ST-ADM01-013-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @subtask        ST-ADM01-013-FE-03
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/AssignUsersDialog.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #assignDrawer
  * @status         built
  */
-'use client';
 
 import { useState } from 'react';
 import { ReasonDialog } from '@/components/ams';
-import { Button, Input, Modal, Select } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
+import { HfModal } from '@/hf/HfModal';
 import { useUserSearch } from '@/features/users';
 import { toApiError } from '@/lib/errors';
 import { useSessionStore } from '@/store/session.store';
 import { useAssignUsers } from '../hooks/useAssignUsers';
 import type { RoleDetails } from '../types/role.types';
 
-/** Props of AssignUsersDialog. */
 interface AssignUsersDialogProps {
-  /** The role to give */
   role: RoleDetails;
-  /** True to show the dialog */
   open: boolean;
-  /** Called when the dialog closes */
   onClose: () => void;
 }
 
@@ -44,22 +42,9 @@ interface Picked {
 }
 
 /**
- * Assign dialog. In plain words: search and pick users, choose the company and the first day, then give the reason and assign; for Report Viewer or Auditor an info line says it is added to the business role.
+ * AssignUsersDialog.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-013
- * @subtask   ST-ADM01-013-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-ROL-06, API-USR-01
- * @ac        AC-US013-01, AC-US013-02, AC-US013-03
- * @lld       LLD-EPIC-ADM-01 v0.19 §6.5
- * @status    built
- *
- * @dependencies useUserSearch, useAssignUsers, ReasonDialog
- *
- * @returns The rendered dialog
+ * In plain words: the "Assign users" side drawer of the high-fidelity design: company and valid-from, a search, the people found (click to add), the chosen people, and Cancel / Assign. Assigning asks for a reason.
  */
 export function AssignUsersDialog({ role, open, onClose }: AssignUsersDialogProps) {
   const sessionCompany = useSessionStore((s) => s.user?.companyCode);
@@ -90,34 +75,101 @@ export function AssignUsersDialog({ role, open, onClose }: AssignUsersDialogProp
         setAskReason(false);
       },
     });
+  const msg = (text?: string) => (
+    <span className={hf('err')} role={text ? 'alert' : undefined}>
+      <span>
+        <HfIcon name="alertC" />
+      </span>
+      <span>{text}</span>
+    </span>
+  );
 
   return (
     <>
-      <Modal open={open} onClose={onClose} title={`Assign users to ${role.name}`} size="lg" closeOnBackdrop={false}
-        footer={<><Button variant="secondary" outline onClick={onClose}>Cancel</Button><Button onClick={submit} data-testid="assign-submit">Assign</Button></>}>
+      <HfModal
+        open={open}
+        onClose={onClose}
+        drawer
+        title="Assign users"
+        subtitle={`to ${role.name}`}
+        footer={
+          <>
+            <button type="button" className={hf('btn btn-outline')} onClick={onClose}>
+              Cancel
+            </button>
+            <button type="button" className={hf('btn btn-primary')} onClick={submit} data-testid="assign-submit">
+              Assign
+            </button>
+          </>
+        }
+      >
         {['Report Viewer', 'Auditor'].includes(role.name) && (
-          <p className="alert alert-info" data-testid="assign-info">This role is added to the user&apos;s business role; it does not replace it.</p>
+          <div className={hf('alert info')} data-testid="assign-info" style={{ marginBottom: 'var(--spacing-lg)' }}>
+            <span>
+              <HfIcon name="info" />
+            </span>
+            <div>This role is added to the user&apos;s business role; it does not replace it.</div>
+          </div>
         )}
-        <Input label="Search users" placeholder="Type a name or an employee code" value={text} onChange={(e) => setText(e.target.value)} error={errors.users} />
-        <ul className="list-unstyled">
+        <div className={hf('form-grid')} style={{ gridTemplateColumns: '1fr 1fr', marginBottom: 'var(--spacing-lg)' }}>
+          <div className={hf('field', errors.company && 'invalid')}>
+            <label htmlFor="assign-company">
+              Company<span className={hf('req')}>*</span>
+            </label>
+            <select id="assign-company" className={hf('select')} value={company} onChange={(e) => setCompany(e.target.value)}>
+              <option value="">Select a company</option>
+              {companies.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            {msg(errors.company)}
+          </div>
+          <div className={hf('field', errors.validFrom && 'invalid')}>
+            <label htmlFor="assign-from">
+              Valid from<span className={hf('req')}>*</span>
+            </label>
+            <input id="assign-from" className={hf('input')} type="date" value={validFrom} onChange={(e) => setValidFrom(e.target.value)} />
+            {msg(errors.validFrom)}
+          </div>
+        </div>
+        <div className={hf('field', errors.users && 'invalid')}>
+          <div className={hf('search')} style={{ marginBottom: 'var(--spacing-sm)' }}>
+            <HfIcon name="search" />
+            <input className={hf('input')} type="search" placeholder="Search name, employee code or department" aria-label="Search users" value={text} onChange={(e) => setText(e.target.value)} />
+          </div>
+          {msg(errors.users)}
+        </div>
+        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
           {found.map((u) => (
             <li key={u.employeeCode}>
-              <button type="button" className="btn btn-link p-0" onClick={() => setPicked([...picked, u])}>Add {u.name} ({u.employeeCode})</button>
+              <button type="button" className={hf('btn btn-text sm')} onClick={() => setPicked([...picked, u])}>
+                Add {u.name} ({u.employeeCode})
+              </button>
             </li>
           ))}
         </ul>
-        <ul className="list-inline" aria-label="Chosen users">
+        <div className={hf('muted')} style={{ fontSize: 'var(--fs-1)', margin: 'var(--spacing-sm) 0' }}>
+          {picked.length} {picked.length === 1 ? 'user' : 'users'} chosen
+        </div>
+        <ul aria-label="Chosen users" className={hf('chips')} style={{ listStyle: 'none', padding: 0 }}>
           {picked.map((p) => (
-            <li key={p.employeeCode} className="list-inline-item badge text-bg-light">
-              {p.name} ({p.employeeCode}) <button type="button" className="btn btn-link btn-sm p-0" aria-label={`Remove ${p.name}`} onClick={() => setPicked(picked.filter((x) => x !== p))}>x</button>
+            <li key={p.employeeCode} className={hf('chip')}>
+              {p.name} ({p.employeeCode}){' '}
+              <button type="button" className={hf('close-btn')} style={{ width: 20, height: 20 }} aria-label={`Remove ${p.name}`} onClick={() => setPicked(picked.filter((x) => x !== p))}>
+                <HfIcon name="x" size="sm" />
+              </button>
             </li>
           ))}
         </ul>
-        <Select id="assign-company" label="Company" required placeholder="Select a company" options={companies.map((c) => ({ value: c, label: c }))} value={company} onChange={(e) => setCompany(e.target.value)} error={errors.company} />
-        <Input label="Valid from" type="date" required value={validFrom} onChange={(e) => setValidFrom(e.target.value)} error={errors.validFrom} />
-        {failure && <p role="alert" className="text-danger">{failure}</p>}
-      </Modal>
-      <ReasonDialog open={askReason} title="Reason for assigning" onConfirm={send} onCancel={() => setAskReason(false)} busy={assign.isPending} />
+        {failure && (
+          <p role="alert" style={{ color: 'var(--text-error)' }}>
+            {failure}
+          </p>
+        )}
+      </HfModal>
+      <ReasonDialog open={askReason} title="Reason for assigning" onConfirm={send} onCancel={() => setAskReason(false)} busy={assign.isPending} confirmLabel="Assign" />
     </>
   );
 }
