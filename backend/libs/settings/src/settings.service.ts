@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-000, US-LGN01-004
  * @subtask        ST-LGN01-000-BE-02
- * @lld            LLD-EPIC-LGN-01 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.3.md
+ * @lld            LLD-EPIC-LGN-01 v0.4 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/settings/src/settings.service.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { SETTING_DEFAULTS } from './settings.defaults';
    *   epics:     EPIC-LGN-01
    *   stories:   US-LGN01-000, US-LGN01-004
    *   workflows: UF-01
-   *   lld:       LLD-EPIC-LGN-01 v0.3 section 6.0
+   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.0
  */
 @Injectable()
 export class SettingsService {
@@ -48,7 +48,7 @@ export class SettingsService {
    * @story     US-LGN01-000
    * @subtask   ST-LGN01-000-BE-02
    * @workflow  UF-01
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.0
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.0
    * @status    built
    *
    * @dependencies ConfigService, SETTING_DEFAULTS
@@ -69,7 +69,7 @@ export class SettingsService {
    * @story     US-LGN01-000
    * @subtask   ST-LGN01-000-BE-02
    * @workflow  UF-01
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.0
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.0
    * @status    built
    *
    * @dependencies SettingsService.get

@@ -23,7 +23,7 @@ describe('ST-ADM01-000-FE-02 route gating', () => {
   it('sends a visitor with no marker to /login', () => {
     const res = proxy(req('/users'));
     expect(res.status).toBe(307);
-    expect(res.headers.get('location')).toBe('http://localhost:3001/login');
+    expect(res.headers.get('location')).toBe('http://localhost:3001/login?next=%2Fusers');
   });
 
   it('lets a visitor with the marker through', () => {

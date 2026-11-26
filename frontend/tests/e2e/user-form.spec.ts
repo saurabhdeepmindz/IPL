@@ -33,7 +33,7 @@ const made: string[] = [];
 const lab = (page: Page, label: string | RegExp) => page.getByLabel(label).filter({ visible: true });
 
 async function signIn(page: Page) {
-  await page.goto('/login');
+  await page.goto('/login?dev=1');
   await lab(page, /Employee code/).fill('10001');
   await lab(page, /Company/).fill('IPL');
   await page.getByRole('button', { name: 'Sign in' }).click();

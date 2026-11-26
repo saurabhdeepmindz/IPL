@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-002
  * @subtask        ST-LGN01-002-BE-02
- * @lld            LLD-EPIC-LGN-01 v0.3 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.3.md
+ * @lld            LLD-EPIC-LGN-01 v0.4 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/core/src/auth/sso-state.store.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -33,7 +33,7 @@ import { InvalidStateException } from './errors/auth-errors';
    *   stories:   US-LGN01-002
    *   workflows: UF-01
    *   ac:        AC-US-LGN01-002-01
-   *   lld:       LLD-EPIC-LGN-01 v0.3 section 6.2
+   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.2
  */
 @Injectable()
 export class SsoStateStore {
@@ -51,7 +51,7 @@ export class SsoStateStore {
    * @subtask   ST-LGN01-002-BE-02
    * @workflow  UF-01
    * @ac        AC-US-LGN01-002-01
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.2
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.2
    * @status    built
    *
    * @returns Promise<string>
@@ -72,7 +72,7 @@ export class SsoStateStore {
    * @subtask   ST-LGN01-002-BE-02
    * @workflow  UF-01
    * @ac        AC-US-LGN01-002-01
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.2
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.2
    * @status    built
    *
    * @returns Promise<{ returnTo?: string }>

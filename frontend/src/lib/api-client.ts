@@ -32,13 +32,13 @@ type Retryable = InternalAxiosRequestConfig & { _retried?: boolean };
  * @param adapter Optional network adapter (tests only)
  * @returns A configured Axios instance
  */
-export function createApiClient(adapter?: AxiosAdapter): AxiosInstance {
+export function createApiClient(adapter?: AxiosAdapter, refreshUrl: string = REFRESH_PATH): AxiosInstance {
   const client = axios.create({ baseURL: env.NEXT_PUBLIC_API_BASE_URL, withCredentials: true, adapter });
   let refreshing: Promise<string> | null = null;
 
   const refresh = (): Promise<string> => {
     refreshing ??= client
-      .post<{ data: { accessToken: string } }>(REFRESH_PATH, undefined, { _retried: true } as Retryable)
+      .post<{ data: { accessToken: string } }>(refreshUrl, undefined, { _retried: true } as Retryable)
       .then((r) => {
         setAccessToken(r.data.data.accessToken);
         return r.data.data.accessToken;
@@ -85,4 +85,4 @@ export function createApiClient(adapter?: AxiosAdapter): AxiosInstance {
 }
 
 /** The shared client used by every feature service. */
-export const api = createApiClient();
+export const api = createApiClient(undefined, `${env.NEXT_PUBLIC_AUTH_API_BASE_URL}${REFRESH_PATH}`);

@@ -16,7 +16,7 @@ import axios from 'axios';
 
 /** Failure body of every API call (Foundation section 3.1). */
 interface FailureBody {
-  error?: { code?: string; message?: string; fields?: { field: string; message: string }[] };
+  error?: { code?: string; message?: string; fields?: { field: string; message: string }[]; details?: Record<string, unknown> };
 }
 
 /**
@@ -33,6 +33,7 @@ export class ApiError extends Error {
     message: string,
     /** Field name to message, for forms. */
     readonly fields: Record<string, string> = {},
+    readonly details: Record<string, unknown> = {},
   ) {
     super(message);
     this.name = 'ApiError';
@@ -53,5 +54,5 @@ export function toApiError(err: unknown): ApiError {
   if (!response) return new ApiError(0, 'NETWORK_ERROR', 'The server could not be reached. Check your connection and try again.');
   const body = (response.data ?? {}) as FailureBody;
   const fields = Object.fromEntries((body.error?.fields ?? []).map((f) => [f.field, f.message]));
-  return new ApiError(response.status, body.error?.code ?? 'ERROR', body.error?.message ?? 'Something went wrong.', fields);
+  return new ApiError(response.status, body.error?.code ?? 'ERROR', body.error?.message ?? 'Something went wrong.', fields, body.error?.details ?? {});
 }

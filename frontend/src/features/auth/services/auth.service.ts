@@ -17,7 +17,11 @@
  * @lld-synced     v0.30
  * @status         built
  */
+import axios from 'axios';
 import { api } from '@/lib/api-client';
+import { env } from '@/lib/env';
+import { toApiError } from '@/lib/errors';
+import type { PublicConfig, SignInResponse } from '../types/auth.types';
 import { setAccessToken } from '@/lib/token';
 
 /**
@@ -43,4 +47,51 @@ export async function devSignIn(employeeCode: string, companyCode: string): Prom
   const who = await api.get<{ data: { userId: string; employeeCode: string; companyCode: string } }>('/dev/whoami');
   const { userId, employeeCode: code, companyCode: company } = who.data.data;
   return { userId, employeeCode: code, companyCode: company };
+}
+
+/** A plain client for the Auth API: no refresh retry, so a wrong password is shown as it is (not turned into "session ended"). */
+const authHttp = axios.create({ baseURL: env.NEXT_PUBLIC_AUTH_API_BASE_URL, withCredentials: true });
+
+/**
+ * Signs in with employee code and password (API-AUTH-01).
+ *
+ * In plain words: sends the code and password and returns the next step, the user name and the access token. The refresh token arrives only as an HTTP-only cookie.
+ *
+ * @story US-LGN01-005
+ * @subtask ST-LGN01-005-FE-02
+ */
+export async function signIn(input: { employeeCode: string; password: string }): Promise<SignInResponse> {
+  try {
+    return (await authHttp.post<{ data: SignInResponse }>('/auth/sign-in', input)).data.data;
+  } catch (e) {
+    throw toApiError(e);
+  }
+}
+
+/**
+ * Address that starts single sign-on (API-AUTH-02).
+ *
+ * In plain words: the browser goes there as a normal page visit; the Auth API redirects to the identity provider.
+ *
+ * @story US-LGN01-005
+ * @subtask ST-LGN01-005-FE-02
+ */
+export function ssoStartUrl(returnTo?: string): string {
+  return `${env.NEXT_PUBLIC_AUTH_API_BASE_URL}/auth/sso/start${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`;
+}
+
+/**
+ * Reads the settings the sign-in page needs (API-AUTH-05).
+ *
+ * In plain words: whether single sign-on is configured, the helpdesk contact, and the identity mode outside production.
+ *
+ * @story US-LGN01-005
+ * @subtask ST-LGN01-005-FE-02
+ */
+export async function getPublicConfig(): Promise<PublicConfig> {
+  try {
+    return (await authHttp.get<{ data: PublicConfig }>('/auth/public-config')).data.data;
+  } catch (e) {
+    throw toApiError(e);
+  }
 }

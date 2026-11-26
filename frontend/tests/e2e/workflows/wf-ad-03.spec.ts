@@ -30,7 +30,7 @@ const bearer = async (request: APIRequestContext) => ({ Authorization: `Bearer $
 const items = async (request: APIRequestContext, path: string) => (await (await request.get(`${API}${path}`, { headers: await bearer(request) })).json()).data.items as { id?: string; roleId?: string; name: string; userCount?: number; isHighest?: boolean }[];
 
 async function signIn(page: Page) {
-  await page.goto('/login');
+  await page.goto('/login?dev=1');
   await page.getByLabel(/Employee code/).filter({ visible: true }).fill('10001');
   await page.getByLabel(/Company/).filter({ visible: true }).fill('IPL');
   await page.getByRole('button', { name: 'Sign in' }).click();

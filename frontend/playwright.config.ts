@@ -27,7 +27,7 @@ export default defineConfig({
         url: 'http://localhost:3001/login',
         reuseExistingServer: true,
         timeout: 300_000,
-        env: { NEXT_PUBLIC_API_BASE_URL: process.env.API_URL ?? 'http://localhost:3100/api/v1', NEXT_PUBLIC_DEV_SIGN_IN: 'true' },
+        env: { NEXT_PUBLIC_API_BASE_URL: process.env.API_URL ?? 'http://localhost:3100/api/v1', NEXT_PUBLIC_DEV_SIGN_IN: 'true', NEXT_PUBLIC_AUTH_API_BASE_URL: process.env.AUTH_API_URL ?? 'http://localhost:3200/api/v1' },
       }
     : { command: 'npx http-server storybook-static -p 6006 -s', url: 'http://localhost:6006', reuseExistingServer: true, timeout: 60_000 },
 });

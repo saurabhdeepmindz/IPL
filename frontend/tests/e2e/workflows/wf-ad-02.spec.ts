@@ -44,7 +44,7 @@ async function freeCode(request: APIRequestContext): Promise<string> {
 }
 
 async function signIn(page: Page) {
-  await page.goto('/login');
+  await page.goto('/login?dev=1');
   await lab(page, /Employee code/).fill('10001');
   await lab(page, /Company/).fill('IPL');
   await page.getByRole('button', { name: 'Sign in' }).click();

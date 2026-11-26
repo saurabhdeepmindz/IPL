@@ -11,10 +11,10 @@
  *
  * @story          US-LGN01-003
  * @subtask        ST-LGN01-003-BE-02
- * @lld            LLD-EPIC-LGN-01 v0.3 §6.3
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.3.md
+ * @lld            LLD-EPIC-LGN-01 v0.4 §6.3
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/libs/core/src/auth/token.service.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -33,7 +33,7 @@ import { AccessClaims } from './session-user.shape';
    *   stories:   US-LGN01-003
    *   workflows: UF-01
    *   ac:        AC-US-LGN01-003-01, AC-US-LGN01-003-02
-   *   lld:       LLD-EPIC-LGN-01 v0.3 section 6.3
+   *   lld:       LLD-EPIC-LGN-01 v0.4 section 6.3
  */
 @Injectable()
 export class TokenService {
@@ -51,7 +51,7 @@ export class TokenService {
    * @subtask   ST-LGN01-003-BE-02
    * @workflow  UF-01
    * @ac        AC-US-LGN01-003-01
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.3
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.3
    * @status    built
    *
    * @dependencies JwtService.signAsync
@@ -74,7 +74,7 @@ export class TokenService {
    * @subtask   ST-LGN01-003-BE-02
    * @workflow  UF-01
    * @ac        AC-US-LGN01-003-01, AC-US-LGN01-003-02
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.3
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.3
    * @status    built
    *
    * @returns { token: string; hash: string }
@@ -94,7 +94,7 @@ export class TokenService {
    * @subtask   ST-LGN01-003-BE-02
    * @workflow  UF-01
    * @ac        AC-US-LGN01-003-02
-   * @lld       LLD-EPIC-LGN-01 v0.3 §6.3
+   * @lld       LLD-EPIC-LGN-01 v0.4 §6.3
    * @status    built
    *
    * @returns string

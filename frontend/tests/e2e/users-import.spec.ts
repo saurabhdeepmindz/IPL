@@ -29,7 +29,7 @@ const shot = (page: Page, step: string) => page.screenshot({ path: `${SHOTS}/TC-
 const HEADER = ['Employee code', 'Full name', 'E-mail', 'Mobile', 'Department code', 'Designation code', 'Reporting manager code', 'Sign-in type', 'Company code', 'Role names', 'Valid from', 'Valid to'];
 
 async function signIn(page: Page) {
-  await page.goto('/login');
+  await page.goto('/login?dev=1');
   await page.getByLabel(/Employee code/).fill('10001');
   await page.getByLabel(/Company/).fill('IPL');
   await page.getByRole('button', { name: 'Sign in' }).click();

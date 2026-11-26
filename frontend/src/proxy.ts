@@ -13,28 +13,40 @@
  * @epic    EPIC-ADM-01
  * @subtask ST-ADM01-000-FE-02
  */
-import { NextResponse, type NextRequest } from 'next/server';
 
-/** Name of the marker cookie set by the back end. */
+import { NextResponse, type NextRequest } from 'next/server';
+import { isPublic } from '@/constants/routes';
+
 export const SESSION_COOKIE = 'ams_session';
 
-const PUBLIC_PREFIXES = ['/login', '/forgot-password', '/_next', '/favicon.ico'];
+const ALWAYS_OPEN = ['/_next', '/favicon.ico'];
 
 /**
- * Decide whether a request may go on.
+ * Route policy of the web app.
  *
- * In plain words: public pages always pass; other pages need the marker cookie.
+ * In plain words: a visitor with no session marker is sent to /login and the page asked for is remembered (`?next=`); a signed-in user who opens /login is sent on to /choose-work. `/login?dev=1` (the development form) is never redirected.
  *
- * @param request The incoming request
- * @returns A redirect to /login, or the request unchanged
+ * @story US-LGN01-008
+ * @subtask ST-LGN01-008-FE-02
+ * @ac AC-US-LGN01-008-01, AC-US-LGN01-008-02
  */
 export function proxy(request: NextRequest): NextResponse {
-  const { pathname } = request.nextUrl;
-  if (PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return NextResponse.next();
-  if (request.cookies.has(SESSION_COOKIE)) return NextResponse.next();
+  const { pathname, search, searchParams } = request.nextUrl;
+  if (ALWAYS_OPEN.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return NextResponse.next();
+  const signedIn = request.cookies.has(SESSION_COOKIE);
+  if (isPublic(pathname)) {
+    if (signedIn && pathname === '/login' && !searchParams.has('dev')) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/choose-work';
+      url.search = '';
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+  if (signedIn) return NextResponse.next();
   const url = request.nextUrl.clone();
   url.pathname = '/login';
-  url.search = '';
+  url.search = pathname === '/' ? '' : `?next=${encodeURIComponent(pathname + search)}`;
   return NextResponse.redirect(url);
 }
 

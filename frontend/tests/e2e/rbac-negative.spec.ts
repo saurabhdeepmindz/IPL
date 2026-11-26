@@ -94,7 +94,7 @@ test.describe('RBAC negative pack: screens (story 018)', () => {
         const allowed = cellAllowed(matrix, role, screen.permission);
         const entry = { role, screen: screen.name, permission: screen.permission, expected: (allowed ? 'opens' : 'no-access') as 'opens' | 'no-access', passed: false };
         results.push(entry);
-        await page.goto('/login');
+        await page.goto('/login?dev=1');
         await page.getByLabel(/Employee code/).fill(codes[role]);
         await page.getByLabel(/Company/).fill('IPL');
         await page.getByRole('button', { name: 'Sign in' }).click();

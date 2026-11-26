@@ -15,10 +15,10 @@
  * @subtask        ST-LGN01-003-BE-01
  * @subtask        ST-LGN01-004-BE-01
  * @contract       API-AUTH-01, API-AUTH-02, API-AUTH-03, API-AUTH-04, API-AUTH-05
- * @lld            LLD-EPIC-LGN-01 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.3.md
+ * @lld            LLD-EPIC-LGN-01 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/apps/auth-apis/src/controllers/auth.controller.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 

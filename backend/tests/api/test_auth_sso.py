@@ -9,10 +9,10 @@
 @story          US-LGN01-002
 @subtask        ST-LGN01-002-BE-04
 @contract       API-AUTH-02, API-AUTH-03
-@lld            LLD-EPIC-LGN-01 v0.3 10
-@lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.3.md
+@lld            LLD-EPIC-LGN-01 v0.4 10
+@lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.4.md
 @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/api/test_auth_sso.py
-@lld-synced     v0.3
+@lld-synced     v0.4
 @status         built
 """
 

@@ -30,7 +30,7 @@ const newCode = () => String(base + next++ * 7);
 const shot = (page: Page, tc: string, step: string) => page.screenshot({ path: `${SHOTS}/TC-ADM01-008-${tc}_${step}.png`, fullPage: true });
 
 async function signIn(page: Page) {
-  await page.goto('/login');
+  await page.goto('/login?dev=1');
   await page.getByLabel(/Employee code/).fill('10001');
   await page.getByLabel(/Company/).fill('IPL');
   await page.getByRole('button', { name: 'Sign in' }).click();
