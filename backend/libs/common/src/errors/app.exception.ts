@@ -42,7 +42,8 @@ export class AppException extends HttpException {
     readonly code: string,
     message: string,
     readonly fields: FieldError[] = [],
+    readonly details?: Record<string, unknown>,
   ) {
-    super({ code, message, fields }, status);
+    super({ code, message, fields, ...(details ? { details } : {}) }, status);
   }
 }

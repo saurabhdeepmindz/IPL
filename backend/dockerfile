@@ -1,16 +1,20 @@
 # Production image (the AWS set-up is decided with HLD v0.3; this file builds the API app)
 FROM node:22-alpine AS build
+# APP picks the application to build and run: ams-apis (default) or auth-apis (decision L-02)
+ARG APP=ams-apis
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+RUN npx nest build ${APP}
 
 FROM node:22-alpine
+ARG APP=ams-apis
+ENV APP=${APP}
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
-EXPOSE 3000
-CMD ["node", "dist/apps/ams-apis/main.js"]
+EXPOSE 3000 3200
+CMD ["sh", "-c", "node dist/apps/${APP}/apps/${APP}/src/main.js"]

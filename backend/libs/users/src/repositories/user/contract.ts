@@ -127,4 +127,28 @@ export abstract class UserRepository {
 
   /** True when the user holds the Administrator role today (any company). */
   abstract isAdministrator(userId: string): Promise<boolean>;
+
+  /**
+   * Reads what the sign-in needs about a user.
+   *
+   * In plain words: the stored password hash, the status, the count of wrong passwords and the lock time. Only the sign-in service uses it; no API returns it.
+   *
+   * @story US-LGN01-001
+   * @subtask ST-LGN01-001-BE-03
+   */
+  abstract findCredentials(employeeCode: string): Promise<UserCredentials | null>;
+}
+
+/** What the sign-in reads about a user (never sent to a browser). */
+export interface UserCredentials {
+  id: string;
+  employeeCode: string;
+  fullName: string;
+  departmentId: string | null;
+  authType: AuthType;
+  passwordHash: string | null;
+  mustChangePassword: boolean;
+  status: UserStatus;
+  failedAttempts: number;
+  lockedUntil: Date | null;
 }

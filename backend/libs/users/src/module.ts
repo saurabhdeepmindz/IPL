@@ -69,6 +69,6 @@ import { UsersQueryService } from './services/users-query.service';
     UserInputValidator,
     UsersCommandService,
   ],
-  exports: [UserRepository, UserWriteRepository, UserFormRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService, UsersCommandService],
+  exports: [PasswordHasher, UserRepository, UserWriteRepository, UserFormRepository, OneTimePasswordRepository, UsersQueryService, OneTimePasswordService, UsersLifecycleService, UsersCommandService],
 })
 export class UsersModule {}

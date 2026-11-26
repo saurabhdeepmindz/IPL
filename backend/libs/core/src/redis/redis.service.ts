@@ -103,6 +103,55 @@ export class RedisService implements OnModuleDestroy {
   }
 
   /**
+   * Count one call in a time window.
+   *
+   * In plain words: adds one to a counter that Redis removes after the window; the first call starts the window.
+   *
+   * @param key Key without the prefix
+   * @param windowSeconds Length of the window in seconds
+   * @returns The count including this call and the seconds left in the window
+   * @throws CacheUnavailableException when Redis cannot be reached
+   * @dependencies Redis.incr, Redis.expire, Redis.ttl
+   */
+  async increment(key: string, windowSeconds: number): Promise<{ count: number; ttlSeconds: number }> {
+    return this.guard(async () => {
+      const count = await this.client.incr(this.k(key));
+      if (count === 1) await this.client.expire(this.k(key), windowSeconds);
+      const ttl = await this.client.ttl(this.k(key));
+      return { count, ttlSeconds: ttl > 0 ? ttl : windowSeconds };
+    });
+  }
+
+  /**
+   * Read a JSON value and delete it in one step.
+   *
+   * In plain words: gives the value once; a second read finds nothing (used for one-time values such as the sign-in state).
+   *
+   * @param key Key without the prefix
+   * @returns The value, or null
+   * @throws CacheUnavailableException when Redis cannot be reached
+   * @dependencies Redis.getdel
+   */
+  async takeJson<T = unknown>(key: string): Promise<T | null> {
+    const raw = await this.guard(() => this.client.getdel(this.k(key)));
+    return raw === null ? null : (JSON.parse(raw) as T);
+  }
+
+  /**
+   * Delete one key.
+   *
+   * In plain words: removes the value if it exists.
+   *
+   * @param key Key without the prefix
+   * @returns Nothing
+   * @throws CacheUnavailableException when Redis cannot be reached
+   * @dependencies Redis.del
+   */
+  async deleteKey(key: string): Promise<void> {
+    await this.guard(() => this.client.del(this.k(key)));
+  }
+
+  /**
    * Delete every key that starts with a prefix.
    *
    * In plain words: clears a group of keys, for example all `perm:user:` entries.

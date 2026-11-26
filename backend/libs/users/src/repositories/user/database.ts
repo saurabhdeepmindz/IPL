@@ -20,7 +20,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService, UserStatus } from '@libs/database';
-import { UserFilter, UserPaging, UserRecord, UserRef, UserRepository } from './contract';
+import { UserCredentials, UserFilter, UserPaging, UserRecord, UserRef, UserRepository } from './contract';
 import { ADMINISTRATOR_ROLE_CODE, orderFor, startOfToday, toUserRecord, userInclude, validToday, whereFor } from './user-helpers';
 
 /**
@@ -234,5 +234,33 @@ export class UserDatabaseRepository extends UserRepository {
     // Any company, so it reads the unfiltered client on purpose (decision L-54).
     const holds = { userId, role: { code: ADMINISTRATOR_ROLE_CODE }, ...validToday(startOfToday()) };
     return (await this.prisma.raw.userCompanyRole.count({ where: holds })) > 0;
+  }
+
+  /**
+   * Reads what the sign-in needs about a user.
+   *
+   * In plain words: one row with the hash, status, wrong-password count and lock time.
+   *
+   * @epic      EPIC-LGN-01
+   * @story     US-LGN01-001
+   * @subtask   ST-LGN01-001-BE-03
+   * @param employeeCode Five-digit code as typed
+   * @returns The credentials or null
+   */
+  async findCredentials(employeeCode: string): Promise<UserCredentials | null> {
+    const u = await this.prisma.db.user.findUnique({ where: { employeeCode } });
+    if (!u) return null;
+    return {
+      id: u.id,
+      employeeCode: u.employeeCode,
+      fullName: u.fullName,
+      departmentId: u.departmentId,
+      authType: u.authType,
+      passwordHash: u.passwordHash,
+      mustChangePassword: u.mustChangePassword,
+      status: u.status,
+      failedAttempts: u.failedAttempts,
+      lockedUntil: u.lockedUntil,
+    };
   }
 }

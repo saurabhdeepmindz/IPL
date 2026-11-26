@@ -58,6 +58,15 @@
       "@libs/roles-and-permissions": [
         "libs/roles-and-permissions/src"
       ],
+      "@libs/settings": [
+        "libs/settings/src"
+      ],
+      "@libs/security": [
+        "libs/security/src"
+      ],
+      "@libs/integrations": [
+        "libs/integrations/src"
+      ],
       "@libs/common/*": [
         "libs/common/src/*"
       ],
@@ -90,6 +99,9 @@
       ],
       "@libs/roles-and-permissions/*": [
         "libs/roles-and-permissions/src/*"
+      ],
+      "@app/auth-apis/*": [
+        "apps/auth-apis/src/*"
       ],
       "@app/ams-apis/*": [
         "apps/ams-apis/src/*"

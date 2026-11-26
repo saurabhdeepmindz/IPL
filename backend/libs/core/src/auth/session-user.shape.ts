@@ -20,4 +20,6 @@ export interface AccessClaims {
   emp: string;
   company: string;
   dept: string | null;
+  /** Session id: set on tokens made by the Auth API (US-LGN01-003); absent on development tokens. */
+  sid?: string;
 }

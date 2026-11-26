@@ -134,3 +134,44 @@ def made(db):
 def bearer(token: str) -> dict[str, str]:
     """Authorization header for a token."""
     return {"Authorization": f"Bearer {token}"}
+
+
+# ---- Auth API fixtures (EPIC-LGN-01, ST-LGN01-001-BE-04)
+AUTH = os.environ.get("AMS_AUTH_URL", "http://localhost:3200/api/v1/auth")
+TEST_PASSWORD = "Test@12345"
+# bcrypt cost-12 hash of TEST_PASSWORD, made once with bcryptjs; used only by the tests
+TEST_PASSWORD_HASH = "$2b$12$2jFUI/81n4RIbETaphMEPOz9agYiEQ9ssh5jia3BPY87Dt8B1ectq"
+
+
+@pytest.fixture(scope="session")
+def auth_api() -> str:
+    """The base URL of the running Auth API (port 3200). It runs with APP_ENV=dev and a high sign-in address limit (SETTING_SIGNIN_LIMITPERADDRESS)."""
+    return AUTH
+
+
+@pytest.fixture()
+def local_user(db):
+    """Make a user who signs in with a password (TEST_PASSWORD); the user and its audit rows are removed after the test."""
+    made_ids: list[tuple[str, str]] = []
+
+    def _make(status: str = "ACTIVE", must_change: bool = False) -> tuple[str, str]:
+        user_id = str(uuid.uuid4())
+        code = str(80000 + int(user_id[:4], 16) % 9999)
+        db.run(
+            "INSERT INTO users (id, employee_code, full_name, email, auth_type, password_hash, must_change_password, status, updated_at) "
+            "VALUES (CAST(:id AS uuid), :code, 'Login Test', :email, 'LOCAL', :h, :m, CAST(:s AS \"UserStatus\"), now())",
+            id=user_id, code=code, email=f"l{user_id[:8]}@example.invalid", h=TEST_PASSWORD_HASH, m=must_change, s=status,
+        )
+        made_ids.append((user_id, code))
+        return user_id, code
+
+    yield _make
+
+    for user_id, code in made_ids:
+        db.run("DELETE FROM audit_log WHERE entity_key = :c", c=code)
+        db.run("DELETE FROM users WHERE id = CAST(:u AS uuid)", u=user_id)
+
+
+def audit_after(db, code: str) -> list[str]:
+    """The `after` text of every sign-in audit row written for an employee code, oldest first."""
+    return [r[0] for r in db.run("SELECT after::text FROM audit_log WHERE entity_key = :c ORDER BY created_at", c=code)]

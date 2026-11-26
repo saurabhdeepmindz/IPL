@@ -8,9 +8,11 @@
   },
   "scripts": {
     "build": "nest build ams-apis",
-    "build:all": "nest build ams-apis && nest build file-services && nest build background-worker && nest build scheduler-job && nest build control-panel",
+    "build:all": "nest build ams-apis && nest build auth-apis && nest build file-services && nest build background-worker && nest build scheduler-job && nest build control-panel",
     "start": "nest start ams-apis",
     "start:dev": "nest start ams-apis --watch",
+    "start:auth": "nest start auth-apis",
+    "start:auth:dev": "nest start auth-apis --watch",
     "start:prod": "node dist/apps/ams-apis/apps/ams-apis/src/main.js",
     "lint": "eslint \"{apps,libs,config,tests}/**/*.ts\" && node scripts/check-headers.js",
     "lint:headers": "node scripts/check-headers.js",

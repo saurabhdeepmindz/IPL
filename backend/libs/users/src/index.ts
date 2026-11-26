@@ -33,3 +33,4 @@ export * from './errors/last-administrator.exception';
 export * from './errors/already-inactive.exception';
 export * from './errors/bulk-import-failed.exception';
 export * from './repositories/user-form';
+export * from './services/password-hasher';

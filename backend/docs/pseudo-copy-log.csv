@@ -161,3 +161,51 @@ date,story,file,lld_version,result
 2026-11-26,US-ADM01-009,libs/users/src/services/users-check-rows.spec.ts,v0.30,copied
 2026-11-26,US-ADM01-009,libs/users/src/services/users-command.service.ts,v0.30,EXISTS-DIFFERENT (not overwritten)
 2026-11-26,US-ADM01-009,tests/api/test_users_import.py,v0.30,copied
+2026-11-26,US-LGN01-000,apps/auth-apis/src/main.ts,v0.2,copied
+2026-11-26,US-LGN01-000,apps/auth-apis/src/module.ts,v0.2,copied
+2026-11-26,US-LGN01-000,libs/security/src/rate-limit/rate-limit.module.ts,v0.2,copied
+2026-11-26,US-LGN01-000,libs/security/src/rate-limit/rate-limiter.service.ts,v0.2,copied
+2026-11-26,US-LGN01-000,libs/settings/src/settings.defaults.ts,v0.2,copied
+2026-11-26,US-LGN01-000,libs/settings/src/settings.module.ts,v0.2,copied
+2026-11-26,US-LGN01-000,libs/settings/src/settings.service.ts,v0.2,copied
+2026-11-26,US-LGN01-001,apps/auth-apis/src/controllers/auth.controller.ts,v0.2,copied
+2026-11-26,US-LGN01-001,apps/auth-apis/src/dtos/sign-in.dto.ts,v0.2,copied
+2026-11-26,US-LGN01-001,apps/auth-apis/src/transformer/sign-in-response.transformer.ts,v0.2,copied
+2026-11-26,US-LGN01-001,apps/auth-apis/src/utils/session-cookie.util.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/core/src/auth/account-lock.policy.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/core/src/auth/errors/auth-errors.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/core/src/auth/local-sign-in.service.spec.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/core/src/auth/local-sign-in.service.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/core/src/auth/session.service.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/core/src/auth/sign-in-audit.writer.ts,v0.2,copied
+2026-11-26,US-LGN01-001,libs/security/src/rate-limit/rate-limiter.service.ts,v0.2,identical
+2026-11-26,US-LGN01-001,libs/users/src/repositories/user-write/contract.ts,v0.2,EXISTS-DIFFERENT (not overwritten)
+2026-11-26,US-LGN01-001,libs/users/src/repositories/user-write/database.ts,v0.2,EXISTS-DIFFERENT (not overwritten)
+2026-11-26,US-LGN01-001,tests/api/test_auth_sign_in.py,v0.2,copied
+2026-11-26,US-LGN01-002,apps/auth-apis/src/controllers/auth.controller.ts,v0.2,identical
+2026-11-26,US-LGN01-002,libs/core/src/auth/errors/auth-errors.ts,v0.2,identical
+2026-11-26,US-LGN01-002,libs/core/src/auth/sign-in-audit.writer.ts,v0.2,identical
+2026-11-26,US-LGN01-002,libs/core/src/auth/sso-sign-in.service.spec.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/core/src/auth/sso-sign-in.service.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/core/src/auth/sso-state.store.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/integrations/src/identity/identity-provider.port.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/integrations/src/identity/identity.module.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/integrations/src/identity/oidc-identity-provider.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/integrations/src/identity/saml-identity-provider.ts,v0.2,copied
+2026-11-26,US-LGN01-002,libs/integrations/src/identity/test-identity-provider.ts,v0.2,copied
+2026-11-26,US-LGN01-002,tests/api/test_auth_sso.py,v0.2,copied
+2026-11-26,US-LGN01-003,apps/auth-apis/src/controllers/auth.controller.ts,v0.2,identical
+2026-11-26,US-LGN01-003,apps/auth-apis/src/utils/session-cookie.util.ts,v0.2,identical
+2026-11-26,US-LGN01-003,libs/core/src/auth/errors/auth-errors.ts,v0.2,identical
+2026-11-26,US-LGN01-003,libs/core/src/auth/session-user.shape.ts,v0.2,EXISTS-DIFFERENT (not overwritten)
+2026-11-26,US-LGN01-003,libs/core/src/auth/session.service.spec.ts,v0.2,copied
+2026-11-26,US-LGN01-003,libs/core/src/auth/session.service.ts,v0.2,identical
+2026-11-26,US-LGN01-003,libs/core/src/auth/token.service.ts,v0.2,copied
+2026-11-26,US-LGN01-003,tests/api/test_auth_refresh.py,v0.2,copied
+2026-11-26,US-LGN01-004,apps/auth-apis/src/controllers/auth.controller.ts,v0.2,identical
+2026-11-26,US-LGN01-004,apps/auth-apis/src/transformer/public-config.transformer.ts,v0.2,copied
+2026-11-26,US-LGN01-004,libs/settings/src/settings.defaults.ts,v0.2,identical
+2026-11-26,US-LGN01-004,libs/settings/src/settings.service.spec.ts,v0.2,copied
+2026-11-26,US-LGN01-004,libs/settings/src/settings.service.ts,v0.2,identical
+2026-11-26,US-LGN01-004,tests/api/test_auth_public_config.py,v0.2,copied
+2026-11-26,US-LGN01-009,tests/api/test_it_adm_lgn.py,v0.2,copied

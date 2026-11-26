@@ -169,6 +169,23 @@ export class UserWriteDatabaseRepository extends UserWriteRepository {
     await this.prisma.db.user.update({ where: { id: userId }, data: { mustChangePassword: value } });
   }
 
+  /** Saves a wrong password and, when the lock starts, the lock time and the LOCKED status. */
+  async recordFailedAttempt(userId: string, failedAttempts: number, lockedUntil: Date | null): Promise<void> {
+    await this.prisma.db.user.update({ where: { id: userId }, data: { failedAttempts, lockedUntil, ...(lockedUntil ? { status: 'LOCKED' as UserStatus } : {}) } });
+  }
+
+  /** Clears the count and the lock after a good sign-in; a LOCKED status goes back to ACTIVE. */
+  async clearFailures(userId: string): Promise<void> {
+    await this.prisma.db.user.update({ where: { id: userId }, data: { failedAttempts: 0, lockedUntil: null } });
+    await this.prisma.db.user.updateMany({ where: { id: userId, status: 'LOCKED' }, data: { status: 'ACTIVE' } });
+  }
+
+  /** Sets the last sign-in time, and the first sign-in time when it is still empty. */
+  async setSignInTimes(userId: string, now: Date): Promise<void> {
+    await this.prisma.db.user.updateMany({ where: { id: userId, firstSignInAt: null }, data: { firstSignInAt: now } });
+    await this.prisma.db.user.update({ where: { id: userId }, data: { lastSignInAt: now } });
+  }
+
   /** Reads one user back as a record. */
   private async read(id: string): Promise<UserRecord> {
     return toUserRecord(await this.prisma.db.user.findUniqueOrThrow({ where: { id }, include: userInclude(startOfToday()) }));

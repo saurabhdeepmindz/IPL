@@ -46,4 +46,34 @@ export abstract class UserWriteRepository {
 
   /** Sets `mustChangePassword`. */
   abstract setMustChangePassword(userId: string, value: boolean): Promise<void>;
+
+  /**
+   * Saves a wrong password.
+   *
+   * In plain words: stores the new count of wrong passwords and, when the lock starts, the end of the lock and the LOCKED status.
+   *
+   * @story US-LGN01-001
+   * @subtask ST-LGN01-001-BE-03
+   */
+  abstract recordFailedAttempt(userId: string, failedAttempts: number, lockedUntil: Date | null): Promise<void>;
+
+  /**
+   * Clears the wrong-password count after a good sign-in.
+   *
+   * In plain words: count back to 0, no lock, and a LOCKED status goes back to ACTIVE.
+   *
+   * @story US-LGN01-001
+   * @subtask ST-LGN01-001-BE-03
+   */
+  abstract clearFailures(userId: string): Promise<void>;
+
+  /**
+   * Saves the sign-in times.
+   *
+   * In plain words: sets the last sign-in time, and the first sign-in time when it was empty.
+   *
+   * @story US-LGN01-001
+   * @subtask ST-LGN01-001-BE-03
+   */
+  abstract setSignInTimes(userId: string, now: Date): Promise<void>;
 }

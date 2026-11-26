@@ -25,7 +25,7 @@ export interface SuccessBody<T> {
 }
 
 export interface FailureBody {
-  error: { code: string; message: string; fields: { field: string; message: string }[] };
+  error: { code: string; message: string; fields: { field: string; message: string }[]; details?: Record<string, unknown> };
 }
 
 /**

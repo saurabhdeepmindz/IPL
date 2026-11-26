@@ -64,6 +64,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           code: (obj.code as string) ?? CODE_BY_STATUS[status] ?? 'ERROR',
           message: Array.isArray(obj.message) ? obj.message.join('; ') : ((obj.message as string) ?? exception.message),
           fields: (obj.fields as FailureBody['error']['fields']) ?? [],
+          ...(obj.details ? { details: obj.details as Record<string, unknown> } : {}),
         },
       };
       res.status(status).json(body);
