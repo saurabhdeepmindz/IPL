@@ -5,52 +5,94 @@
  * @module  UsersImport
  *
  * @description
- * Step 1. In plain words: explains the columns and downloads AMS_Users_Template_v1.xlsx.
+ * Import step 1. In plain words: what to import and the template.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
+ * @version 0.2.0
  * @since   2026-11-26
  *
  * @story          US-ADM01-009
  * @subtask        ST-ADM01-009-IN-05
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.2
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users-import/components/ImportStepTemplate.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-05
  * @status         built
  */
 
-import { Button } from '@/components/ui';
-import { COLUMNS } from '../types/import.types';
+import { useRouter } from 'next/navigation';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 
-/** Props of ImportStepTemplate. */
+/** What the design lets you choose to import; only Users is built here, the others open the Coming soon page. */
+const KINDS = [
+  { key: 'users', title: 'Users', text: 'Employee code, name, e-mail, department, designation, company and roles' },
+  { key: 'dept', title: 'Departments and sub-departments', text: 'Code, name, parent, head' },
+  { key: 'des', title: 'Designations', text: 'Code, name, level, group' },
+  { key: 'sc', title: 'Subject codes', text: 'Code, subject, proposal types, DoA scope' },
+  { key: 'doa', title: 'DoA matrix (draft version)', text: 'Scope, amount from, up to, final approver, FC needed' },
+  { key: 'hol', title: 'Holidays', text: 'Date, holiday, applies to, type' },
+];
+
 interface ImportStepTemplateProps {
   busy: boolean;
   error: string | null;
   onDownload: () => void;
-  onNext: () => void;
 }
 
 /**
  * Step 1.
  *
- * In plain words: explains the columns and downloads AMS_Users_Template_v1.xlsx.
- *
- * @story    US-ADM01-009
- * @subtask  ST-ADM01-009-IN-05
- * @ac       AC-US009-02
+ * In plain words: "What do you want to import?" with the six choices of the design (Users is built; the others open the Coming soon page), the template card and the Download template button.
  */
-export function ImportStepTemplate({ busy, error, onDownload, onNext }: ImportStepTemplateProps) {
+export function ImportStepTemplate({ busy, error, onDownload }: ImportStepTemplateProps) {
+  const router = useRouter();
   return (
     <section aria-labelledby="import-step-1">
-      <h2 id="import-step-1" className="h5">Choose and download template</h2>
-      <p>Download the template, fill one row per user and save it as .xlsx. The drop-down lists in the template come from the current departments, designations, companies and roles.</p>
-      <p className="small text-body-secondary">{`Columns: ${COLUMNS.join(', ')}. One company per row; a manager must already exist as an Active user.`}</p>
-      <div className="d-flex gap-2">
-        <Button variant="secondary" outline onClick={onDownload} isLoading={busy}>Download template</Button>
-        <Button onClick={onNext}>Next: upload file</Button>
+      <h3 id="import-step-1" className={hf('sh')}>
+        What do you want to import?
+      </h3>
+      <div className={hf('pick')} role="radiogroup" aria-label="What to import">
+        {KINDS.map((k) => (
+          <label key={k.key}>
+            <input
+              type="radio"
+              name="kind"
+              value={k.key}
+              checked={k.key === 'users'}
+              onChange={() => {
+                if (k.key !== 'users') router.push(`/coming-soon?feature=${encodeURIComponent(`Import of ${k.title}`)}`);
+              }}
+            />
+            <span>
+              <b>{k.title}</b>
+              <small>{k.text}</small>
+            </span>
+          </label>
+        ))}
+        <div className={hf('muted')} style={{ gridColumn: '1/-1', fontSize: 'var(--fs-1)' }}>
+          Vendors, plants and purchase groups are not imported here — they come from SAP (SAP Masters).
+        </div>
       </div>
-      {error && <p role="alert" className="mt-2">{error}</p>}
+      <div className={hf('card')} style={{ marginTop: 'var(--spacing-xl)', padding: 'var(--spacing-lg)', display: 'flex', gap: 'var(--spacing-lg)', alignItems: 'center', flexWrap: 'wrap', border: '1px solid var(--stroke-100)', boxShadow: 'none' }}>
+        <span className={hf('kpi-ico')}>
+          <HfIcon name="xls" />
+        </span>
+        <div style={{ flex: 1, minWidth: 240 }}>
+          <b>AMS_Users_Template_v1.xlsx</b>
+          <p className={hf('muted')} style={{ margin: '2px 0 0', fontSize: 'var(--fs-2)' }}>
+            Columns with rules, an example row, and drop-down lists filled from the current masters.
+          </p>
+        </div>
+        <button type="button" className={hf('btn btn-outline')} onClick={onDownload} disabled={busy}>
+          <HfIcon name="download" />
+          Download template
+        </button>
+      </div>
+      {error && (
+        <p role="alert" style={{ marginTop: 'var(--spacing-md)' }}>
+          {error}
+        </p>
+      )}
     </section>
   );
 }

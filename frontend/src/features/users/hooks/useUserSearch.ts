@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { listUsers } from '../services/users.service';
 
 /**
- * User search hook. In plain words: waits 300 ms after typing, starts at 2 characters, then calls `listUsers`.
+ * User search hook. In plain words: waits 300 ms after typing, starts at 2 characters (or at once with an empty box when `showAllWhenEmpty` is set: the Assign users drawer of the design lists people before anything is typed), then calls `listUsers`.
  *
  * @epic      EPIC-ADM-01
  * @story     US-ADM01-013
@@ -39,11 +39,11 @@ import { listUsers } from '../services/users.service';
  *
  * @returns The query result
  */
-export function useUserSearch(text: string) {
+export function useUserSearch(text: string, showAllWhenEmpty = false) {
   const [settled, setSettled] = useState('');
   useEffect(() => {
     const timer = setTimeout(() => setSettled(text.trim()), 300);
     return () => clearTimeout(timer);
   }, [text]);
-  return useQuery({ queryKey: ['users', 'search', settled], queryFn: () => listUsers({ q: settled, pageSize: 10 }), enabled: settled.length >= 2 });
+  return useQuery({ queryKey: ['users', 'search', settled], queryFn: () => listUsers({ q: settled, pageSize: 10 }), enabled: settled.length >= 2 || (showAllWhenEmpty && settled.length === 0) });
 }

@@ -35,35 +35,35 @@ const problems: Problem[] = [
 ];
 
 export const Template: Story = {
-  render: () => <ImportStepTemplate busy={false} error={null} onDownload={fn()} onNext={fn()} />,
+  render: () => <ImportStepTemplate busy={false} error={null} onDownload={fn()} />,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('button', { name: 'Download template' })).toBeEnabled();
   },
 };
 
-export const UploadEmpty: Story = { render: () => <ImportStepUpload fileName={null} error={null} busy={false} onFile={fn()} onRemove={fn()} /> };
-export const UploadWithFile: Story = { render: () => <ImportStepUpload fileName="users.xlsx" error={null} busy onFile={fn()} onRemove={fn()} /> };
+export const UploadEmpty: Story = { render: () => <ImportStepUpload file={null} error={null} busy={false} onFile={fn()} onRemove={fn()} /> };
+export const UploadWithFile: Story = { render: () => <ImportStepUpload file={new File(['x'], 'users.xlsx')} error={null} busy onFile={fn()} onRemove={fn()} /> };
 export const UploadRefused: Story = {
-  render: () => <ImportStepUpload fileName={null} error="The file has no column: E-mail. Use the template." busy={false} onFile={fn()} onRemove={fn()} />,
+  render: () => <ImportStepUpload file={null} error="The file has no column: E-mail. Use the template." busy={false} onFile={fn()} onRemove={fn()} />,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('alert')).toHaveTextContent('no column: E-mail');
   },
 };
 
 export const CheckWithProblems: Story = {
-  render: () => <ImportStepCheck total={52} passed={50} problems={problems} onImport={fn()} onBack={fn()} onDownload={fn()} />,
+  render: () => <ImportStepCheck total={52} passed={50} problems={problems} onDownload={fn()} />,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByTestId('check-summary')).toHaveTextContent('52 rows read. 50 can be imported. 2 have problems.');
     await expect(within(canvasElement).getByRole('table', { name: 'Rows with problems' })).toBeInTheDocument();
   },
 };
 export const CheckNonePassed: Story = {
-  render: () => <ImportStepCheck total={2} passed={0} problems={problems} onImport={fn()} onBack={fn()} onDownload={fn()} />,
+  render: () => <ImportStepCheck total={2} passed={0} problems={problems} onDownload={fn()} />,
   play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).getByRole('button', { name: 'Import the rows that passed' })).toBeDisabled();
+    await expect(within(canvasElement).getByText('Ready to import')).toBeInTheDocument();
   },
 };
-export const CheckNoProblems: Story = { render: () => <ImportStepCheck total={52} passed={52} problems={[]} onImport={fn()} onBack={fn()} onDownload={fn()} /> };
+export const CheckNoProblems: Story = { render: () => <ImportStepCheck total={52} passed={52} problems={[]} onDownload={fn()} /> };
 
 export const ImportRunning: Story = {
   render: () => <ImportStepImport done={400} total={5000} result={null} problems={[]} onDownload={fn()} onAgain={fn()} />,

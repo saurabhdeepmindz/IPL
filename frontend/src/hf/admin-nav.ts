@@ -35,7 +35,7 @@ export interface NavGroup {
 export const ADMIN_NAV: NavGroup[] = [
   { key: 'dashboard', label: 'Admin Dashboard', icon: 'dashboard', items: [], route: '/dashboard' },
   { key: 'access', label: 'User & Access Management', icon: 'shield', items: [{ label: 'User Management', route: '/users' }, { label: 'Role Management', route: '/roles' }, { label: 'Permission Management', route: '/permissions' }] },
-  { key: 'masters', label: 'Master Data Management', icon: 'database', items: [{ label: 'Master Data' }, { label: 'Excel Import' }, { label: 'SAP Masters' }] },
+  { key: 'masters', label: 'Master Data Management', icon: 'database', items: [{ label: 'Master Data' }, { label: 'Excel Import', route: '/users/import' }, { label: 'SAP Masters' }] },
   { key: 'workflow', label: 'Workflow Management', icon: 'workflow', items: [{ label: 'Workflow Monitor' }, { label: 'Reassignment' }, { label: 'Routing Rules' }] },
   { key: 'sla', label: 'SLA & Escalation Management', icon: 'clock', items: [{ label: 'SLA Configuration' }, { label: 'SLA Monitoring' }] },
   { key: 'notifications', label: 'Notification Management', icon: 'mail', items: [{ label: 'Notification Templates' }, { label: 'Template Management' }] },

@@ -22,7 +22,11 @@
 
 import { useState } from 'react';
 import { NoAccess } from '@/components/ams';
-import { Button } from '@/components/ui';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
+import { HfModal } from '@/hf/HfModal';
 import { ApiError } from '@/lib/errors';
 import { useImportReference } from '../hooks/useImportReference';
 import { useCheckRows, useImportRows } from '../hooks/useImportRows';
@@ -52,6 +56,7 @@ const forbidden = (e: unknown): boolean => e instanceof ApiError && e.status ===
  * @dependencies useImportReference, useCheckRows, useImportRows, readUsersFile, mapUsersRows, buildUsersTemplate
  */
 export function ImportWizard() {
+  const router = useRouter();
   const { reference, isPending, forbidden: listsDenied, isError } = useImportReference();
   const check = useCheckRows();
   const importing = useImportRows();
@@ -59,7 +64,8 @@ export function ImportWizard() {
   const [busy, setBusy] = useState(false);
   const [denied, setDenied] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [confirming, setConfirming] = useState(false);
   const [mapped, setMapped] = useState<MappedFile | null>(null);
   const [serverProblems, setServerProblems] = useState<Problem[]>([]);
   const [importProblems, setImportProblems] = useState<Problem[]>([]);
@@ -76,7 +82,7 @@ export function ImportWizard() {
   const reset = () => {
     setStep(1);
     setMessage(null);
-    setFileName(null);
+    setFile(null);
     setMapped(null);
     setServerProblems([]);
     setImportProblems([]);
@@ -90,17 +96,15 @@ export function ImportWizard() {
     setBusy(false);
   };
 
-  const readFile = async (file: File) => {
+  const readFile = async (picked: File) => {
     setBusy(true);
     setMessage(null);
-    setFileName(file.name);
     try {
-      const parsed = mapUsersRows(await readUsersFile(file), reference, today());
+      const parsed = mapUsersRows(await readUsersFile(picked), reference, today());
       setServerProblems(parsed.rows.length > 0 ? await check.run(parsed.rows) : []);
       setMapped(parsed);
       setStep(3);
     } catch (e) {
-      setFileName(null);
       fail(e, 'The file could not be checked. Try again.');
     }
     setBusy(false);
@@ -121,24 +125,102 @@ export function ImportWizard() {
 
   const downloadReport = (list: Problem[]) => saveFile(new Blob(['\uFEFF', errorReportCsv(list)], { type: 'text/csv;charset=utf-8' }), 'AMS_Users_Import_Errors.csv');
 
+  const confirmAndImport = () => {
+    setConfirming(false);
+    void runImport();
+  };
+
+  const nextLabel = step === 1 ? 'Next: upload file' : step === 2 ? 'Check file' : `Import ${passed.length} good ${passed.length === 1 ? 'row' : 'rows'}`;
+  const nextDisabled = busy || (step === 2 && !file) || (step === 3 && passed.length === 0);
+  const next = () => {
+    if (step === 1) setStep(2);
+    else if (step === 2 && file) void readFile(file);
+    else if (step === 3) setConfirming(true);
+  };
+
   return (
     <div data-testid="import-wizard">
-      <p className="text-body-secondary mb-1">{`Step ${step} of 4`}</p>
-      <ol className="list-inline small">
-        {STEPS.map((label, i) => (
-          <li key={label} className="list-inline-item" aria-current={step === i + 1 ? 'step' : undefined}>{label}</li>
-        ))}
-      </ol>
-      {step === 1 && <ImportStepTemplate busy={busy} error={message} onDownload={downloadTemplate} onNext={() => setStep(2)} />}
-      {step === 2 && <ImportStepUpload fileName={fileName} error={message} busy={busy} onFile={readFile} onRemove={() => setFileName(null)} />}
-      {step === 3 && mapped && <ImportStepCheck total={mapped.total} passed={passed.length} problems={problems} onImport={runImport} onBack={() => setStep(2)} onDownload={() => downloadReport(problems)} />}
-      {step === 4 && !message && <ImportStepImport done={importing.progress} total={passed.length} result={result} problems={importProblems} onDownload={() => downloadReport([...problems, ...importProblems])} onAgain={reset} />}
-      {step === 4 && message && (
-        <>
-          <p role="alert">{message}</p>
-          <Button onClick={reset}>Start over</Button>
-        </>
-      )}
+      <div className={hf('page-head')}>
+        <div>
+          <h1>Excel Import</h1>
+          <p>Load or update master data from Excel. Nothing changes until the file has been checked and you confirm the import.</p>
+        </div>
+        <div className={hf('page-actions')}>
+          <Link className={hf('btn btn-outline')} href="/coming-soon?feature=Master%20Data">
+            <HfIcon name="database" />
+            Go to Master Data
+          </Link>
+        </div>
+      </div>
+      <div className={hf('tabs card')} role="tablist" aria-label="Excel import" style={{ marginBottom: 'var(--spacing-xl)', border: '1px solid var(--stroke-100)', borderRadius: 'var(--radius-md)', background: 'var(--neutral-0-white)' }}>
+        <button type="button" role="tab" aria-selected="true">
+          New import
+        </button>
+        <button type="button" role="tab" aria-selected="false" onClick={() => router.push('/coming-soon?feature=Import%20history')}>
+          Import history
+        </button>
+      </div>
+      <section className={hf('card')}>
+        <div className={hf('card-head')}>
+          <ol className={hf('steps')} style={{ margin: 0, padding: 0, flexWrap: 'wrap', gap: 'var(--spacing-xl)' }}>
+            {STEPS.map((label, i) => (
+              <li key={label} className={hf(step === i + 1 && 'cur', step > i + 1 && 'done')} aria-current={step === i + 1 ? 'step' : undefined}>
+                {label}
+              </li>
+            ))}
+          </ol>
+          <span className={hf('muted')} style={{ fontSize: 'var(--fs-2)' }}>{`Step ${step} of 4`}</span>
+        </div>
+        <div className={hf('card-body')}>
+          {step === 1 && <ImportStepTemplate busy={busy} error={message} onDownload={downloadTemplate} />}
+          {step === 2 && <ImportStepUpload file={file} error={message} busy={busy} onFile={(f) => { setMessage(null); setFile(f); }} onRemove={() => setFile(null)} />}
+          {step === 3 && mapped && <ImportStepCheck total={mapped.total} passed={passed.length} problems={problems} onDownload={() => downloadReport(problems)} />}
+          {step === 4 && !message && <ImportStepImport done={importing.progress} total={passed.length} result={result} problems={importProblems} onDownload={() => downloadReport([...problems, ...importProblems])} onAgain={reset} />}
+          {step === 4 && message && (
+            <>
+              <p role="alert">{message}</p>
+              <button type="button" className={hf('btn btn-primary')} onClick={reset}>
+                Start over
+              </button>
+            </>
+          )}
+        </div>
+        {step < 4 && (
+          <div className={hf('modal-foot')} style={{ justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+              {step > 1 && (
+                <button type="button" className={hf('btn btn-outline')} onClick={() => setStep(step - 1)} disabled={busy}>
+                  Back
+                </button>
+              )}
+              <button type="button" className={hf('btn btn-primary')} onClick={next} disabled={nextDisabled}>
+                {nextLabel}
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+      <HfModal
+        open={confirming}
+        onClose={() => setConfirming(false)}
+        title={`Import ${passed.length} ${passed.length === 1 ? 'row' : 'rows'}?`}
+        footer={
+          <>
+            <button type="button" className={hf('btn btn-outline')} onClick={() => setConfirming(false)}>
+              Cancel
+            </button>
+            <button type="button" className={hf('btn btn-primary')} onClick={confirmAndImport} data-testid="import-confirm">
+              Import
+            </button>
+          </>
+        }
+      >
+        <p style={{ margin: 0 }}>
+          {`${passed.length} ${passed.length === 1 ? 'user' : 'users'} will be added in `}
+          <b>Users</b>
+          {`. The ${new Set(problems.map((p) => p.excelRow)).size} rows with problems are left out. This cannot be undone in one step; each change is in the audit trail.`}
+        </p>
+      </HfModal>
     </div>
   );
 }

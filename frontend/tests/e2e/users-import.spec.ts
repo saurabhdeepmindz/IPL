@@ -87,6 +87,7 @@ test.describe('Import wizard journeys (story 009)', () => {
     await shot(page, 'template');
     await page.getByRole('button', { name: 'Next: upload file' }).click();
     await page.getByLabel('Filled template (.xlsx)').setInputFiles({ name: 'users.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: await filledFile(request, codes) });
+    await page.getByRole('button', { name: 'Check file' }).click();
     await expect(page.getByText('Step 3 of 4')).toBeVisible();
     await expect(page.getByTestId('check-summary')).toHaveText('5 rows read. 4 can be imported. 1 has problems.');
     const line = page.getByRole('table', { name: 'Rows with problems' }).getByRole('row').nth(1);
@@ -99,7 +100,8 @@ test.describe('Import wizard journeys (story 009)', () => {
     const report = await reportDownload;
     expect(report.suggestedFilename()).toBe('AMS_Users_Import_Errors.csv');
     expect(readFileSync((await report.path())!, 'utf8')).toContain('Row,Column,Value,Problem');
-    await page.getByRole('button', { name: 'Import the rows that passed' }).click();
+    await page.getByRole('button', { name: 'Import 4 good rows' }).click();
+    await page.getByTestId('import-confirm').click();
     await expect(page.getByTestId('import-result')).toHaveText('Import finished: 4 created, 1 failed.');
     await shot(page, 'finished');
     for (const code of codes.slice(0, 4)) expect((await request.get(`${API}/users/${code}`, { headers: await bearer(request) })).status()).toBe(200);

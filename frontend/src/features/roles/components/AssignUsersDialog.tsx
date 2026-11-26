@@ -56,7 +56,7 @@ export function AssignUsersDialog({ role, open, onClose }: AssignUsersDialogProp
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [askReason, setAskReason] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
-  const found = useUserSearch(text).data?.items.filter((u) => !picked.some((p) => p.employeeCode === u.employeeCode)) ?? [];
+  const found = useUserSearch(text, open).data?.items.filter((u) => !picked.some((p) => p.employeeCode === u.employeeCode)) ?? [];
   const companies = [...new Set([sessionCompany, ...role.users.map((u) => u.company)].filter((c): c is string => Boolean(c)))];
 
   const submit = () => {
@@ -141,7 +141,7 @@ export function AssignUsersDialog({ role, open, onClose }: AssignUsersDialogProp
           </div>
           {msg(errors.users)}
         </div>
-        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+        <ul aria-label="People found" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
           {found.map((u) => (
             <li key={u.employeeCode}>
               <button type="button" className={hf('btn btn-text sm')} onClick={() => setPicked([...picked, u])}>

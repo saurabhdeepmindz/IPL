@@ -46,3 +46,26 @@ html:has(.hf-admin) {
 .hf-admin .hf-table-wrap {
   position: relative;
 }
+
+/* Excel Import (HF-ADM-05): "pick" is also the name of the person list of the assign drawer; the choice grid keeps its own look. */
+.hf-admin .hf-pick[role='radiogroup'] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-md);
+  align-items: stretch;
+  padding: 0;
+  border-bottom: 0;
+}
+@media (max-width: 1199px) {
+  .hf-admin .hf-pick[role='radiogroup'] {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 767px) {
+  .hf-admin .hf-pick[role='radiogroup'] {
+    grid-template-columns: 1fr;
+  }
+}
+.hf-admin .hf-pick[role='radiogroup'] input {
+  margin: 3px 3px 3px 5px;
+}

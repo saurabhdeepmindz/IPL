@@ -229,6 +229,23 @@ const SCREENS: UxScreen[] = [
     mask: [...MASK_SHELL, '#uTbl td.act,#uTbl th.act,.hf-tbl td.hf-act,.hf-tbl th.hf-act', '.crumbs .cur,.hf-crumbs .hf-cur'],
   },
   {
+    id: 'UX-ADM-05-import-step1',
+    hf: { file: '02-Admin/HF-ADM-05-excel-import.html', suffix: '#users' },
+    app: {
+      url: '/users/import',
+      prepare: async (page, context) => {
+        await signedIn(page, context);
+        await page.route('**/masters/departments', (r) => r.fulfill(json({ data: { items: [{ id: 'd1', code: 'IT', name: 'IT' }] } })));
+        await page.route('**/masters/designations', (r) => r.fulfill(json({ data: { items: [{ id: 'g1', code: 'SM', name: 'SM' }] } })));
+        await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }], canViewAll: false } })));
+        await page.route(/\/api\/v1\/roles(\?.*)?$/, (r) => r.fulfill(json({ data: { items: [{ roleId: 'r1', name: 'Initiator', description: '', type: 'STANDARD', userCount: 1, lastChanged: '2026-01-01T00:00:00Z', status: 'ACTIVE' }] } })));
+      },
+      steps: (p) => p.getByTestId('import-wizard').waitFor(),
+    },
+    // UX-ACC-10 · Excel Import, tab "Import history" (HF-ADM-05): the design shows a count (7) of earlier imports; the application has no import history yet (the tab opens the Coming soon page), so no count is shown.
+    mask: [...MASK_SHELL],
+  },
+  {
     id: 'UX-ADM-03-permission-matrix',
     hf: { file: '02-Admin/HF-ADM-03-permission-management.html' },
     app: { url: '/permissions', prepare: mockMatrixApi, steps: (p) => p.getByTestId('permission-matrix').waitFor() },

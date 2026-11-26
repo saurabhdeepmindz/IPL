@@ -40,7 +40,8 @@ const initials = (name: string): string => name.replace(/[^A-Z]/g, '').slice(0, 
 
 /** The sidebar of the design: brand, groups with icons, the current screen marked, Collapse menu at the foot. */
 function Sidebar({ path }: { path: string }) {
-  const [open, setOpen] = useState<Record<string, boolean>>({ access: true });
+  const bestRoute = ADMIN_NAV.flatMap((g) => g.items.map((i) => i.route)).filter((r): r is string => !!r && (path === r || path.startsWith(`${r}/`))).sort((a, b) => b.length - a.length)[0];
+  const [open, setOpen] = useState<Record<string, boolean>>({ ...Object.fromEntries(ADMIN_NAV.filter((g) => g.items.some((i) => i.route === bestRoute)).map((g) => [g.key, true])) });
   const [collapsed, setCollapsed] = useState(false);
   return (
     <aside className={hf('sidebar')} data-collapsed={collapsed || undefined}>
@@ -66,7 +67,7 @@ function Sidebar({ path }: { path: string }) {
               </Link>
             );
           }
-          const active = g.items.some((i) => i.route && (path === i.route || path.startsWith(`${i.route}/`)));
+          const active = g.items.some((i) => i.route === bestRoute);
           const isOpen = open[g.key] ?? false;
           return (
             <div key={g.key} className={hf('nav-group', isOpen && 'open', active && 'has-active')}
@@ -78,7 +79,7 @@ function Sidebar({ path }: { path: string }) {
               </button>
               <div className={hf('nav-sub')}>
                 {g.items.map((i) => {
-                  const here = !!i.route && (path === i.route || path.startsWith(`${i.route}/`));
+                  const here = !!i.route && i.route === bestRoute;
                   // A screen of a later release opens the "Coming soon" page (replaced when the screen is built).
                   const href = i.route ?? `/coming-soon?feature=${encodeURIComponent(i.label)}`;
                   return (

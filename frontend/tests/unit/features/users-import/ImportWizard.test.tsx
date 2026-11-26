@@ -31,6 +31,7 @@ import { useImportReference } from '@/features/users-import/hooks/useImportRefer
 import type { Column, RawRow, Reference } from '@/features/users-import/types/import.types';
 import { ApiError } from '@/lib/errors';
 
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => '/users/import' }));
 vi.mock('@/features/users-import/hooks/useImportReference', () => ({ useImportReference: vi.fn() }));
 vi.mock('@/features/users-import/services/readUsersFile', async (original) => ({ ...(await original<typeof ReadFile>()), readUsersFile: vi.fn() }));
 vi.mock('@/features/users-import/services/buildUsersTemplate', () => ({ buildUsersTemplate: vi.fn() }));
@@ -55,7 +56,10 @@ const renderWizard = () =>
   );
 const file = () => new File(['x'], 'users.xlsx');
 const toUpload = async () => userEvent.click(await screen.findByRole('button', { name: 'Next: upload file' }));
-const upload = async () => userEvent.upload(await screen.findByLabelText('Filled template (.xlsx)'), file());
+const upload = async () => {
+  await userEvent.upload(await screen.findByLabelText('Filled template (.xlsx)'), file());
+  await userEvent.click(await screen.findByRole('button', { name: 'Check file' }));
+};
 
 describe('US-ADM01-009 the import wizard (supporting tests)', () => {
   beforeEach(() => {
@@ -118,7 +122,7 @@ describe('US-ADM01-009 the import wizard (supporting tests)', () => {
     await toUpload();
     await upload();
     expect(await screen.findByTestId('check-summary')).toHaveTextContent('0 can be imported');
-    expect(screen.getByRole('button', { name: 'Import the rows that passed' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /^Import 0 good rows$/ })).toBeDisabled();
   });
 
   it('step 2 shows why a file was refused and stays on step 2', async () => {
@@ -148,7 +152,8 @@ describe('US-ADM01-009 the import wizard (supporting tests)', () => {
     renderWizard();
     await toUpload();
     await upload();
-    await userEvent.click(await screen.findByRole('button', { name: 'Import the rows that passed' }));
+    await userEvent.click(await screen.findByRole('button', { name: /^Import \d+ good rows?$/ }));
+    await userEvent.click(await screen.findByTestId('import-confirm'));
     expect(await screen.findByRole('status')).toHaveTextContent('Importing… 1 of 2 rows');
     expect(vi.mocked(importAll).mock.calls[0][0].map((r) => r.excelRow)).toEqual([2, 4]);
     finish({ created: 2, problems: [] });
