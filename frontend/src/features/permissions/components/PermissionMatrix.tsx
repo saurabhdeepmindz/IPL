@@ -1,68 +1,54 @@
+'use client';
+
 /**
  * @file    PermissionMatrix.tsx
  * @module  Permissions
  *
  * @description
- * The grid. In plain words: roles across with the user counts, permissions down in module groups, sticky permission column and header row (decisions L-95 to L-100, L-102).
+ * Permission matrix. In plain words: HF-ADM-03 grid.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
- * @story          US-ADM01-015
- * @subtask        ST-ADM01-015-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.7
+ * @story          US-ADM01-014
+ * @subtask        ST-ADM01-014-FE-02
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/components/PermissionMatrix.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-03
  * @status         built
  */
-'use client';
 
 import { Fragment } from 'react';
 import Link from 'next/link';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import type { MatrixChanges } from '../hooks/useMatrixChanges';
-import type { MatrixPermission, PermissionMatrixData } from '../types/permission.types';
+import type { MatrixPermission, MatrixRole, PermissionMatrixData } from '../types/permission.types';
 import { PermissionSwitch } from './PermissionSwitch';
 import { ScopeSelect } from './ScopeSelect';
 
-const STICKY_LEFT = { position: 'sticky', left: 0, zIndex: 1, background: 'var(--bs-body-bg, #fff)' } as const;
-const STICKY_TOP = { position: 'sticky', top: 0, zIndex: 2, background: 'var(--bs-body-bg, #fff)' } as const;
-
-/** True when the permission has a data scope in any role (it is shown as a list). */
 const scoped = (p: MatrixPermission): boolean => Object.values(p.cells).some((c) => c.scope !== null);
 
-/** Props of PermissionMatrix. */
 interface PermissionMatrixProps {
-  /** The matrix as saved */
   matrix: PermissionMatrixData;
-  /** The unsaved changes */
   changes: MatrixChanges;
-  /** The text to find in the label, hint or key */
   search: string;
-  /** The module to show; empty for all */
   module: string;
-  /** True to show only the rows that have a changed cell */
   changedOnly: boolean;
 }
 
+/** The small line under a role in the header: "142 users", "System · locked" or "Draft · 0 users". */
+function roleNote(r: MatrixRole, locked: boolean): string {
+  const users = r.userCount === 1 ? '1 user' : `${r.userCount} users`;
+  if (locked) return 'System · locked';
+  return r.status && r.status !== 'ACTIVE' ? `${r.status.charAt(0)}${r.status.slice(1).toLowerCase()} · ${users}` : users;
+}
+
 /**
- * The matrix. In plain words: one row per permission under its module; a switch or a scope list in each cell; the rows narrow with the search, the module and Show changed only.
+ * PermissionMatrix.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-015
- * @subtask   ST-ADM01-015-FE-02
- * @frd       FR-043.1, FR-043.3, FR-043.6
- * @workflow  AD-03
- * @screen    ADM-03
- * @contract  API-PRM-01
- * @ac        AC-US015-01, 02, 03, 04, 05
- * @lld       LLD-EPIC-ADM-01 v0.27 §6.7
- * @status    built
- *
- * @dependencies PermissionSwitch, ScopeSelect
- *
- * @returns The rendered output
+ * In plain words: the matrix of the high-fidelity design (HF-ADM-03): a column per role (the system role tinted), the modules as grouped rows, a toggle or a data-scope list in every cell.
  */
 export function PermissionMatrix({ matrix, changes, search, module, changedOnly }: PermissionMatrixProps) {
   const needle = search.trim().toLowerCase();
@@ -70,6 +56,7 @@ export function PermissionMatrix({ matrix, changes, search, module, changedOnly 
     .filter((g) => !module || g.module === module)
     .map((g) => ({
       module: g.module,
+      note: g.note,
       permissions: g.permissions.filter((p) => {
         if (needle && !`${p.label} ${p.hint} ${p.key}`.toLowerCase().includes(needle)) return false;
         if (changedOnly && !matrix.roles.some((r) => changes.isChanged(r.roleId, p.key))) return false;
@@ -77,19 +64,34 @@ export function PermissionMatrix({ matrix, changes, search, module, changedOnly 
       }),
     }))
     .filter((g) => g.permissions.length > 0);
+  const lockedRole = (roleId: string) => matrix.groups.every((g) => g.permissions.every((p) => p.cells[roleId]?.locked));
 
-  if (rows.length === 0) return <p data-testid="matrix-empty">No permissions match your filters</p>;
+  if (rows.length === 0) {
+    return (
+      <div className={hf('empty')} data-testid="matrix-empty">
+        <span className={hf('art')}>
+          <HfIcon name="search" size="lg" />
+        </span>
+        <b>No permission matches</b>
+        <p>Try another word, or show all modules.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="table-responsive" style={{ maxHeight: '70vh' }}>
-      <table className="table align-middle" data-testid="permission-matrix">
+    <div className={hf('table-wrap')}>
+      <table className={hf('tbl matrix')} data-testid="permission-matrix">
         <thead>
           <tr>
-            <th scope="col" style={{ ...STICKY_TOP, ...STICKY_LEFT, zIndex: 3 }}>Permission</th>
+            <th scope="col" className={hf('perm')}>
+              Permission
+            </th>
             {matrix.roles.map((r) => (
-              <th key={r.roleId} scope="col" className="text-center" style={STICKY_TOP}>
-                <Link href={`/roles/${r.roleId}`}>{r.name}</Link>
-                <div className="small text-body-secondary fw-normal">{r.userCount === 1 ? '1 user' : `${r.userCount} users`}</div>
+              <th key={r.roleId} scope="col" className={hf('rc', lockedRole(r.roleId) && 'lockcol')}>
+                <Link href={`/roles/${r.roleId}`} style={{ color: 'inherit' }}>
+                  {r.name}
+                </Link>
+                <small>{roleNote(r, lockedRole(r.roleId))}</small>
               </th>
             ))}
           </tr>
@@ -97,21 +99,31 @@ export function PermissionMatrix({ matrix, changes, search, module, changedOnly 
         <tbody>
           {rows.map((g) => (
             <Fragment key={g.module}>
-              <tr className="table-light">
-                <th scope="row" colSpan={matrix.roles.length + 1}>{g.module}</th>
+              <tr className={hf('grp')}>
+                <td role="rowheader" colSpan={matrix.roles.length + 1}>
+                  {g.module}
+                  {g.note && (
+                    <>
+                      {' '}
+                      <span className={hf('muted')} style={{ fontWeight: 500 }}>
+                        · {g.note}
+                      </span>
+                    </>
+                  )}
+                </td>
               </tr>
               {g.permissions.map((p) => (
                 <tr key={p.key}>
-                  <th scope="row" className="fw-normal" style={STICKY_LEFT}>
-                    {p.label}
-                    {p.hint && <div className="small text-body-secondary">{p.hint}</div>}
-                  </th>
+                  <td role="rowheader" className={hf('perm')}>
+                    <b style={{ fontWeight: 500 }}>{p.label}</b>
+                    {p.hint && <small>{p.hint}</small>}
+                  </td>
                   {matrix.roles.map((r) => {
                     const cell = p.cells[r.roleId];
                     const value = changes.valueOf(r.roleId, p.key);
                     const changed = changes.isChanged(r.roleId, p.key);
                     return (
-                      <td key={r.roleId} className="text-center">
+                      <td key={r.roleId} className={hf('rc', changed && 'changed', lockedRole(r.roleId) && 'lockcol')}>
                         {scoped(p) ? (
                           <ScopeSelect permission={p.label} role={r.name} value={value} locked={cell?.locked ?? false} changed={changed} onChange={(v) => changes.set(r.roleId, p.key, v)} />
                         ) : (

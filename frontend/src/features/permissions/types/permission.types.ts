@@ -35,6 +35,8 @@ export interface MatrixRole {
   roleId: string;
   name: string;
   userCount: number;
+  /** ACTIVE, DRAFT … (optional: the design shows "Draft · 0 users") */
+  status?: string;
 }
 
 /** One permission row with one cell per role id. */
@@ -48,6 +50,8 @@ export interface MatrixPermission {
 /** The permissions of one module. */
 export interface MatrixGroup {
   module: string;
+  /** Optional note after the module name (the design: "SOW B1, B3") */
+  note?: string;
   permissions: MatrixPermission[];
 }
 

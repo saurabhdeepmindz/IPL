@@ -20,7 +20,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Input, Modal } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
+import { HfModal } from '@/hf/HfModal';
 import { ApiError } from '@/lib/errors';
 import { useReviewChanges } from '../hooks/useReviewChanges';
 import { useSaveChanges } from '../hooks/useSaveChanges';
@@ -105,20 +107,19 @@ function Body({ changes, matrixVersion, onBack, onSaved, onStale }: ReviewChange
   };
 
   return (
-    <Modal
+    <HfModal
       open
+      wide
       onClose={onBack}
-      title="Review changes"
-      size="lg"
-      closeOnBackdrop={false}
+      title="Review permission changes"
       footer={
         <>
-          <Button variant="secondary" outline onClick={onBack}>
+          <button type="button" className={hf('btn btn-outline')} onClick={onBack}>
             Back to the matrix
-          </Button>
-          <Button onClick={submit} disabled={blocked}>
+          </button>
+          <button type="button" className={hf('btn btn-primary')} onClick={submit} disabled={blocked}>
             Save changes
-          </Button>
+          </button>
         </>
       }
     >
@@ -126,31 +127,50 @@ function Body({ changes, matrixVersion, onBack, onSaved, onStale }: ReviewChange
       {reviewM.isError && <p role="alert">{reviewM.error instanceof ApiError && reviewM.error.code === 'LOCKED_CELL' ? 'A protected right cannot be changed. Nothing was saved.' : 'The changes could not be reviewed. Try again.'}</p>}
       {reviewM.data && rows.length === 0 && <p>These changes do not alter any access</p>}
       {rows.length > 0 && (
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Role</th>
-              <th scope="col">Permission</th>
-              <th scope="col">Before</th>
-              <th scope="col">After</th>
-              <th scope="col">Users affected</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <ChangeRow key={`${r.roleId}|${r.permissionKey}`} row={r} />
-            ))}
-          </tbody>
-        </table>
+        <div className={hf('table-wrap')} style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <table className={hf('tbl')}>
+            <thead>
+              <tr>
+                <th scope="col">Role</th>
+                <th scope="col">Permission</th>
+                <th scope="col">Before</th>
+                <th scope="col">After</th>
+                <th scope="col">Users affected</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <ChangeRow key={`${r.roleId}|${r.permissionKey}`} row={r} />
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
       <SensitiveWarning warnings={warnings} confirmed={confirmed} missing={missing} onChange={(c) => { setConfirmed(c); setMissing(false); }} />
-      <Input label="Reason" required value={reason} maxLength={500} error={reasonError} onChange={(e) => { setReason(e.target.value); setReasonError(undefined); }} />
-      <Input label="Approval reference (optional)" value={reference} maxLength={100} onChange={(e) => setReference(e.target.value)} />
+      <div className={hf('field', reasonError && 'invalid')}>
+        <label htmlFor="review-reason">
+          Reason for the change<span className={hf('req')}>*</span>
+        </label>
+        <textarea id="review-reason" className={hf('textarea')} value={reason} maxLength={500} placeholder="e.g. Approved by CIO, mail of 28-Oct" onChange={(e) => { setReason(e.target.value); setReasonError(undefined); }} />
+        <span className={hf('err')} role={reasonError ? 'alert' : undefined}>
+          <span>
+            <HfIcon name="alertC" />
+          </span>
+          <span>{reasonError}</span>
+        </span>
+      </div>
+      <div className={hf('field')}>
+        <label htmlFor="review-reference">Approval reference</label>
+        <input id="review-reference" className={hf('input')} value={reference} maxLength={100} placeholder="e.g. CR-2026-0142" onChange={(e) => setReference(e.target.value)} />
+      </div>
       {failure && (
-        <p role="alert" className="alert alert-danger mb-0">
-          {failure}
-        </p>
+        <div role="alert" className={hf('alert danger')}>
+          <span>
+            <HfIcon name="alertC" />
+          </span>
+          <div>{failure}</div>
+        </div>
       )}
-    </Modal>
+    </HfModal>
   );
 }

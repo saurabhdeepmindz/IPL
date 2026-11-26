@@ -1,28 +1,29 @@
+'use client';
+
 /**
  * @file    PermissionManagementPage.tsx
  * @module  Permissions
  *
  * @description
- * Permission Management page. In plain words: title, the note "Same roles in every company", the filters, the counter with Discard changes, the disabled Review and save, Add role and the matrix (decisions L-95, L-98, L-101, L-103 to L-109).
+ * Permission Management screen. In plain words: HF-ADM-03.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
- * @story          US-ADM01-015
- * @subtask        ST-ADM01-015-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.7
+ * @story          US-ADM01-014
+ * @subtask        ST-ADM01-014-FE-02
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/permissions/components/PermissionManagementPage.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-03
  * @status         built
  */
-'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button, Input, Select } from '@/components/ui';
 import { isForbidden, NoAccess } from '@/components/ams';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { useMatrixChanges } from '../hooks/useMatrixChanges';
 import { usePermissionMatrix } from '../hooks/usePermissionMatrix';
 import type { CellChange } from '../types/permission.types';
@@ -33,22 +34,9 @@ const MAX_REVIEW = 200;
 type Notice = { kind: 'saved'; count: number } | { kind: 'stale' } | { kind: 'too-many' } | null;
 
 /**
- * Permission Management page. In plain words: loads the matrix, holds the changes in memory and shows the loading, no-access and error with Retry states.
+ * PermissionManagementPage.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-015
- * @subtask   ST-ADM01-015-FE-02
- * @frd       FR-043.1, FR-043.3, FR-043.6
- * @workflow  AD-03
- * @screen    ADM-03
- * @contract  API-PRM-01
- * @ac        AC-US015-01, 02, 03, 04, 05
- * @lld       LLD-EPIC-ADM-01 v0.27 §6.7
- * @status    built
- *
- * @dependencies usePermissionMatrix, useMatrixChanges, PermissionMatrix
- *
- * @returns The rendered output
+ * In plain words: the Permission Management screen of the high-fidelity design (HF-ADM-03): page head with Export to Excel (a later release: it opens the Coming soon page) and Add role, the "Same roles in every company" note, one card with the search, module filter, "Show changed only" and the matrix, and the save bar that appears when something is changed.
  */
 export function PermissionManagementPage() {
   const { data: matrix, isPending, error, refetch } = usePermissionMatrix();
@@ -66,70 +54,125 @@ export function PermissionManagementPage() {
       setReviewing(changes.changes);
     }
   };
+  const touched = new Set(changes.changes.map((c) => c.roleId));
+  const affected = (matrix?.roles ?? []).filter((r) => touched.has(r.roleId)).reduce((n, r) => n + r.userCount, 0);
 
   return (
     <section data-testid="permissions-page">
-      <div className="d-flex justify-content-between align-items-start mb-3">
+      <div className={hf('page-head')}>
         <div>
-          <h1 className="h3">Permission Management</h1>
-          <p className="text-body-secondary mb-0">What each role may do and whose proposals it can see. Switch a permission on or off, or change its data scope, then review and save with a reason.</p>
+          <h1>Permission Management</h1>
+          <p>What each role may do and whose proposals it can see. Switch a permission on or off, or change its data scope, then review and save with a reason.</p>
         </div>
-        <Link href="/roles/new" className="btn btn-primary">
-          Add role
-        </Link>
+        <div className={hf('page-actions')}>
+          <Link className={hf('btn btn-outline')} href="/coming-soon?feature=Export%20to%20Excel" data-testid="matrix-export">
+            <HfIcon name="download" />
+            Export to Excel
+          </Link>
+          <Link href="/roles/new" className={hf('btn btn-primary')}>
+            <HfIcon name="plus" />
+            Add role
+          </Link>
+        </div>
       </div>
-      <div className="alert alert-info" role="note">
-        <strong>Same roles in every company</strong>
-        <div>Who has which role in which company is set in User Management. A change here applies to every user with the role, from the moment it is saved.</div>
+      <div className={hf('alert info')} role="note" style={{ marginBottom: 'var(--spacing-xl)' }}>
+        <span>
+          <HfIcon name="info" />
+        </span>
+        <div>
+          <b>Same roles in every company</b>
+          Who has which role in which company is set in User Management. A change here applies to every user with the role, from the moment it is saved.
+        </div>
       </div>
       {notice?.kind === 'saved' && (
-        <p className="alert alert-success d-flex justify-content-between" role="status">
-          <span>{notice.count === 1 ? '1 change saved' : `${notice.count} changes saved`}</span>
-          <Button variant="secondary" outline size="sm" onClick={() => setNotice(null)}>
+        <div className={hf('alert success')} role="status" style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <span>
+            <HfIcon name="checkC" />
+          </span>
+          <div>
+            <b>{notice.count === 1 ? '1 change saved' : `${notice.count} changes saved`}</b>
+          </div>
+          <button type="button" className={hf('btn btn-text sm')} onClick={() => setNotice(null)}>
             Dismiss
-          </Button>
-        </p>
+          </button>
+        </div>
       )}
-      {notice?.kind === 'stale' && <p className="alert alert-warning" role="alert">Another administrator saved first. The matrix was reloaded; make your changes again.</p>}
-      {notice?.kind === 'too-many' && <p className="alert alert-warning" role="alert">Review at most 200 changes at a time</p>}
+      {notice?.kind === 'stale' && (
+        <div className={hf('alert warning')} role="alert" style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <span>
+            <HfIcon name="alert" />
+          </span>
+          <div>Another administrator saved first. The matrix was reloaded; make your changes again.</div>
+        </div>
+      )}
+      {notice?.kind === 'too-many' && (
+        <div className={hf('alert warning')} role="alert" style={{ marginBottom: 'var(--spacing-lg)' }}>
+          <span>
+            <HfIcon name="alert" />
+          </span>
+          <div>Review at most 200 changes at a time</div>
+        </div>
+      )}
       {isPending && <p role="status">Loading the permission matrix…</p>}
       {error && isForbidden(error) && <NoAccess screen="Permission Management" />}
       {error && !isForbidden(error) && (
         <p role="alert">
           The permission matrix could not be loaded.{' '}
-          <Button variant="link" size="sm" onClick={() => refetch()}>
+          <button type="button" className={hf('btn btn-text sm')} onClick={() => refetch()}>
             Retry
-          </Button>
+          </button>
         </p>
       )}
       {matrix && (
         <>
-          <div className="d-flex flex-wrap gap-3 align-items-end mb-3">
-            <Input label="Find a permission" value={search} onChange={(e) => setSearch(e.target.value)} />
-            <Select label="Module" placeholder="All modules" value={module} onChange={(e) => setModule(e.target.value)} options={matrix.groups.map((g) => ({ value: g.module, label: g.module }))} />
-            <div className="form-check mb-3">
-              <input id="matrix-changed-only" type="checkbox" className="form-check-input" checked={changedOnly} onChange={(e) => setChangedOnly(e.target.checked)} />
-              <label htmlFor="matrix-changed-only" className="form-check-label">
-                Show changed only
+          <section className={hf('card')}>
+            <div className={hf('toolbar')}>
+              <div className={hf('search')} style={{ flex: 1, minWidth: 220, maxWidth: 380 }}>
+                <HfIcon name="search" />
+                <input className={hf('input')} type="search" placeholder="Find a permission" aria-label="Find a permission" value={search} onChange={(e) => setSearch(e.target.value)} />
+              </div>
+              <select className={hf('select')} aria-label="Module" value={module} onChange={(e) => setModule(e.target.value)}>
+                <option value="">All modules</option>
+                {matrix.groups.map((g) => (
+                  <option key={g.module} value={g.module}>
+                    {g.module}
+                  </option>
+                ))}
+              </select>
+              <label className={hf('check')}>
+                <input id="matrix-changed-only" type="checkbox" checked={changedOnly} onChange={(e) => setChangedOnly(e.target.checked)} /> Show changed only
               </label>
-            </div>
-            <div className="ms-auto d-flex align-items-center gap-3 mb-3">
-              {count > 0 && (
-                <span data-testid="matrix-counter" role="status">
-                  {count === 1 ? '1 unsaved change' : `${count} unsaved changes`}
+              <span style={{ flex: 1 }} />
+              <div style={{ display: 'flex', gap: 'var(--spacing-md)', fontSize: 'var(--fs-1)', color: 'var(--text-hint)' }}>
+                <span>
+                  Scope: <b>Own</b> · <b>Department</b> · <b>Company</b>
                 </span>
-              )}
-              {count > 0 && (
-                <Button variant="secondary" outline size="sm" onClick={changes.discard}>
-                  Discard changes
-                </Button>
-              )}
-              <Button disabled={count === 0} onClick={review}>
-                Review and save
-              </Button>
+              </div>
             </div>
-          </div>
-          <PermissionMatrix matrix={matrix} changes={changes} search={search} module={module} changedOnly={changedOnly} />
+            <PermissionMatrix matrix={matrix} changes={changes} search={search} module={module} changedOnly={changedOnly} />
+          </section>
+          {count > 0 && (
+            <div className={hf('card')} style={{ position: 'sticky', bottom: 16, marginTop: 'var(--spacing-lg)', boxShadow: 'var(--shadows-shadow-lg)', padding: 'var(--spacing-md) var(--spacing-xl)', display: 'flex', alignItems: 'center', gap: 'var(--spacing-md)', flexWrap: 'wrap' }}>
+              <span className={hf('sr-only')} data-testid="matrix-counter" role="status">
+                {count === 1 ? '1 unsaved change' : `${count} unsaved changes`}
+              </span>
+              <span className={hf('count danger')} aria-hidden="true">
+                {count}
+              </span>
+              <b aria-hidden="true">{count === 1 ? 'change not saved' : 'changes not saved'}</b>
+              <span className={hf('muted')} style={{ fontSize: 'var(--fs-2)' }}>
+                · affects {affected} {affected === 1 ? 'user' : 'users'} in {touched.size} {touched.size === 1 ? 'role' : 'roles'}
+              </span>
+              <span style={{ flex: 1 }} />
+              <button type="button" className={hf('btn btn-outline')} onClick={changes.discard}>
+                Discard changes
+              </button>
+              <button type="button" className={hf('btn btn-primary')} onClick={review}>
+                <HfIcon name="check" />
+                Review and save
+              </button>
+            </div>
+          )}
           <ReviewChangesPanel
             changes={reviewing}
             matrixVersion={matrix.matrixVersion}

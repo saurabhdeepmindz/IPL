@@ -76,7 +76,7 @@ test.describe('Permission matrix journeys (story 015)', () => {
     await openMatrix(page);
     const list = matrix(page).getByRole('combobox').first();
     await expect(list).toBeVisible();
-    await expect(list.getByRole('option')).toHaveText(['No access', 'Own', 'Department', 'Company']);
+    await expect(list.getByRole('option')).toHaveText(['—', 'Own', 'Department', 'Company']);
     await shot(page, 'E02', 'scope');
   });
 
@@ -103,7 +103,7 @@ test.describe('Permission matrix journeys (story 015)', () => {
     expect(narrowed).toBeLessThan(all);
     await shot(page, 'E03', 'module');
     await page.getByLabel('Module').selectOption({ label: modules[0] });
-    await matrix(page).getByRole('switch').and(page.locator(':enabled')).first().click();
+    await matrix(page).getByRole('switch').and(page.locator(':enabled')).first().click({ force: true });
     await page.getByLabel('Show changed only').check();
     await expect(matrix(page).getByRole('row')).toHaveCount(3);
     await shot(page, 'E03', 'changed-only');
@@ -123,8 +123,8 @@ test.describe('Permission matrix journeys (story 015)', () => {
     const a = free.nth(0);
     const b = free.nth(1);
     const before = [await a.isChecked(), await b.isChecked()];
-    await a.click();
-    await b.click();
+    await a.locator('xpath=ancestor::label').click();
+    await b.locator('xpath=ancestor::label').click();
     await expect(page.getByTestId('matrix-counter')).toHaveText('2 unsaved changes');
     await expect(page.getByTestId('changed-dot')).toHaveCount(2);
     await shot(page, 'E04', 'changed');

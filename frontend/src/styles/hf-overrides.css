@@ -33,3 +33,16 @@ html:has(.hf-admin) {
 .hf-admin dt {
   font-weight: 400;
 }
+
+/* Permission matrix (HF-ADM-03): the role form also uses a class "perm" (a flex row); inside the matrix it is a plain table cell. */
+.hf-admin .hf-matrix td.hf-perm,
+.hf-admin .hf-matrix th.hf-perm {
+  display: table-cell;
+}
+.hf-admin .hf-matrix th a {
+  text-decoration: underline;
+}
+/* Hidden text (sr-only) inside a scrolling table must be clipped by it, so it cannot widen the page. */
+.hf-admin .hf-table-wrap {
+  position: relative;
+}

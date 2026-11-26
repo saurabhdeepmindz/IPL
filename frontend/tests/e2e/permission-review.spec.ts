@@ -88,7 +88,7 @@ test.describe('Permission review journeys (story 016)', () => {
     await scopeList(page, name).selectOption('DEPARTMENT');
     await expect(page.getByTestId('matrix-counter')).toHaveText('1 unsaved change');
     await page.getByRole('button', { name: 'Review and save' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Review changes' });
+    const dialog = page.getByRole('dialog', { name: 'Review permission changes' });
     const line = dialog.getByRole('row', { name: new RegExp(name) });
     await expect(line).toContainText('Company');
     await expect(line).toContainText('Department');
@@ -119,9 +119,9 @@ test.describe('Permission review journeys (story 016)', () => {
     const roleId = await makeRole(request, name);
     await signIn(page);
     await openMatrix(page);
-    await companySwitch(page, name).click();
+    await companySwitch(page, name).click({ force: true });
     await page.getByRole('button', { name: 'Review and save' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Review changes' });
+    const dialog = page.getByRole('dialog', { name: 'Review permission changes' });
     await expect(dialog.getByTestId('sensitive-warning')).toContainText('sensitive right');
     await dialog.getByLabel(/^Reason/).fill('Needed for the group reports');
     const save = dialog.getByRole('button', { name: 'Save changes' });
@@ -158,7 +158,7 @@ test.describe('Permission review journeys (story 016)', () => {
     });
     await scopeList(page, name).selectOption('OWN');
     await page.getByRole('button', { name: 'Review and save' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Review changes' });
+    const dialog = page.getByRole('dialog', { name: 'Review permission changes' });
     await dialog.getByLabel(/^Reason/).fill('Try with a locked cell');
     await dialog.getByRole('button', { name: 'Save changes' }).click();
     await expect(dialog.getByText('A protected right cannot be changed. Nothing was saved.')).toBeVisible();

@@ -34,6 +34,8 @@ interface HfModalProps {
   subtitle?: string;
   /** A side drawer instead of a centred dialog. */
   drawer?: boolean;
+  /** The wide dialog (a table inside). */
+  wide?: boolean;
   /** Close with a click outside. Off by default: a dialog that asks for a reason must not vanish by accident. */
   closeOnBackdrop?: boolean;
 }
@@ -43,7 +45,7 @@ interface HfModalProps {
  *
  * In plain words: the dialog and the side drawer of the high-fidelity design: dimmed page behind, a head with the title and a close button, a body and a foot. Escape closes it; focus goes to the first field when it opens.
  */
-export function HfModal({ open, title, onClose, children, footer, subtitle, drawer = false, closeOnBackdrop = false }: HfModalProps) {
+export function HfModal({ open, title, onClose, children, footer, subtitle, drawer = false, wide = false, closeOnBackdrop = false }: HfModalProps) {
   const id = useId();
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -76,7 +78,7 @@ export function HfModal({ open, title, onClose, children, footer, subtitle, draw
           {inner}
         </aside>
       ) : (
-        <div className={hf('modal')} role="dialog" aria-modal="true" aria-labelledby={id}>
+        <div className={hf('modal', wide && 'wide')} role="dialog" aria-modal="true" aria-labelledby={id}>
           {inner}
         </div>
       )}

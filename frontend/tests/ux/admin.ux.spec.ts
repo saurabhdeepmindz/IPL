@@ -165,6 +165,42 @@ async function mockRoleViewApi(page: Page, context: BrowserContext) {
   await page.route(/\/api\/v1\/roles\/r1$/, (r) => r.fulfill(json({ data: role })));
 }
 
+/** Mocks the permission matrix with the HF demo data (roles, modules, permissions, who has what), read from the HF page. */
+async function mockMatrixApi(page: Page, context: BrowserContext) {
+  await signedIn(page, context);
+  const browser = context.browser()!;
+  const c = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`file:///${HF_ROOT.replace(/\\/g, '/')}/02-Admin/HF-ADM-03-permission-management.html`);
+  await p.waitForTimeout(600);
+  const d = await p.evaluate(() => {
+    const t = (e: Element | null | undefined) => (e?.textContent ?? '').trim();
+    const roles = [...document.querySelectorAll('#mxh th.rc')].map((th) => ({ name: t(th.querySelector('a')), note: t(th.querySelector('small')), sys: th.classList.contains('lockcol') }));
+    const groups: { module: string; note: string; permissions: { label: string; hint: string; cells: { on: boolean; scope: string | null; locked: boolean }[] }[] }[] = [];
+    for (const tr of document.querySelectorAll('#mxb tr')) {
+      if (tr.classList.contains('grp')) {
+        const [m, n] = t(tr.querySelector('td')).split(' · ');
+        groups.push({ module: m.trim(), note: (n ?? '').trim(), permissions: [] });
+      } else {
+        const td = tr.querySelectorAll('td');
+        groups[groups.length - 1].permissions.push({
+          label: t(td[0].querySelector('b')), hint: t(td[0].querySelector('small')),
+          cells: [...td].slice(1).map((x) => { const sel = x.querySelector('select') as HTMLSelectElement | null; const chk = x.querySelector('input') as HTMLInputElement | null; return { on: sel ? sel.value !== '—' : !!chk?.checked, scope: sel ? ({ Own: 'OWN', Department: 'DEPARTMENT', Company: 'COMPANY' } as Record<string, string>)[sel.value] ?? 'COMPANY' : null, locked: !!(sel ?? chk)?.disabled }; }),
+        });
+      }
+    }
+    return { roles, groups };
+  });
+  await c.close();
+  const roles = d.roles.map((r, i) => ({ roleId: `m${i}`, name: r.name, userCount: +(r.note.match(/^(\d+) users/)?.[1] ?? 0), status: r.note.startsWith('Draft') ? 'DRAFT' : 'ACTIVE' }));
+  const groups = d.groups.map((g, gi) => ({
+    module: g.module, note: g.note,
+    permissions: g.permissions.map((q, qi) => ({ key: `g${gi}.p${qi}`, label: q.label, hint: q.hint, cells: Object.fromEntries(q.cells.map((x, i) => [`m${i}`, { allowed: x.on, scope: x.on ? x.scope : null, locked: x.locked }])) })),
+  }));
+  await page.route('**/roles/permissions/matrix', (r) => r.fulfill(json({ data: { matrixVersion: 'v-1', roles, groups } })));
+  await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }], canViewAll: false } })));
+}
+
 const SCREENS: UxScreen[] = [
   {
     id: 'UX-ADM-01-user-list',
@@ -191,6 +227,12 @@ const SCREENS: UxScreen[] = [
     // The "Remove" buttons of the design (unassign from this screen) are not in the stories (UX-ACC-05 · Role details, users table): the action column is painted grey.
     // The role name in the breadcrumb comes from the loaded role (the page passes a fixed label today): painted grey.
     mask: [...MASK_SHELL, '#uTbl td.act,#uTbl th.act,.hf-tbl td.hf-act,.hf-tbl th.hf-act', '.crumbs .cur,.hf-crumbs .hf-cur'],
+  },
+  {
+    id: 'UX-ADM-03-permission-matrix',
+    hf: { file: '02-Admin/HF-ADM-03-permission-management.html' },
+    app: { url: '/permissions', prepare: mockMatrixApi, steps: (p) => p.getByTestId('permission-matrix').waitFor() },
+    mask: MASK_SHELL,
   },
 ];
 

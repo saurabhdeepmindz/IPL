@@ -93,7 +93,7 @@ describe('US-ADM01-015 permission matrix (J01 to J05 and supporting)', () => {
   it('J02 shows the scope choices in words', async () => {
     renderPage();
     const list = await screen.findByRole('combobox', { name: 'View proposals for Initiator' });
-    expect(within(list).getAllByRole('option').map((o) => o.textContent)).toEqual(['No access', 'Own', 'Department', 'Company']);
+    expect(within(list).getAllByRole('option').map((o) => o.textContent)).toEqual(['—', 'Own', 'Department', 'Company']);
     expect(list).toHaveValue('OWN');
     expect(screen.getByRole('combobox', { name: 'View proposals for Administrator' })).toHaveValue('COMPANY');
   });
@@ -186,12 +186,12 @@ describe('US-ADM01-015 permission matrix (J01 to J05 and supporting)', () => {
    * @story   US-ADM01-015
    * @ac      AC-US015-04
    * @subtask ST-ADM01-015-FE-03
-   * In plain words: supporting test. Review and save is disabled while there is no change and enabled once there is one (decision L-99 until story 016, now story 016); Add role links to the role form.
+   * In plain words: supporting test. Review and save (the save bar) shows only when there is a change and is then enabled once there is one (decision L-99 until story 016, now story 016); Add role links to the role form.
    */
   it('enables Review and save once there is a change', async () => {
     renderPage();
     await screen.findByText('Create General proposal');
-    expect(screen.getByRole('button', { name: 'Review and save' })).toBeDisabled();
+    expect(screen.queryByRole('button', { name: 'Review and save' })).not.toBeInTheDocument();
     await userEvent.click(toggle('View users', 'Initiator'));
     expect(screen.getByRole('button', { name: 'Review and save' })).toBeEnabled();
     expect(screen.getByRole('link', { name: 'Add role' })).toHaveAttribute('href', '/roles/new');

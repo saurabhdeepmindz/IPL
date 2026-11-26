@@ -55,7 +55,7 @@ const openReview = async () => {
   await screen.findByText('View users');
   await userEvent.click(toggle('View users', 'Initiator'));
   await userEvent.click(screen.getByRole('button', { name: 'Review and save' }));
-  return screen.findByRole('dialog', { name: 'Review changes' });
+  return screen.findByRole('dialog', { name: 'Review permission changes' });
 };
 
 describe('US-ADM01-016 review and save (J01 to J03 and supporting)', () => {
@@ -129,7 +129,7 @@ describe('US-ADM01-016 review and save (J01 to J03 and supporting)', () => {
     await userEvent.click(within(dialog).getByRole('button', { name: 'Save changes' }));
     expect(await within(dialog).findByText('A protected right cannot be changed. Nothing was saved.')).toBeInTheDocument();
     expect(saveChanges).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('dialog', { name: 'Review changes' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Review permission changes' })).toBeInTheDocument();
     await userEvent.click(within(dialog).getByRole('button', { name: 'Back to the matrix' }));
     expect(screen.getByTestId('matrix-counter')).toHaveTextContent('1 unsaved change');
   });
