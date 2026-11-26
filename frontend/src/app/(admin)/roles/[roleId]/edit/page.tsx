@@ -40,7 +40,7 @@ import { AdminShell } from '@/components/layout/AdminShell';
  */
 export default function Page({ params }: { params: Promise<{ roleId: string }> }) {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'Role Management', href: '/roles' }, { label: 'Edit role' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'Role Management', href: '/roles' }, { label: 'Edit role' }]}>
       <Suspense fallback={<p role="status">Loading…</p>}>
         <RoleEditRoute params={params} />
       </Suspense>

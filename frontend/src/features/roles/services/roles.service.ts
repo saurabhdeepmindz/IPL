@@ -63,10 +63,11 @@ export async function listRoles(query: { q?: string; type?: string; status?: str
  * @returns The modules with their permissions and the cells
  */
 export async function getPermissionCatalog(): Promise<PermissionCatalog> {
-  const res = await api.get<{ data: { groups: { module: string; permissions: { key: string; label: string; hint: string; cells: Record<string, CatalogCell> }[] }[]; roles: { roleId: string }[] } }>('/roles/permissions/matrix');
+  const res = await api.get<{ data: { groups: { module: string; note?: string; permissions: { key: string; label: string; hint: string; cells: Record<string, CatalogCell> }[] }[]; roles: { roleId: string }[] } }>('/roles/permissions/matrix');
   const cellsByRole: PermissionCatalog['cellsByRole'] = {};
   const modules = res.data.data.groups.map((g) => ({
     name: g.module,
+    ...(g.note ? { note: g.note } : {}),
     permissions: g.permissions.map((p) => {
       for (const [roleId, cell] of Object.entries(p.cells)) (cellsByRole[roleId] ??= {})[p.key] = cell;
       return { key: p.key, label: p.label, hint: p.hint, scoped: Object.values(p.cells).some((c) => c.scope !== null) };

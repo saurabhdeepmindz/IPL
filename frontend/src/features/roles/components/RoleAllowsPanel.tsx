@@ -1,76 +1,93 @@
 /**
  * @file    RoleAllowsPanel.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * What the role allows. In plain words: the allowed permissions with their scope, the type, status and last changed.
+ * What a role allows. In plain words: the card of the design with the tick list and the facts.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
- * @story          US-ADM01-013
- * @subtask        ST-ADM01-013-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @story          US-ADM01-012
+ * @subtask        ST-ADM01-012-FE-04
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleAllowsPanel.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #view
  * @status         built
  */
-import { StatusBadge } from '@/components/ams';
+
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { formatDay } from '@/lib/utils';
 import type { RoleDetails } from '../types/role.types';
 
-/** Props of RoleAllowsPanel. */
 interface RoleAllowsPanelProps {
-  /** The role with its allows */
   role: RoleDetails;
-  /** Label of each permission key; a key without a label is shown as it is */
   labels?: Record<string, string>;
 }
 
 const SCOPE = { OWN: 'own only', DEPARTMENT: 'own department', COMPANY: 'whole company' } as const;
+const BADGE = { ACTIVE: ['b-success', 'Active'], DRAFT: ['b-warning', 'Draft'], INACTIVE: ['b-neutral', 'Inactive'] } as const;
 
 /**
- * What the role allows. In plain words: the allowed permissions with their scope in words, then type, status, companies and last changed.
+ * RoleAllowsPanel.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-013
- * @subtask   ST-ADM01-013-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-ROL-05
- * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.19 §6.5
- * @status    built
- *
- * @returns The rendered panel
+ * In plain words: the "What this role allows" card of the design: a tick and a sentence for each permission, then type, status, companies and last change.
  */
 export function RoleAllowsPanel({ role, labels = {} }: RoleAllowsPanelProps) {
+  const [cls, word] = BADGE[role.status];
+  const total = Object.keys(labels).length;
+  const off = Math.max(0, total - role.allows.length);
   return (
-    <aside className="card p-3" aria-label="What this role allows" data-testid="roles-allows">
-      <h2 className="h5">What this role allows</h2>
-      <ul className="list-unstyled">
-        {role.allows.map((a) => (
-          <li key={a.permission}>
-            {labels[a.permission] ?? a.permission}
-            {a.scope ? <strong> — {SCOPE[a.scope]}</strong> : null}
-          </li>
-        ))}
-      </ul>
-      <dl className="row mb-0 small">
-        <dt className="col-5">Type</dt>
-        <dd className="col-7">{role.type === 'STANDARD' ? 'Standard' : 'Custom'}</dd>
-        <dt className="col-5">Status</dt>
-        <dd className="col-7">
-          <StatusBadge status={role.status} />
-        </dd>
-        <dt className="col-5">Companies</dt>
-        <dd className="col-7">Same role in every company</dd>
-        <dt className="col-5">Last changed</dt>
-        <dd className="col-7">{formatDay(role.lastChanged)}</dd>
-      </dl>
+    <aside className={hf('card')} aria-label="What this role allows" data-testid="roles-allows">
+      <div className={hf('card-head')}>
+        <h3>What this role allows</h3>
+        <a className={hf('btn btn-text sm')} href="/permissions">
+          Full matrix
+        </a>
+      </div>
+      <div className={hf('card-body')}>
+        <ul className={hf('sumlist')}>
+          {role.allows.map((a) => (
+            <li key={a.permission}>
+              <HfIcon name="check" size="sm" />
+              <span>
+                {labels[a.permission] ?? a.permission}
+                {a.scope ? (
+                  <>
+                    {' — '}
+                    <b>{SCOPE[a.scope]}</b>
+                  </>
+                ) : null}
+              </span>
+            </li>
+          ))}
+          {total > 0 && (
+            <li style={{ paddingTop: 'var(--spacing-md)' }}>
+              <span className={hf('muted')} style={{ fontSize: 'var(--fs-1)' }}>
+                Not allowed: {off} permissions
+              </span>
+            </li>
+          )}
+        </ul>
+        <hr className={hf('divider')} style={{ margin: 'var(--spacing-lg) 0' }} />
+        <dl className={hf('dl')} style={{ gridTemplateColumns: '110px 1fr' }}>
+          <dt>Type</dt>
+          <dd>{role.type === 'STANDARD' ? 'Standard' : 'Custom'}</dd>
+          <dt>Status</dt>
+          <dd>
+            <span className={hf('badge', cls)}>{word}</span>
+          </dd>
+          <dt>Companies</dt>
+          <dd>Same role in every company</dd>
+          <dt>Last changed</dt>
+          <dd>
+            {formatDay(role.lastChanged)}
+            {role.changedBy ? ` · ${role.changedBy}` : ''}
+          </dd>
+        </dl>
+      </div>
     </aside>
   );
 }

@@ -62,6 +62,8 @@ export interface CatalogPermission {
 /** A module of the catalog with its permissions. */
 export interface CatalogModule {
   name: string;
+  /** Where the permissions come from in the contract, for example "SOW B1, B3" (shown as a badge when the catalog gives it). */
+  note?: string;
   permissions: CatalogPermission[];
 }
 
@@ -84,11 +86,15 @@ export interface RoleHolder {
   name: string;
   department: string | null;
   company: string;
+  /** Company name, when the API gives it (the design shows "Indian Potash Limited · 1000"). */
+  companyName?: string;
   assignedOn: string;
 }
 
 /** A role with its holders and what it allows (API-ROL-05). */
 export interface RoleDetails extends Role {
+  /** Who changed the role last, when the API gives it (decision UX-ACC-05). */
+  changedBy?: string;
   users: RoleHolder[];
   allows: { permission: string; scope: DataScope | null }[];
 }

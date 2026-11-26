@@ -39,7 +39,7 @@ import { RoleDetailRoute } from '@/features/roles/components/RoleDetailRoute';
  */
 export default function Page({ params }: { params: Promise<{ roleId: string }> }) {
   return (
-    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'User & Access Management' }, { label: 'Role Management', href: '/roles' }, { label: 'Role' }]}>
+    <AdminShell breadcrumbs={[{ label: 'Administration', href: '/dashboard' }, { label: 'Role Management', href: '/roles' }, { label: 'Role' }]}>
       <RoleDetailRoute params={params} />
     </AdminShell>
   );

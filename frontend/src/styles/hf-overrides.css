@@ -27,3 +27,9 @@ html:has(.hf-admin) {
 .hf-admin img {
   vertical-align: baseline;
 }
+
+/* The application's reset makes definition terms bold; the design does not. */
+.hf-scope dt,
+.hf-admin dt {
+  font-weight: 400;
+}

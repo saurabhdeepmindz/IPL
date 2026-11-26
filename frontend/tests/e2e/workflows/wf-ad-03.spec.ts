@@ -124,7 +124,7 @@ test.describe('Workflow AD-03: roles and permissions', () => {
     await page.getByRole('link', { name: roleName, exact: true }).first().click();
     await expect(page.getByRole('heading', { name: roleName })).toBeVisible();
     await page.getByTestId('roles-assign-button').click();
-    await page.getByLabel('Search users').fill(userCode);
+    await page.getByLabel('Search users', { exact: true }).fill(userCode);
     await page.getByRole('button', { name: new RegExp(`Add WF Role User ${userCode}`) }).click();
     await page.locator('select#assign-company').selectOption('IPL');
     await page.getByLabel(/Valid from/).fill('2026-01-01');

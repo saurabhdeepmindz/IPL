@@ -101,7 +101,7 @@ test.describe('Roles journeys (story 012)', () => {
     await expect(page.getByRole('heading', { name: 'Create role' })).toBeVisible();
     await page.getByLabel(/Role name/).fill(name);
     await page.getByLabel(/Description/).fill('Created by the journey');
-    await page.locator('[data-testid=roles-switches] input').first().check();
+    await page.locator('[data-testid=roles-switches] input[type=checkbox]').first().check({ force: true });
     await shot(page, 'E02', 'form');
     await page.getByTestId('roles-save-button').click();
     await page.getByRole('textbox', { name: /^Reason/ }).fill('New role from the journey');

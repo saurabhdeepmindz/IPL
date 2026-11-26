@@ -1,72 +1,114 @@
 /**
  * @file    RoleUsersTable.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * The users of a role. In plain words: a table of user, department, company and assigned-on date; the empty message "No users have this role yet".
+ * Users of a role. In plain words: the table of the design.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
- * @story          US-ADM01-013
- * @subtask        ST-ADM01-013-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @story          US-ADM01-012
+ * @subtask        ST-ADM01-012-FE-04
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleUsersTable.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #view
  * @status         built
  */
+
+import Link from 'next/link';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { formatDay } from '@/lib/utils';
 import type { RoleHolder } from '../types/role.types';
 
-/** Props of RoleUsersTable. */
 interface RoleUsersTableProps {
-  /** The holders of the role */
   users: RoleHolder[];
+  /** Current order as `field:asc|desc`. */
+  sort?: string;
+  onSort?: (field: string) => void;
 }
 
+const initials = (name: string): string => name.replace(/[^A-Z]/g, '').slice(0, 2) || name.slice(0, 2).toUpperCase();
+
 /**
- * Users of a role. In plain words: a table of user, department, company and assigned-on date; the empty message "No users have this role yet". No Remove action in this release (decision L-65).
+ * RoleUsersTable.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-013
- * @subtask   ST-ADM01-013-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-ROL-05
- * @ac        AC-US013-01
- * @lld       LLD-EPIC-ADM-01 v0.19 §6.5
- * @status    built
- *
- * @returns The rendered table
+ * In plain words: the "Users with this role" table of the design: avatar, name and code, department, company and the day the role was given.
  */
-export function RoleUsersTable({ users }: RoleUsersTableProps) {
-  if (users.length === 0) return <p data-testid="roles-users-empty">No users have this role yet</p>;
+export function RoleUsersTable({ users, sort = '', onSort }: RoleUsersTableProps) {
+  const [by, dir] = sort.split(':');
+  if (users.length === 0) {
+    return (
+      <div className={hf('empty')} data-testid="roles-users-empty">
+        <span className={hf('art')}>
+          <HfIcon name="users" size="lg" />
+        </span>
+        <b>No users have this role yet</b>
+        <p>Assign users so they can use what this role allows.</p>
+      </div>
+    );
+  }
   return (
-    <table className="table align-middle" data-testid="roles-users-table">
-      <thead>
-        <tr>
-          <th scope="col">User</th>
-          <th scope="col">Department</th>
-          <th scope="col">Company</th>
-          <th scope="col">Assigned on</th>
-        </tr>
-      </thead>
-      <tbody>
-        {users.map((u) => (
-          <tr key={`${u.employeeCode}-${u.company}`}>
-            <td>
-              {u.name}
-              <div className="small text-body-secondary">{u.employeeCode}</div>
-            </td>
-            <td>{u.department ?? '-'}</td>
-            <td>{u.company}</td>
-            <td>{formatDay(u.assignedOn)}</td>
+    <div className={hf('table-wrap')}>
+      <table className={hf('tbl')} data-testid="roles-users-table">
+        <thead>
+          <tr>
+            {(
+              [
+                ['User', 'name'],
+                ['Department', 'department'],
+                ['Company', 'company'],
+                ['Assigned on', 'since'],
+              ] as const
+            ).map(([h, field]) => (
+              <th
+                key={h}
+                scope="col"
+                className={hf('sortable')}
+                aria-sort={field === by ? (dir === 'desc' ? 'descending' : 'ascending') : 'none'}
+                tabIndex={0}
+                onClick={() => onSort?.(field)}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onSort?.(field)}
+              >
+                {h}
+                <span className={hf('sort')}>
+                  <HfIcon name={field === by ? (dir === 'desc' ? 'sortD' : 'sortU') : 'sort'} size="sm" />
+                </span>
+              </th>
+            ))}
+            <th scope="col" className={hf('act')} style={{ width: 105 }}>
+              <span className={hf('sr-only')}>Actions</span>
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {users.map((u) => (
+            <tr key={`${u.employeeCode}-${u.company}`}>
+              <td>
+                <div className={hf('person')}>
+                  <span className={hf('avatar sm')} aria-hidden="true">
+                    {initials(u.name)}
+                  </span>
+                  <span>
+                    <b>
+                      <Link href={`/users/${u.employeeCode}`}>{u.name}</Link>
+                    </b>
+                    <small className={hf('mono')} style={{ fontSize: 'var(--fs-1)' }}>
+                      {u.employeeCode}
+                    </small>
+                  </span>
+                </div>
+              </td>
+              <td>{u.department ?? '-'}</td>
+              <td>{u.companyName ? `${u.companyName} · ${u.company}` : u.company}</td>
+              <td style={{ whiteSpace: 'nowrap' }}>{formatDay(u.assignedOn)}</td>
+              <td className={hf('act')} style={{ width: 105 }} />
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

@@ -1,23 +1,23 @@
+'use client';
+
 /**
  * @file    RoleForm.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * The role form. In plain words: name, start from, description, status, permissions by module with data scope and the plain-words panel; Save asks for a reason.
+ * Role form. In plain words: HF-ADM-02 create and edit view.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
  * @story          US-ADM01-012
- * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @subtask        ST-ADM01-012-FE-03
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleForm.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #new, #edit
  * @status         built
  */
-'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -25,7 +25,8 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { ReasonDialog } from '@/components/ams';
-import { Button, Input, Select, Switch } from '@/components/ui';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import { toApiError } from '@/lib/errors';
 import { usePermissionCatalog } from '../hooks/usePermissionCatalog';
 import { useRoles } from '../hooks/useRoles';
@@ -35,29 +36,37 @@ import type { PermissionCell } from '../types/role.types';
 import { PlainWordsPanel } from './PlainWordsPanel';
 import { RolePermissionSwitches } from './RolePermissionSwitches';
 
-/** Props of RoleForm. */
 interface RoleFormProps {
-  /** Id of the role to change; empty to create */
   roleId?: string;
 }
 
+/** Field message line of the design: icon and words under the field. */
+function FieldError({ text }: { text?: string }) {
+  return (
+    <span className={hf('err')} role={text ? 'alert' : undefined}>
+      <span>
+        <HfIcon name="alertC" />
+      </span>
+      <span>{text}</span>
+    </span>
+  );
+}
+
+function Help({ children }: { children: string }) {
+  return (
+    <span className={hf('help')}>
+      <span>
+        <HfIcon name="info" />
+      </span>
+      {children}
+    </span>
+  );
+}
+
 /**
- * Role form. In plain words: name, start from, description, status, permissions by module and the plain-words panel; Save checks the fields, asks for a reason and only then sends the call.
+ * RoleForm.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-012
- * @subtask   ST-ADM01-012-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @contract  API-ROL-02, API-ROL-03
- * @ac        AC-US012-02, AC-US012-03, AC-US012-04, AC-US012-06
- * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
- * @status    built
- *
- * @dependencies useSaveRole, usePermissionCatalog, ReasonDialog, RolePermissionSwitches, PlainWordsPanel
- *
- * @returns The rendered form
+ * In plain words: the Create role and Edit role screen of the high-fidelity design (HF-ADM-02): the "About the role" and "Permissions by module" sections in one card, the "In plain words" card beside it, and the sticky foot with Cancel and Save role.
  */
 export function RoleForm({ roleId }: RoleFormProps) {
   const router = useRouter();
@@ -74,6 +83,7 @@ export function RoleForm({ roleId }: RoleFormProps) {
     values: existing ? { name: existing.name, description: existing.description, status: existing.status === 'DRAFT' ? 'DRAFT' : 'ACTIVE', copyFromRoleId: '' } : undefined,
   });
   const status = useWatch({ control: form.control, name: 'status' });
+  const errors = form.formState.errors;
   const cellsOf = (id: string): PermissionCell[] => Object.entries(catalog?.cellsByRole[id] ?? {}).map(([permissionKey, c]) => ({ permissionKey, allowed: c.allowed, ...(c.scope ? { scope: c.scope } : {}) }));
   const cells = override ?? (roleId ? cellsOf(roleId) : []);
   const labels = Object.fromEntries((catalog?.modules ?? []).flatMap((m) => m.permissions.map((p) => [p.key, p.label])));
@@ -93,32 +103,86 @@ export function RoleForm({ roleId }: RoleFormProps) {
     });
   };
 
+  const register = form.register('copyFromRoleId', { onChange: (e) => setOverride(cellsOf(e.target.value)) });
   return (
-    <form onSubmit={form.handleSubmit(setPending)} noValidate data-testid="roles-form">
-      <h1 className="h3">{roleId ? 'Edit role' : 'Create role'}</h1>
-      <div className="row">
-        <div className="col-lg-8">
-          <Input label="Role name" required maxLength={40} error={form.formState.errors.name?.message} {...form.register('name')} />
-          <Select label="Start from" placeholder="Blank role" options={roles.map((r) => ({ value: r.roleId, label: r.name }))} {...form.register('copyFromRoleId', { onChange: (e) => setOverride(cellsOf(e.target.value)) })} />
-          <div className="mb-3">
-            <label htmlFor="role-description" className="form-label">Description<span className="text-danger ms-1" aria-hidden="true">*</span></label>
-            <textarea id="role-description" rows={3} className={`form-control${form.formState.errors.description ? ' is-invalid' : ''}`} {...form.register('description')} />
-            {form.formState.errors.description && <div className="invalid-feedback d-block" role="alert">{form.formState.errors.description.message}</div>}
-          </div>
-          <Switch label="Active — can be given to users" checked={status === 'ACTIVE'} onChange={(v) => form.setValue('status', v ? 'ACTIVE' : 'DRAFT')} />
-          <h2 className="h5 mt-4">Permissions by module</h2>
-          <RolePermissionSwitches modules={catalog?.modules ?? []} cells={cells} onChange={setOverride} lockedKeys={locked} />
-        </div>
-        <div className="col-lg-4">
-          <PlainWordsPanel cells={cells} labels={labels} />
+    <div data-testid="roles-form-page">
+      <div className={hf('page-head')}>
+        <div>
+          <h1>{roleId ? 'Edit role' : 'Create role'}</h1>
+          <p>Name the role and choose what it allows. Detailed action-level rights (create, view, edit, approve, export per module) are refined in Permission Management.</p>
         </div>
       </div>
-      {failure && <p role="alert" className="text-danger">{failure}</p>}
-      <div className="d-flex gap-2 justify-content-end border-top pt-3">
-        <Link href="/roles" className="btn btn-outline-secondary">Cancel</Link>
-        <Button type="submit" data-testid="roles-save-button">Save role</Button>
+      <div className={hf('split')}>
+        <form className={hf('card')} onSubmit={form.handleSubmit(setPending)} noValidate data-testid="roles-form">
+          <div className={hf('form-sec')}>
+            <h3>About the role</h3>
+            <p>Shown to administrators when giving access to users.</p>
+            <div className={hf('form-grid')}>
+              <div className={hf('field', errors.name && 'invalid')}>
+                <label htmlFor="r-name">
+                  Role name<span className={hf('req')}>*</span>
+                </label>
+                <input className={hf('input')} id="r-name" maxLength={40} placeholder="e.g. Plant Head" {...form.register('name')} />
+                <Help>Must be unique. Up to 40 characters.</Help>
+                <FieldError text={errors.name?.message} />
+              </div>
+              <div className={hf('field')}>
+                <label htmlFor="r-copy">Start from</label>
+                <select className={hf('select')} id="r-copy" {...register}>
+                  <option value="">Blank role</option>
+                  {roles.map((r) => (
+                    <option key={r.roleId} value={r.roleId}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+                <Help>Copies the permissions of an existing role; you can change them below.</Help>
+              </div>
+              <div className={hf('field full', errors.description && 'invalid')}>
+                <label htmlFor="r-desc">
+                  Description<span className={hf('req')}>*</span>
+                </label>
+                <textarea className={hf('textarea')} id="r-desc" maxLength={200} placeholder="Who is this role for and what can they do?" {...form.register('description')} />
+                <FieldError text={errors.description?.message} />
+              </div>
+              <div className={hf('field')}>
+                <span className={hf('lbl')}>Status</span>
+                <label className={hf('toggle')}>
+                  <input type="checkbox" role="switch" checked={status === 'ACTIVE'} onChange={(e) => form.setValue('status', e.target.checked ? 'ACTIVE' : 'DRAFT')} />
+                  <span className={hf('track')} />
+                  <span>Active — can be given to users</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div className={hf('form-sec')}>
+            <h3>Permissions by module</h3>
+            <p>Switch on what this role may do. Data scope decides whose proposals the role can see.</p>
+            <RolePermissionSwitches modules={catalog?.modules ?? []} cells={cells} onChange={setOverride} lockedKeys={locked} />
+          </div>
+          {failure && (
+            <p role="alert" style={{ padding: '0 var(--spacing-xl)', color: 'var(--text-error)' }}>
+              {failure}
+            </p>
+          )}
+          <div className={hf('sticky-foot')}>
+            <span className={hf('muted')} style={{ fontSize: 'var(--fs-1)' }}>
+              Saving asks for a reason, recorded in the audit trail.
+            </span>
+            <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+              <Link className={hf('btn btn-neutral')} href="/roles">
+                Cancel
+              </Link>
+              <button className={hf('btn btn-primary')} type="submit" data-testid="roles-save-button">
+                <HfIcon name="check" />
+                Save role
+              </button>
+            </div>
+          </div>
+        </form>
+        <PlainWordsPanel cells={cells} labels={labels} />
       </div>
       <ReasonDialog open={pending !== null} title="Reason for saving the role" onConfirm={send} onCancel={() => setPending(null)} busy={save.isPending} />
-    </form>
+    </div>
   );
 }

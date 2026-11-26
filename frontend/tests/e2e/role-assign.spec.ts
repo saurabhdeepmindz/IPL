@@ -49,7 +49,7 @@ async function openRole(page: Page, name: string) {
 /** Assigns the Administrator 10001 through the dialog. */
 async function assignThroughDialog(page: Page, tc: string, reason: string) {
   await page.getByTestId('roles-assign-button').click();
-  await page.getByLabel('Search users').fill('System');
+  await page.getByLabel('Search users', { exact: true }).fill('System');
   await page.getByRole('button', { name: /Add System Administrator/ }).click();
   await page.locator('select#assign-company').selectOption('IPL');
   await page.getByLabel(/Valid from/).fill('2026-01-01');

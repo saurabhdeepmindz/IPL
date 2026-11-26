@@ -114,6 +114,57 @@ async function mockRolesApi(page: Page, context: BrowserContext) {
   await page.route('**/masters/companies', (r) => r.fulfill(json({ data: { items: [{ code: '1000', name: 'Indian Potash Limited' }, { code: '2000', name: 'IPL Subsidiary' }], canViewAll: false } })));
 }
 
+/** Mocks the role form: the role list, the permission catalogue read from the HF form (modules, permissions, scoped ones) and the companies. */
+async function mockRoleFormApi(page: Page, context: BrowserContext) {
+  await mockRolesApi(page, context);
+  const browser = context.browser()!;
+  const c = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`file:///${HF_ROOT.replace(/\\/g, '/')}/02-Admin/HF-ADM-02-role-management.html#new`);
+  await p.waitForTimeout(600);
+  const mods = await p.evaluate(() => {
+    const t = (e: Element | null | undefined) => (e?.textContent ?? '').trim();
+    return [...document.querySelectorAll('#permBox .perm-mod')].map((m) => ({
+      module: t(m.querySelector('header b')), note: t(m.querySelector('header .badge')),
+      permissions: [...m.querySelectorAll('.pl .perm')].map((pm, i) => ({ label: (pm.querySelector('span')?.childNodes[0]?.textContent ?? '').trim(), hint: t(pm.querySelector('span small')), scoped: !!pm.querySelector('select'), key: `${t(m.querySelector('header b'))}.${i}` })),
+    }));
+  });
+  await c.close();
+  const groups = mods.map((m) => ({ ...m, permissions: m.permissions.map((q) => ({ key: q.key, label: q.label, hint: q.hint, cells: { r0: { allowed: false, scope: q.scoped ? 'COMPANY' : null, locked: false } } })) }));
+  await page.route('**/roles/permissions/matrix', (r) => r.fulfill(json({ data: { groups, roles: [{ roleId: 'r0' }] } })));
+  return groups;
+}
+
+/** Mocks the role details: the HF "Processor" view read from the HF page (users, what it allows, facts) on top of the form mocks. */
+async function mockRoleViewApi(page: Page, context: BrowserContext) {
+  const groups = await mockRoleFormApi(page, context);
+  const keyOf = new Map(groups.flatMap((g) => g.permissions.map((q) => [q.label, q.key] as const)));
+  const browser = context.browser()!;
+  const c = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const p = await c.newPage();
+  await p.goto(`file:///${HF_ROOT.replace(/\\/g, '/')}/02-Admin/HF-ADM-02-role-management.html#view/processor`);
+  await p.waitForTimeout(600);
+  const v = await p.evaluate(() => {
+    const t = (e: Element | null | undefined) => (e?.textContent ?? '').trim();
+    return {
+      name: t(document.querySelector('#vName')), desc: t(document.querySelector('#vDesc')),
+      users: [...document.querySelectorAll('#uBody tr')].map((tr) => { const td = tr.querySelectorAll('td'); return { name: t(td[0].querySelector('b')), code: t(td[0].querySelector('small')), dept: t(td[1]), company: t(td[2]), since: t(td[3]) }; }),
+      allows: [...document.querySelectorAll('#vSum li')].filter((li) => li.querySelector('svg')).map((li) => ({ label: t(li.querySelector('span')).split(' — ')[0], scope: t(li.querySelector('b')) })),
+      changed: t(document.querySelectorAll('#vDl dd')[3]),
+    };
+  });
+  await c.close();
+  const day = (label: string) => { const m = label.match(/^(\d\d)-(\w{3})-(\d{4})/)!; return new Date(+m[3], MONTHS[m[2]], +m[1], 12, 0).toISOString(); };
+  const scope = (x: string) => ({ 'own only': 'OWN', 'own department': 'DEPARTMENT', 'whole company': 'COMPANY' })[x] ?? null;
+  const [changedDay, changedBy] = v.changed.split(' · ');
+  const role = {
+    roleId: 'r1', name: v.name, description: v.desc, type: 'STANDARD', userCount: 96, lastChanged: day(changedDay), changedBy, status: 'ACTIVE',
+    users: v.users.map((u) => { const [companyName, code] = u.company.split(' · '); return { employeeCode: u.code, name: u.name, department: u.dept, company: code, companyName, assignedOn: day(u.since) }; }),
+    allows: v.allows.map((a) => ({ permission: keyOf.get(a.label) ?? a.label, scope: scope(a.scope) })),
+  };
+  await page.route(/\/api\/v1\/roles\/r1$/, (r) => r.fulfill(json({ data: role })));
+}
+
 const SCREENS: UxScreen[] = [
   {
     id: 'UX-ADM-01-user-list',
@@ -126,6 +177,20 @@ const SCREENS: UxScreen[] = [
     hf: { file: '02-Admin/HF-ADM-02-role-management.html' },
     app: { url: '/roles', prepare: mockRolesApi, steps: (p) => p.getByTestId('roles-table').waitFor() },
     mask: MASK_SHELL,
+  },
+  {
+    id: 'UX-ADM-02-role-form',
+    hf: { file: '02-Admin/HF-ADM-02-role-management.html', suffix: '#new' },
+    app: { url: '/roles/new', prepare: async (p, c) => { await mockRoleFormApi(p, c); }, steps: (p) => p.getByTestId('roles-switches').waitFor() },
+    mask: MASK_SHELL,
+  },
+  {
+    id: 'UX-ADM-02-role-view',
+    hf: { file: '02-Admin/HF-ADM-02-role-management.html', suffix: '#view/processor' },
+    app: { url: '/roles/r1', prepare: mockRoleViewApi, steps: (p) => p.getByTestId('roles-users-table').waitFor() },
+    // The "Remove" buttons of the design (unassign from this screen) are not in the stories (decision UX-ACC-05): the action column is painted grey.
+    // The role name in the breadcrumb comes from the loaded role (the page passes a fixed label today): painted grey.
+    mask: [...MASK_SHELL, '#uTbl td.act,#uTbl th.act,.hf-tbl td.hf-act,.hf-tbl th.hf-act', '.crumbs .cur,.hf-crumbs .hf-cur'],
   },
 ];
 

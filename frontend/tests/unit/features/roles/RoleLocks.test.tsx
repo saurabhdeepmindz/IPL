@@ -54,7 +54,7 @@ describe('Locked role and deactivate (J04, J05)', () => {
     expect(within(plant).getByRole('menuitem', { name: /Deactivate Plant Head/ })).toBeEnabled();
     render(<RolePermissionSwitches modules={CATALOG.modules} cells={[{ permissionKey: 'users.manage', allowed: true }]} onChange={() => undefined} lockedKeys={['users.manage']} />);
     expect(screen.getByLabelText('Manage users')).toBeDisabled();
-    expect(screen.getByLabelText('View users')).toBeEnabled();
+    expect(screen.getByLabelText('View users scope')).toBeEnabled();
   });
 
   /**

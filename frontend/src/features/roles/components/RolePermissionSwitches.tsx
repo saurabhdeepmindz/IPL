@@ -1,34 +1,33 @@
+'use client';
+
 /**
  * @file    RolePermissionSwitches.tsx
- * @module  RolesFeature
+ * @module  Roles
  *
  * @description
- * Permission switches by module. In plain words: one collapsible group per module with a switch per permission and a data scope list where the permission has one.
+ * Permission box. In plain words: the folding modules with toggles and scope drop-downs of the design.
  *
  * @author  Deepmindz AMS team
- * @version 0.1.0
- * @since   2026-11-25
+ * @version 0.2.0
+ * @since   2026-11-26
  *
  * @story          US-ADM01-012
- * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
+ * @subtask        ST-ADM01-012-FE-03
+ * @lld            LLD-EPIC-ADM-01 v0.30 §6
  * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RolePermissionSwitches.tsx
- * @lld-synced     v0.30
+ * @hf             HF-ADM-02 #new, #edit
  * @status         built
  */
-import { Select, Switch } from '@/components/ui';
+
+import { useState } from 'react';
+import { hf } from '@/hf/hf';
+import { HfIcon } from '@/hf/HfIcon';
 import type { CatalogModule, DataScope, PermissionCell } from '../types/role.types';
 
-/** Props of RolePermissionSwitches. */
 interface RolePermissionSwitchesProps {
-  /** The catalog: modules with their permissions */
   modules: CatalogModule[];
-  /** The current cells */
   cells: PermissionCell[];
-  /** Called with the new cells */
   onChange: (cells: PermissionCell[]) => void;
-  /** Keys that cannot be changed (the Administrator role) */
   lockedKeys?: string[];
 }
 
@@ -39,46 +38,68 @@ const SCOPES = [
 ];
 
 /**
- * Permission switches by module. In plain words: one group per module with a switch per permission and a data scope list where the permission has one; locked keys are disabled.
+ * RolePermissionSwitches.
  *
- * @epic      EPIC-ADM-01
- * @story     US-ADM01-012
- * @subtask   ST-ADM01-012-FE-02
- * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
- * @workflow  AD-03
- * @screen    ADM-02
- * @ac        AC-US012-02, AC-US012-04
- * @lld       LLD-EPIC-ADM-01 v0.24 §6.5
- * @status    built
- *
- * @returns The rendered switches
+ * In plain words: the "Permissions by module" box of the high-fidelity design: one folding block per module with "n of m on", a toggle for a plain permission and a drop-down (Not allowed, Own only, Own department, Whole company) for a permission that has a data scope.
  */
 export function RolePermissionSwitches({ modules, cells, onChange, lockedKeys = [] }: RolePermissionSwitchesProps) {
+  const [shut, setShut] = useState<Record<string, boolean>>({});
   const cellOf = (key: string) => cells.find((c) => c.permissionKey === key);
   const set = (key: string, allowed: boolean, scope?: DataScope) => onChange([...cells.filter((c) => c.permissionKey !== key), { permissionKey: key, allowed, ...(scope ? { scope } : {}) }]);
 
   return (
     <div data-testid="roles-switches">
-      {modules.map((m) => {
+      {modules.map((m, i) => {
         const on = m.permissions.filter((p) => cellOf(p.key)?.allowed).length;
+        const open = shut[m.name] === undefined ? i < 2 : !shut[m.name];
+        const toggle = () => setShut({ ...shut, [m.name]: open });
         return (
-          <details key={m.name} open className="mb-3 border rounded p-2">
-            <summary className="fw-semibold">
-              {m.name} <span className="small text-body-secondary">{on} of {m.permissions.length} on</span>
-            </summary>
-            {m.permissions.map((p) => {
-              const cell = cellOf(p.key);
-              const locked = lockedKeys.includes(p.key);
-              return (
-                <div key={p.key} className="d-flex justify-content-between align-items-center py-1">
-                  <Switch label={p.label} checked={cell?.allowed === true} disabled={locked} lockedReason={locked ? 'Locked for this role' : undefined} onChange={(v) => set(p.key, v, v && p.scoped ? (cell?.scope ?? 'COMPANY') : undefined)} />
-                  {p.scoped && cell?.allowed && (
-                    <Select label={`${p.label} scope`} options={SCOPES} value={cell.scope ?? 'COMPANY'} disabled={locked} onChange={(e) => set(p.key, true, e.target.value as DataScope)} />
-                  )}
-                </div>
-              );
-            })}
-          </details>
+          <div key={m.name} className={hf('perm-mod', open && 'open')}>
+            <header tabIndex={0} role="button" aria-expanded={open} onClick={toggle} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggle()}>
+              <HfIcon name="chevR" size="sm" className={hf('chev')} />
+              <b>{m.name}</b>
+              {m.note && <span className={hf('badge b-neutral plain')}>{m.note}</span>}
+              <small>
+                {on} of {m.permissions.length} on
+              </small>
+            </header>
+            <div className={hf('pl')}>
+              {m.permissions.map((p) => {
+                const cell = cellOf(p.key);
+                const locked = lockedKeys.includes(p.key);
+                return (
+                  <div key={p.key} className={hf('perm')}>
+                    <span>
+                      {p.label}
+                      {p.hint && <small>{p.hint}</small>}
+                    </span>
+                    {p.scoped ? (
+                      <select
+                        className={hf('select')}
+                        aria-label={`${p.label} scope`}
+                        disabled={locked}
+                        title={locked ? 'Locked for this role' : undefined}
+                        value={cell?.allowed ? (cell.scope ?? 'COMPANY') : ''}
+                        onChange={(e) => (e.target.value ? set(p.key, true, e.target.value as DataScope) : set(p.key, false))}
+                      >
+                        <option value="">Not allowed</option>
+                        {SCOPES.map((s) => (
+                          <option key={s.value} value={s.value}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <label className={hf('toggle')} title={locked ? 'Locked for this role' : undefined}>
+                        <input type="checkbox" role="switch" aria-label={p.label} checked={cell?.allowed === true} disabled={locked} onChange={(e) => set(p.key, e.target.checked)} />
+                        <span className={hf('track')} />
+                      </label>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         );
       })}
     </div>

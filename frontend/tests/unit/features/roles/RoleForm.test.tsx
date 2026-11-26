@@ -55,7 +55,7 @@ describe('RoleForm (J02, J03, J06)', () => {
     renderWithQuery(<RoleForm />);
     await screen.findByText('View users');
     await fill();
-    await userEvent.click(screen.getByLabelText('View users'));
+    await userEvent.selectOptions(screen.getByLabelText('View users scope'), 'COMPANY');
     await userEvent.click(screen.getByTestId('roles-save-button'));
     await userEvent.type(await screen.findByRole('textbox', { name: /^Reason/ }), 'New plant role');
     await userEvent.click(screen.getByTestId('reason-confirm'));
