@@ -35,6 +35,8 @@ async function mockConfig(page: Page) {
 // UX-LGN-05: the HF page has a shortcut "Open the link from the e-mail (demo)" that is part of the mock-up, not of the product; it is removed from the HF picture.
 async function dropDemoLink(page: Page) {
   await page.locator('a[href*="HF-LGN-06"]').evaluate((a) => a.remove());
+  // UX-LGN-01: the HF masks 3 characters, the agreed rule 2; the HF picture gets the app's text so the words after it sit in the same place.
+  await page.locator('#mk').evaluate((b) => { b.textContent = 'k.***@ipl.example'; });
 }
 
 const LINK_OK = { data: { valid: true, maskedEmail: 'k.***@ipl.example' } };

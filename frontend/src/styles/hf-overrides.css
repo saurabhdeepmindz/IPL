@@ -69,3 +69,8 @@ html:has(.hf-admin) {
 .hf-admin .hf-pick[role='radiogroup'] input {
   margin: 3px 3px 3px 5px;
 }
+
+/* Sign-in screens: a plain link (no class) is underlined, as in the high-fidelity design (footer links, Forgot password?, Sign out). Found by the UX comparison of 27 Nov 2026. */
+.hf-scope.hf-auth-body a:not([class]) {
+  text-decoration: underline;
+}
