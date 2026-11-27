@@ -110,3 +110,9 @@ export function insertResetToken(code: string): string {
   execSync(`${DB} "insert into password_reset_tokens (id, user_id, token_hash, issued_at) select gen_random_uuid(), id, '${hash}', now() from users where employee_code = '${code}'"`);
   return token;
 }
+
+/** How many messages the mail trap holds for an address. */
+export async function countMails(email: string): Promise<number> {
+  const res = await fetch(`${TRAP}/api/v2/search?kind=to&query=${encodeURIComponent(email)}&limit=50`);
+  return ((await res.json()) as { items: unknown[] }).items.length;
+}
