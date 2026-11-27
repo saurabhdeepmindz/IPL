@@ -26,6 +26,7 @@ import { useMe, useSelectContext } from '@/features/auth/hooks/useMe';
 import { getCompanies } from '@/features/users/services/masters.service';
 import { hf } from '@/hf/hf';
 import { HfIcon } from '@/hf/HfIcon';
+import { readContext, rememberContext } from '@/features/auth/rememberChoices';
 import { useSessionStore } from '@/store/session.store';
 
 /**
@@ -59,6 +60,8 @@ export function CompanySwitcher() {
   const year = user?.financialYear ?? profile?.financialYears.find((y) => y.current)?.label ?? '';
   const pick = (companyCode: string) => {
     setOpen(false);
+    // a user who asked to start with the last company keeps that choice up to date
+    if (readContext()) rememberContext({ companyCode, financialYear: year });
     choose.mutate({ companyCode, financialYear: year });
   };
   return (

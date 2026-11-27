@@ -170,6 +170,17 @@ async function waitForOpeningPage(page: Page) {
   await page.getByTestId('opening').waitFor();
 }
 
+// UX-LGN-01-remember (R15): the sign-in page of a device that remembers the employee code: the code is filled and "Remember my employee code on this device" is ticked. The HF picture gets the same by typing the code and ticking the box.
+async function deviceRemembersCode(page: Page) {
+  await mockConfig(page);
+  await page.addInitScript(() => localStorage.setItem('ams-rem-code', '10002'));
+}
+
+async function tickRememberInDesign(page: Page) {
+  await page.locator('#code').fill('10002');
+  await page.locator('#rem').check();
+}
+
 async function dropDepartmentLine(page: Page) {
   await page.locator('#wd').evaluate((s) => { s.textContent = 'Employee code 10002'; });
 }
@@ -205,6 +216,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-09-company', hf: { file: '01-Login-User-Flow/HF-LGN-09-choose-company.html', steps: dropDepartmentLine }, app: { url: '/choose-work', prepare: mockChoose, steps: waitForChoosePage } },
   { id: 'UX-LGN-10-no-access', hf: { file: '01-Login-User-Flow/HF-LGN-10-no-company-access.html', steps: equaliseReference }, app: { url: '/no-company-access', prepare: mockNoCompany, steps: waitForNoAccessPage }, mask: ['.hf-contact .hf-mono', '.contact .mono'] },
   { id: 'UX-LGN-11-opening', hf: { file: '01-Login-User-Flow/HF-LGN-11-opening-dashboard.html', steps: equaliseOpening }, app: { url: '/landing/opening', prepare: mockOpening, steps: waitForOpeningPage } },
+  { id: 'UX-LGN-01-remember', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html', steps: tickRememberInDesign }, app: { url: '/login', prepare: deviceRemembersCode } },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 

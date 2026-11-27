@@ -43,6 +43,15 @@ async function sessionCompany(page: Page): Promise<string | undefined> {
   return ((await me.json()) as { data: { context: { companyCode: string } | null } }).data.context?.companyCode;
 }
 
+/** A different person on a different device: no cookies and nothing remembered (the company page is skipped on a device that remembers the last choice). */
+async function newDevice(page: Page): Promise<void> {
+  await page.context().clearCookies();
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+}
+
 const grant = (code: string, company: string, ...roles: string[]) => roles.forEach((r) => grantRoleInDatabase(code, r, company));
 
 test.describe('User lands on the dashboard of their role and can change company from the header (US-LGN03-005)', () => {
@@ -94,13 +103,13 @@ test.describe('User lands on the dashboard of their role and can change company 
   });
 
   /** @tc TC-LGN03-005-E04 @story US-LGN03-005 @ac AC-US-LGN03-005-04 @subtask ST-LGN03-005-FE-03 */
-  test('TC-LGN03-005-E04 a user with several roles lands by the order Administrator, Finance, Initiator / Processor, Auditor / Report Viewer', async ({ page, context }) => {
+  test('TC-LGN03-005-E04 a user with several roles lands by the order Administrator, Finance, Initiator / Processor, Auditor / Report Viewer', async ({ page }) => {
     const finance = makeLocalUser();
     grant(finance, 'IPL', 'AUDITOR', 'FINANCE', 'INITIATOR');
     await signInAndChoose(page, finance);
     await page.waitForURL('**/landing/finance');
     await expect(tid(page, 'landing-placeholder')).toContainText('Finance Dashboard');
-    await context.clearCookies();
+    await newDevice(page);
     const reports = makeLocalUser();
     grant(reports, 'IPL', 'REPORT_VIEWER', 'AUDITOR');
     await signInAndChoose(page, reports);
@@ -109,13 +118,13 @@ test.describe('User lands on the dashboard of their role and can change company 
   });
 
   /** @tc TC-LGN03-005-E05 @story US-LGN03-005 @ac AC-US-LGN03-005-05 @subtask ST-LGN03-005-FE-03 */
-  test('TC-LGN03-005-E05 an initiator lands on the Initiator Dashboard; an initiator who is also a processor lands in the Inbox', async ({ page, context }) => {
+  test('TC-LGN03-005-E05 an initiator lands on the Initiator Dashboard; an initiator who is also a processor lands in the Inbox', async ({ page }) => {
     const initiator = makeLocalUser();
     grant(initiator, 'IPL', 'INITIATOR');
     await signInAndChoose(page, initiator);
     await page.waitForURL('**/landing/initiator');
     await expect(tid(page, 'landing-placeholder')).toContainText('Initiator Dashboard');
-    await context.clearCookies();
+    await newDevice(page);
     const both = makeLocalUser();
     grant(both, 'IPL', 'INITIATOR', 'PROCESSOR');
     await signInAndChoose(page, both);

@@ -21,7 +21,7 @@
  */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { hf } from '../hf/hf';
@@ -29,6 +29,7 @@ import { Icon } from '../hf/Icon';
 import { useMe, useSelectContext } from '../hooks/useMe';
 import { usePublicConfig } from '../hooks/usePublicConfig';
 import { useSignOut } from '../hooks/useSignOut';
+import { readContext, rememberContext } from '../rememberChoices';
 import type { MeProfile } from '../types/me.types';
 import { AuthShell } from './AuthShell';
 import { CompanyCard } from './CompanyCard';
@@ -93,7 +94,7 @@ function ChooseForm({ profile }: { profile: MeProfile }) {
       return;
     }
     setMissing(false);
-    choose.mutate({ companyCode, financialYear });
+    choose.mutate({ companyCode, financialYear }, { onSuccess: () => rememberContext(remember ? { companyCode, financialYear } : null) });
   };
   const errorText = missing ? 'Choose a company' : choose.error ? refusedText(refused) : undefined;
   return (
@@ -151,7 +152,7 @@ function ChooseForm({ profile }: { profile: MeProfile }) {
 /**
  * ChooseCompanyPage.
  *
- * In plain words: LGN-09. Reads the profile; a user with no company goes to `/no-company-access`.
+ * In plain words: LGN-09. Reads the profile; a user with no company goes to `/no-company-access`; when the user asked to start with the last company and year and they are still allowed, the page is skipped and the choice is saved at once.
  *
  * @epic      EPIC-LGN-03
  * @story     US-LGN03-003
@@ -170,13 +171,29 @@ export function ChooseCompanyPage() {
   const router = useRouter();
   const { data: config } = usePublicConfig();
   const { data: profile } = useMe();
+  const skip = useSelectContext();
+  const [remembered] = useState(readContext);
+  const started = useRef(false);
   const noCompany = profile !== undefined && profile.companies.length === 0;
+  // a remembered choice is used only when the user still has the company and the year is still in the list (the API checks it again)
+  const allowed =
+    profile !== undefined && remembered !== null && profile.companies.some((c) => c.code === remembered.companyCode) && profile.financialYears.some((y) => y.label === remembered.financialYear);
   useEffect(() => {
     if (noCompany) router.replace('/no-company-access');
   }, [noCompany, router]);
+  useEffect(() => {
+    if (profile && remembered && !allowed) rememberContext(null);
+  }, [profile, remembered, allowed]);
+  useEffect(() => {
+    if (allowed && remembered && !started.current) {
+      started.current = true;
+      skip.mutate(remembered, { onError: () => rememberContext(null) });
+    }
+  }, [allowed, remembered, skip]);
+  const skipping = allowed && !skip.isError;
   return (
     <AuthShell helpEmail={config?.helpdesk.email ?? 'it.helpdesk@ipl.example'}>
-      {profile && !noCompany ? (
+      {profile && !noCompany && !skipping ? (
         <div data-testid="choose-company">
           <WhoChip profile={profile} />
           <h1>Choose where to work</h1>

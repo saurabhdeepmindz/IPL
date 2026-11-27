@@ -29,9 +29,9 @@ import type { ApiError } from '@/lib/errors';
 import { hf } from '../hf/hf';
 import { Icon } from '../hf/Icon';
 import { useSignIn } from '../hooks/useSignIn';
+import { readEmployeeCode, rememberEmployeeCode } from '../rememberChoices';
 import { signInSchema } from '../schemas/signInSchema';
 
-const REMEMBER_KEY = 'ams-rem-code';
 const formSchema = signInSchema.extend({ remember: z.boolean() });
 type Values = z.infer<typeof formSchema>;
 
@@ -60,24 +60,15 @@ export function LocalSignInForm(props: { onError: (e: ApiError) => void; onAttem
   const [caps, setCaps] = useState(false);
   const { register, handleSubmit, resetField, setValue, formState: { errors } } = useForm<Values>({ resolver: zodResolver(formSchema), defaultValues: { employeeCode: '', password: '', remember: false } });
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(REMEMBER_KEY);
-      if (saved) {
-        setValue('employeeCode', saved);
-        setValue('remember', true);
-      }
-    } catch {
-      /* private window: nothing remembered */
+    const saved = readEmployeeCode();
+    if (saved) {
+      setValue('employeeCode', saved);
+      setValue('remember', true);
     }
   }, [setValue]);
   const submit = handleSubmit((values) => {
     props.onAttempt?.();
-    try {
-      if (values.remember) localStorage.setItem(REMEMBER_KEY, values.employeeCode);
-      else localStorage.removeItem(REMEMBER_KEY);
-    } catch {
-      /* ignore */
-    }
+    rememberEmployeeCode(values.remember ? values.employeeCode : null);
     signIn.mutate({ employeeCode: values.employeeCode, password: values.password }, {
       onError: (error) => {
         resetField('password');
