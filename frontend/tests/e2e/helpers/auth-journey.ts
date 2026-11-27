@@ -19,6 +19,7 @@
  */
 
 import { execSync } from 'node:child_process';
+import { createHash, randomBytes } from 'node:crypto';
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
 
 export const AUTH = process.env.AUTH_API_URL ?? 'http://localhost:3200/api/v1';
@@ -48,6 +49,9 @@ export function unlockInDatabase(code: string): void {
 /** Removes the users made by makeLocalUser and their audit rows. */
 export function removeMadeUsers(): void {
   for (const code of made.splice(0)) {
+    for (const table of ['password_reset_tokens', 'password_history', 'one_time_passwords']) {
+      execSync(`${DB} "delete from ${table} where user_id = (select id from users where employee_code = '${code}')"`);
+    }
     execSync(`${DB} "delete from audit_log where entity_key = '${code}'"`);
     execSync(`${DB} "delete from users where employee_code = '${code}'"`);
   }
@@ -66,4 +70,43 @@ export async function stubCallback(page: Page, request: APIRequestContext, accou
   const start = await request.get(`${AUTH}/auth/sso/start`, { maxRedirects: 0 });
   const state = new URL('http://x' + start.headers()['location']).searchParams.get('state');
   await page.goto(`${AUTH}/auth/sso/callback?state=${state}&account=${account}`);
+}
+
+/** Address of the local mail trap (MailHog web and API). */
+export const TRAP = process.env.MAIL_TRAP_URL ?? 'http://localhost:8025';
+
+/** Decodes a quoted-printable text (soft line breaks and =XX bytes), as the mail trap keeps the raw message. */
+function decodeQuotedPrintable(text: string): string {
+  return text.replace(/=\r?\n/g, '').replace(/=([0-9A-F]{2})/g, (_m, hex: string) => String.fromCharCode(parseInt(hex, 16)));
+}
+
+/** Waits for the reset e-mail of an address in the mail trap and returns the token inside its link. */
+export async function waitForResetToken(email: string, timeoutMs = 25000): Promise<string> {
+  const end = Date.now() + timeoutMs;
+  while (Date.now() < end) {
+    const res = await fetch(`${TRAP}/api/v2/search?kind=to&query=${encodeURIComponent(email)}&limit=10`);
+    const items = ((await res.json()) as { items: { Raw: { Data: string } }[] }).items;
+    for (const item of items) {
+      const found = /token=([A-Za-z0-9_-]+)/.exec(decodeQuotedPrintable(item.Raw.Data));
+      if (found) return found[1];
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`No reset e-mail reached ${email} in ${timeoutMs} ms. Is the mail worker running?`);
+}
+
+/** Asks the Auth API for a reset link for a user made by makeLocalUser and returns the token from the e-mail. */
+export async function requestResetLink(code: string): Promise<string> {
+  const email = `j${code}@example.invalid`;
+  const res = await fetch(`${AUTH}/auth/password/forgot`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ employeeCode: code, email }) });
+  if (res.status !== 202) throw new Error(`The reset request answered ${res.status}`);
+  return waitForResetToken(email);
+}
+
+/** Puts a second reset link of a user straight into the database (the 60-second rule stops a second e-mail) and returns the token. */
+export function insertResetToken(code: string): string {
+  const token = randomBytes(32).toString('base64url');
+  const hash = createHash('sha256').update(token).digest('hex');
+  execSync(`${DB} "insert into password_reset_tokens (id, user_id, token_hash, issued_at) select gen_random_uuid(), id, '${hash}', now() from users where employee_code = '${code}'"`);
+  return token;
 }
