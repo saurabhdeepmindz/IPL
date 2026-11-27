@@ -3,7 +3,7 @@
  * @module  Auth
  *
  * @description
- * Hooks of the session context. In plain words: `useMe` reads the profile; `useSelectContext` saves the choice of company and year, stores it in the session store, clears the cached data of the old company and opens the landing page.
+ * Hooks of the session context. In plain words: `useMe` reads the profile; `useSelectContext` saves the choice of company and year, stores it in the session store, clears the cached data of the old company and opens the Opening page, which then opens the landing page.
  *
  * @author  Deepmindz AMS team
  * @version 1.0.0
@@ -41,10 +41,11 @@ import type { ContextInput, ContextResult, MeProfile } from '../types/me.types';
  * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
  * @status    built
  *
+ * @param options.enabled False to wait (the header reads the profile only when its list is opened)
  * @returns The query result with the profile
  */
-export function useMe(): UseQueryResult<MeProfile> {
-  return useQuery<MeProfile>({ queryKey: ['me'], queryFn: getMe, staleTime: 60_000 });
+export function useMe(options: { enabled?: boolean } = {}): UseQueryResult<MeProfile> {
+  return useQuery<MeProfile>({ queryKey: ['me'], queryFn: getMe, staleTime: 60_000, enabled: options.enabled ?? true });
 }
 
 /**
@@ -71,7 +72,7 @@ export function useSelectContext(): UseMutationResult<ContextResult, ApiError, C
     onSuccess: async (result) => {
       setContext(result.context, result.landing);
       await queryClient.invalidateQueries();
-      router.push(result.landing.route);
+      router.push('/landing/opening');
     },
   });
 }

@@ -3,7 +3,7 @@
  * @module  Auth
  *
  * @description
- * Stories of the company screens. In plain words: the "Choose where to work" page with several companies and with one company, on data held in the query client so no story calls the network. The no-access page, the header switcher and the placeholder dashboard are added by their own stories.
+ * Stories of the company screens. In plain words: the "Choose where to work" page with several companies and with one company, the Opening page and the placeholder of a dashboard that is not built yet, on data held in the query client so no story calls the network.
  *
  * @author  Deepmindz AMS team
  * @version 0.2.0
@@ -22,6 +22,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ChooseCompanyPage } from '@/features/auth/components/ChooseCompanyPage';
+import { LandingGate } from '@/features/auth/components/LandingGate';
+import { RoleDashboardPlaceholder } from '@/features/auth/components/RoleDashboardPlaceholder';
+import { useSessionStore } from '@/store/session.store';
 import type { PublicConfig } from '@/features/auth/types/auth.types';
 import type { MeProfile } from '@/features/auth/types/me.types';
 import '@/styles/hf-auth.css';
@@ -85,4 +88,19 @@ export const SeveralCompanies: Story = { decorators: [withProfile(several)], ren
 /** A user with one company: it is preselected and its roles are shown. */
 export const OneCompany: Story = { decorators: [withProfile(one)], render: () => <ChooseCompanyPage /> };
 
-// The stories NoAccess (US-LGN03-004), Switcher and Placeholder (US-LGN03-005) are added with their screens.
+/** The Opening page of a user whose landing is the Finance Dashboard. */
+export const Opening: Story = {
+  decorators: [
+    (Story) => {
+      useSessionStore.setState({ status: 'signedIn', user: { userId: '', employeeCode: '10234', name: 'R. Sharma', companyCode: '1000', financialYear: '2026-27' }, landing: { role: 'FINANCE', route: '/landing/finance' } });
+      return <Story />;
+    },
+    withProfile(several),
+  ],
+  render: () => <LandingGate />,
+};
+
+/** The placeholder of a dashboard that is not built yet. */
+export const Placeholder: Story = { render: () => <RoleDashboardPlaceholder route="/landing/finance" /> };
+
+// The stories NoAccess (US-LGN03-004) and Switcher (US-LGN03-005) need the main frame and are covered by the journeys.

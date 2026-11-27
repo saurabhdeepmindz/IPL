@@ -25,7 +25,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminShell } from '@/components/layout/AdminShell';
 import { useSessionStore } from '@/store/session.store';
 
-vi.mock('next/navigation', () => ({ usePathname: () => '/roles/abc' }));
+vi.mock('next/navigation', () => ({ usePathname: () => '/roles/abc', useRouter: () => ({ push: vi.fn(), replace: vi.fn() }) }));
+vi.mock('@/lib/api-client', () => ({ api: { get: vi.fn().mockRejectedValue(new Error('offline')), put: vi.fn() } }));
 vi.mock('@/features/users/services/masters.service', () => ({ getCompanies: vi.fn().mockResolvedValue({ items: [], canViewAll: false }) }));
 const render = (ui: ReactElement) => rtlRender(<QueryClientProvider client={new QueryClient()}>{ui}</QueryClientProvider>);
 

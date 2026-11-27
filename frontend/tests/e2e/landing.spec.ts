@@ -55,12 +55,12 @@ test.describe('User lands on the dashboard of their role and can change company 
     grant(code, 'IPLFB', 'AUDITOR');
     await signInAndChoose(page, code, 'IPL');
     await page.waitForURL('**/dashboard');
-    await expect(tid(page, 'layout-company')).toHaveText('IPL');
+    await expect(tid(page, 'layout-company')).toContainText('IPL');
     expect(await sessionCompany(page)).toBe('IPL');
     await tid(page, 'company-switcher').click();
     await tid(page, 'switch-IPLFB').click();
     await page.waitForURL('**/landing/reports');
-    await expect(tid(page, 'layout-company')).toHaveText('IPLFB');
+    await expect(tid(page, 'layout-company')).toContainText('IPLFB');
     expect(await sessionCompany(page)).toBe('IPLFB');
     await shot(page, 'TC-LGN03-005-E01_switched');
   });
@@ -132,7 +132,7 @@ test.describe('User lands on the dashboard of their role and can change company 
     await expect(tid(page, 'landing-placeholder')).toContainText('Finance Dashboard');
     await expect(tid(page, 'landing-placeholder')).toContainText('not built yet');
     await expect(tid(page, 'layout-menu')).toBeVisible();
-    await expect(page.getByRole('alert')).toHaveCount(0);
+    await expect(tid(page, 'layout-shell')).not.toContainText(/error|went wrong|not allowed|do not have permission/i);
     await shot(page, 'TC-LGN03-005-E06_placeholder');
   });
 });

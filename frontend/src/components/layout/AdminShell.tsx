@@ -22,9 +22,8 @@
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { getCompanies } from '@/features/users/services/masters.service';
 import { hf, HF_SCOPE_PAGE } from '@/hf/hf';
+import { CompanySwitcher } from './CompanySwitcher';
 import { HfIcon } from '@/hf/HfIcon';
 import { ADMIN_NAV } from '@/hf/admin-nav';
 import { useSessionStore } from '@/store/session.store';
@@ -106,8 +105,6 @@ function Sidebar({ path }: { path: string }) {
 /** The top bar of the design: notifications, company, financial year, workspace and the user. */
 function TopBar() {
   const user = useSessionStore((s) => s.user);
-  const companies = useQuery({ queryKey: ['masters.companies'], queryFn: getCompanies, staleTime: 5 * 60_000 });
-  const company = companies.data?.items.find((c) => c.code === user?.companyCode);
   const name = user?.name ?? user?.employeeCode ?? '-';
   return (
     <header className={hf('topbar')} data-testid="layout-topbar">
@@ -117,18 +114,7 @@ function TopBar() {
             <HfIcon name="bell" />
           </Link>
         </div>
-        <div className={hf('menu-wrap')}>
-          <button className={hf('ctx-select')} type="button" aria-haspopup="true">
-            <small>Company</small>
-            <b>
-              <HfIcon name="building" size="sm" />
-              <span className={hf('co-name')} data-testid="layout-company">
-                {company ? `${company.name} · ${company.code}` : (user?.companyCode ?? '-')}
-              </span>
-              <HfIcon name="chevD" size="sm" />
-            </b>
-          </button>
-        </div>
+        <CompanySwitcher />
         <div className={hf('menu-wrap fy')}>
           <button className={hf('ctx-select')} type="button" aria-haspopup="true">
             <small>Financial year</small>

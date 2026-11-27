@@ -27,9 +27,17 @@ import { hf, HF_SCOPE } from '../hf/hf';
 /**
  * AuthShell.
  *
- * In plain words: the page frame of every sign-in screen in the high-fidelity design: the header (logo, name, Help, Contact IT team), the brand panel on the left, the card on the right, the legal line and the footer. `card` is what goes in the white card.
+ * In plain words: with `wide` the brand panel is left out and the card fills the page (the "Opening your dashboard" screen). The page frame of every sign-in screen in the high-fidelity design: the header (logo, name, Help, Contact IT team), the brand panel on the left, the card on the right, the legal line and the footer. `card` is what goes in the white card.
  */
-export function AuthShell({ children, helpEmail }: { children: ReactNode; helpEmail: string }) {
+export function AuthShell({
+  children,
+  helpEmail,
+  wide = false,
+}: {
+  children: ReactNode;
+  helpEmail: string;
+  wide?: boolean;
+}) {
   return (
     <div className={HF_SCOPE}>
       <header className={hf('ah')}>
@@ -53,26 +61,39 @@ export function AuthShell({ children, helpEmail }: { children: ReactNode; helpEm
           </a>
         </nav>
       </header>
-      <main className={hf('auth')} id="main-content">
-        <section className={hf('brandp')} aria-label="About AMS">
-          <small>Indian Potash Limited</small>
-          <h2>Approvals, in one place</h2>
-          <p>Create, route and approve proposals — General and Financial Concurrence — with digital signature and a complete audit trail.</p>
-          <ol>
-            <li>
-              <span>1</span>Raise a proposal and pick the approval path
-            </li>
-            <li>
-              <span>2</span>Approve, return or discuss — on desktop or phone
-            </li>
-            <li>
-              <span>3</span>Track every step and who holds it
-            </li>
-          </ol>
-        </section>
+      <main
+        className={hf('auth')}
+        id="main-content"
+        style={wide ? { gridTemplateColumns: 'minmax(0,1fr)' } : undefined}
+      >
+        {wide ? null : (
+          <section className={hf('brandp')} aria-label="About AMS">
+            <small>Indian Potash Limited</small>
+            <h2>Approvals, in one place</h2>
+            <p>
+              Create, route and approve proposals — General and Financial Concurrence — with digital
+              signature and a complete audit trail.
+            </p>
+            <ol>
+              <li>
+                <span>1</span>Raise a proposal and pick the approval path
+              </li>
+              <li>
+                <span>2</span>Approve, return or discuss — on desktop or phone
+              </li>
+              <li>
+                <span>3</span>Track every step and who holds it
+              </li>
+            </ol>
+          </section>
+        )}
         <section className={hf('pane')}>
-          <div className={hf('acard')}>{children}</div>
-          <p className={hf('legal')}>For authorised IPL users only. Sign-ins and actions are recorded in the audit trail.</p>
+          <div className={hf('acard')} style={wide ? { textAlign: 'left' } : undefined}>
+            {children}
+          </div>
+          <p className={hf('legal')}>
+            For authorised IPL users only. Sign-ins and actions are recorded in the audit trail.
+          </p>
         </section>
       </main>
       <footer className={hf('af')}>

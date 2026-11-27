@@ -117,7 +117,7 @@ describe('User chooses company and financial year (US-LGN03-003)', () => {
     await user.selectOptions(screen.getByTestId('choose-fy'), '2025-26');
     await user.click(screen.getByTestId('choose-go'));
     await waitFor(() => expect(put).toHaveBeenCalledWith('/me/context', { companyCode: '1000', financialYear: '2025-26' }));
-    await waitFor(() => expect(push).toHaveBeenCalledWith('/dashboard'));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/landing/opening'));
   });
 
   /** @story US-LGN03-003 @ac AC-US-LGN03-003-03 @subtask ST-LGN03-003-FE-02 In plain words: supporting test. A refused choice (403) shows a plain message, keeps the form and reloads the list. */
@@ -150,8 +150,8 @@ describe('User chooses company and financial year (US-LGN03-003)', () => {
     expect(screen.getByTestId('choose-rem')).toBeChecked();
   });
 
-  /** @tc TC-LGN03-003-J03 @story US-LGN03-003 @ac AC-US-LGN03-003-03 @subtask ST-LGN03-003-FE-01 In plain words: a choice calls PUT /me/context with the company and the year, keeps the new token in memory, stores company, year and landing in the session store and opens the landing page. */
-  it('TC-LGN03-003-J03 a choice calls API-ME-02, keeps the new token and opens the landing page', async () => {
+  /** @tc TC-LGN03-003-J03 @story US-LGN03-003 @ac AC-US-LGN03-003-03 @subtask ST-LGN03-003-FE-01 In plain words: a choice calls PUT /me/context with the company and the year, keeps the new token in memory, stores company, year and landing in the session store and opens the Opening page (which then opens the landing page). */
+  it('TC-LGN03-003-J03 a choice calls API-ME-02, keeps the new token and opens the Opening page', async () => {
     const put = vi.spyOn(api, 'put').mockResolvedValue({ data: { data: chosen } });
     const qc = client();
     const invalidate = vi.spyOn(qc, 'invalidateQueries');
@@ -163,7 +163,7 @@ describe('User chooses company and financial year (US-LGN03-003)', () => {
     expect(useSessionStore.getState().user).toMatchObject({ companyCode: '1000', financialYear: '2026-27' });
     expect(useSessionStore.getState().landing).toEqual({ role: 'ADMINISTRATOR', route: '/dashboard' });
     expect(invalidate).toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith('/dashboard');
+    expect(push).toHaveBeenCalledWith('/landing/opening');
   });
 
   /** @story US-LGN03-003 @ac AC-US-LGN03-003-01 @subtask ST-LGN03-003-FE-01 In plain words: supporting test. The profile call reads GET /me and gives the data part; the hook gives the same data. */
