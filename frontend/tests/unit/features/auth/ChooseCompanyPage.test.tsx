@@ -19,10 +19,13 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ChooseCompanyPage } from '@/features/auth/components/ChooseCompanyPage';
 import { useMe, useSelectContext } from '@/features/auth/hooks/useMe';
+import { authHttp } from '@/features/auth/services/auth.service';
 import { getMe, selectContext } from '@/features/auth/services/me.service';
 import { api } from '@/lib/api-client';
 import { ApiError } from '@/lib/errors';
@@ -30,7 +33,8 @@ import { clearAccessToken, getAccessToken, setAccessToken } from '@/lib/token';
 import { useSessionStore } from '@/store/session.store';
 
 const push = vi.fn();
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push, replace: vi.fn() }), usePathname: () => '/choose-work' }));
+const replace = vi.fn();
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push, replace }), usePathname: () => '/choose-work' }));
 
 const profile = {
   employeeCode: '10002',
@@ -40,6 +44,8 @@ const profile = {
   context: null,
   helpdesk: { phone: '1', email: 'it@ipl.example', hours: 'x', placeholder: false },
 };
+const TWO = { ...profile, companies: [{ code: '1000', name: 'Indian Potash Limited', roles: ['Administrator'] }, { code: '2000', name: 'IPL Subsidiary (illustrative)', roles: ['Initiator', 'Processor'] }] };
+const config = { data: { data: { ssoAvailable: true, idpMode: 'saml', helpdesk: { phone: '1', email: 'it@ipl.example', hours: 'x', placeholder: false } } } };
 const chosen = { context: { companyCode: '1000', financialYear: '2026-27' }, landing: { role: 'ADMINISTRATOR', route: '/dashboard' }, accessToken: 'new-token', expiresIn: 900 };
 
 const client = () => new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -52,6 +58,8 @@ function wrapperOf(qc: QueryClient) {
 describe('User chooses company and financial year (US-LGN03-003)', () => {
   beforeEach(() => {
     push.mockClear();
+    replace.mockClear();
+    vi.spyOn(authHttp, 'get').mockResolvedValue(config);
     setAccessToken('first-token');
     useSessionStore.setState({ status: 'signedIn', user: { userId: '', employeeCode: '10002', name: 'A. Kumar', companyCode: '' }, landing: null });
   });
@@ -60,11 +68,87 @@ describe('User chooses company and financial year (US-LGN03-003)', () => {
     clearAccessToken();
   });
 
-  /** @tc TC-LGN03-003-J01 @story US-LGN03-003 @ac AC-US-LGN03-003-01 @subtask ST-LGN03-003-FE-02 In plain words: page case, written with the page (ST-LGN03-003-FE-02). */
-  it.todo('TC-LGN03-003-J01 Given several companies, when the page opens, then they are listed with the roles as a single choice; with one company it is preselected.');
+  /** @tc TC-LGN03-003-J01 @story US-LGN03-003 @ac AC-US-LGN03-003-01 @subtask ST-LGN03-003-FE-02 In plain words: several companies start on "Select a company" and each is listed with its code; the roles of the chosen company show in a box; with one company it is preselected. */
+  it('TC-LGN03-003-J01 several companies are listed for a single choice with the roles; one company is preselected', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: TWO } });
+    const user = userEvent.setup();
+    const first = render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    const select = (await screen.findByTestId('choose-co')) as HTMLSelectElement;
+    expect([...select.options].map((o) => o.textContent)).toEqual(['Select a company', 'Indian Potash Limited · 1000', 'IPL Subsidiary (illustrative) · 2000']);
+    expect(select.value).toBe('');
+    expect(screen.queryByTestId('choose-roles')).toBeNull();
+    expect(screen.getByText('You have access to 2 companies. You work in one company at a time.')).toBeInTheDocument();
+    await user.selectOptions(select, '2000');
+    expect(within(screen.getByTestId('choose-roles')).getByText('Your roles in IPL Subsidiary (illustrative)')).toBeInTheDocument();
+    expect(screen.getByTestId('choose-roles')).toHaveTextContent('Initiator, Processor');
+    first.unmount();
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: profile } });
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    const one = (await screen.findByTestId('choose-co')) as HTMLSelectElement;
+    expect([...one.options].map((o) => o.textContent)).toEqual(['Indian Potash Limited · 1000']);
+    expect(one.value).toBe('1000');
+    expect(screen.getByText('You have access to one company.')).toBeInTheDocument();
+    expect(screen.getByTestId('choose-roles')).toHaveTextContent('Administrator');
+  });
 
-  /** @tc TC-LGN03-003-J02 @story US-LGN03-003 @ac AC-US-LGN03-003-02 @subtask ST-LGN03-003-FE-02 In plain words: page case, written with the page (ST-LGN03-003-FE-02). */
-  it.todo('TC-LGN03-003-J02 Given the page, when it opens, then the current financial year is selected and can be changed.');
+  /** @tc TC-LGN03-003-J02 @story US-LGN03-003 @ac AC-US-LGN03-003-02 @subtask ST-LGN03-003-FE-02 In plain words: the current financial year is selected when the page opens and the user can change it. */
+  it('TC-LGN03-003-J02 the current financial year is selected and can be changed', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: profile } });
+    const user = userEvent.setup();
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    const year = (await screen.findByTestId('choose-fy')) as HTMLSelectElement;
+    expect([...year.options].map((o) => o.textContent)).toEqual(['2026-27 (current)', '2025-26', '2024-25']);
+    expect(year.value).toBe('2026-27');
+    await user.selectOptions(year, '2025-26');
+    expect(year.value).toBe('2025-26');
+  });
+
+  /** @story US-LGN03-003 @ac AC-US-LGN03-003-03 @subtask ST-LGN03-003-FE-02 In plain words: supporting test. Continue with a chosen company and year calls the choice; Continue with no company chosen shows what is missing and calls nothing. */
+  it('continues with the choice, and asks for a company first when none is chosen', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: TWO } });
+    const put = vi.spyOn(api, 'put').mockResolvedValue({ data: { data: chosen } });
+    const user = userEvent.setup();
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    await screen.findByTestId('choose-co');
+    await user.click(screen.getByTestId('choose-go'));
+    expect(await screen.findByTestId('choose-error')).toHaveTextContent('Choose a company');
+    expect(put).not.toHaveBeenCalled();
+    await user.selectOptions(screen.getByTestId('choose-co'), '1000');
+    await user.selectOptions(screen.getByTestId('choose-fy'), '2025-26');
+    await user.click(screen.getByTestId('choose-go'));
+    await waitFor(() => expect(put).toHaveBeenCalledWith('/me/context', { companyCode: '1000', financialYear: '2025-26' }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/dashboard'));
+  });
+
+  /** @story US-LGN03-003 @ac AC-US-LGN03-003-03 @subtask ST-LGN03-003-FE-02 In plain words: supporting test. A refused choice (403) shows a plain message, keeps the form and reloads the list. */
+  it('shows a plain message and reloads the list when the choice is refused', async () => {
+    const get = vi.spyOn(api, 'get').mockResolvedValue({ data: { data: profile } });
+    vi.spyOn(api, 'put').mockRejectedValue(Object.assign(new Error('x'), { isAxiosError: true, response: { status: 403, data: { error: { code: 'COMPANY_NOT_ALLOWED', message: 'You do not have access to this company.', fields: [] } } } }));
+    const user = userEvent.setup();
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    await screen.findByTestId('choose-co');
+    await user.click(screen.getByTestId('choose-go'));
+    expect(await screen.findByTestId('choose-error')).toHaveTextContent('You do not have access to this company');
+    await waitFor(() => expect(get.mock.calls.length).toBeGreaterThan(1));
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  /** @story US-LGN03-004 @ac AC-US-LGN03-004-01 @subtask ST-LGN03-003-FE-02 In plain words: supporting test. A user with no company is sent to the no-access page. */
+  it('sends a user with no company to the no-access page', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: { ...profile, companies: [] } } });
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    await waitFor(() => expect(replace).toHaveBeenCalledWith('/no-company-access'));
+  });
+
+  /** @story US-LGN03-003 @ac AC-US-LGN03-003-01 @subtask ST-LGN03-003-FE-02 In plain words: supporting test. The page shows the name and employee code and the sign-out link, and the tick box "Start with this company and year next time" is ticked (UX-LGN-16). */
+  it('shows who is signed in and a ticked next-time box', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: profile } });
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    expect(await screen.findByText('A. Kumar')).toBeInTheDocument();
+    expect(screen.getByText('Employee code 10002')).toBeInTheDocument();
+    expect(screen.getByText('Not you? Sign out')).toBeInTheDocument();
+    expect(screen.getByTestId('choose-rem')).toBeChecked();
+  });
 
   /** @tc TC-LGN03-003-J03 @story US-LGN03-003 @ac AC-US-LGN03-003-03 @subtask ST-LGN03-003-FE-01 In plain words: a choice calls PUT /me/context with the company and the year, keeps the new token in memory, stores company, year and landing in the session store and opens the landing page. */
   it('TC-LGN03-003-J03 a choice calls API-ME-02, keeps the new token and opens the landing page', async () => {

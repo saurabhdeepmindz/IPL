@@ -104,7 +104,7 @@ async function failSignIn(page: Page, status: number, details: Record<string, un
   await Promise.all([page.waitForResponse('**/auth/sign-in'), page.getByTestId('sign-in-submit').click()]);
 }
 
-// UX-LGN-09 (R15): "Choose where to work". The sign-in answer is stubbed so the application opens /choose-work by its own redirect, and GET /me is stubbed with the two companies of the HF demo user 10002.
+// UX-LGN-09 (R15): "Choose where to work". The back end's session marker cookie is set so the route gate lets the browser open /choose-work, and GET /me is stubbed with the two companies of the HF demo user 10002.
 // The HF line under the name holds the department ("Information Technology · Senior Manager"), which the profile does not carry; the HF picture gets the app's words (UX-LGN-13, suggested: leave the department out).
 const PROFILE_10002 = {
   data: {
@@ -126,15 +126,12 @@ const PROFILE_10002 = {
 
 async function mockChoose(page: Page) {
   await mockConfig(page);
-  await page.route('**/auth/sign-in', (r) => r.fulfill(json({ data: { nextStep: 'CHOOSE_WORK', user: { employeeCode: '10002', name: 'A. Kumar' }, accessToken: 'tok-choose', expiresIn: 900 } })));
+  // the back end sets this marker cookie at sign-in; the route gate (proxy) lets a signed-in user open /choose-work only with it
+  await page.context().addCookies([{ name: 'ams_session', value: '1', url: BASE }]);
   await page.route('**/me', (r) => r.fulfill(json(PROFILE_10002)));
 }
 
-async function signInToChoose(page: Page) {
-  await page.locator('#code').fill('10002');
-  await page.locator('#pw').fill('Ipl@2026');
-  await page.getByTestId('sign-in-submit').click();
-  await page.waitForURL('**/choose-work');
+async function waitForChoosePage(page: Page) {
   await page.getByTestId('choose-company').waitFor();
 }
 
@@ -170,7 +167,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-07-done', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#done', steps: dropConfirmationSentence }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }), steps: changePassword } },
   { id: 'UX-LGN-06-expired', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#expired' }, app: { url: '/set-password?token=old', prepare: (p) => openSetPassword(p, { status: 410, body: { error: { code: 'LINK_EXPIRED', message: 'x', fields: [], details: {} } } }) } },
   { id: 'UX-LGN-08-change', hf: { file: '01-Login-User-Flow/HF-LGN-08-change-temporary-password.html', steps: useChipOfApp }, app: { url: '/login', prepare: mockConfig, steps: signInWithTemporaryPassword }, mask: ['#av'] },
-  { id: 'UX-LGN-09-company', hf: { file: '01-Login-User-Flow/HF-LGN-09-choose-company.html', steps: useDepartmentOfApp }, app: { url: '/login', prepare: mockChoose, steps: signInToChoose } },
+  { id: 'UX-LGN-09-company', hf: { file: '01-Login-User-Flow/HF-LGN-09-choose-company.html', steps: useDepartmentOfApp }, app: { url: '/choose-work', prepare: mockChoose, steps: waitForChoosePage } },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
