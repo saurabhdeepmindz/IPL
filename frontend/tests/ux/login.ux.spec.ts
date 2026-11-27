@@ -3,17 +3,17 @@
  * @module  Tests (UX fidelity)
  *
  * @description
- * Pixel comparison of the Login screens with the high-fidelity (HF) mock-up: LGN-01 (sign-in and its error, locked and inactive states) and LGN-02 (single sign-on states). In plain words: for each screen the HF page and the
+ * Pixel comparison of the Login screens with the high-fidelity (HF) mock-up: LGN-01 (sign-in and its error, locked and inactive states), LGN-02 (single sign-on states) and, from R14, LGN-04 and LGN-05 (forgot password, check your e-mail). In plain words: for each screen the HF page and the
  * application are opened at the same size and state, photographed, and the pictures are compared pixel by pixel; the pictures are kept as proof.
  *
  * @author  Deepmindz AMS team
  * @version 1.0.0
  * @since   2026-11-26
  *
- * @epic       EPIC-LGN-01
- * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007
+ * @epic       EPIC-LGN-01, EPIC-LGN-02
+ * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006
  * @workflow   UF-01
- * @tc         UX-LGN-01, UX-LGN-02
+ * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05
  * @lld            LLD-EPIC-LGN-01 v0.5 §15
  * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/ux/login.ux.spec.ts
@@ -30,6 +30,13 @@ const LOCKED_UNTIL = new Date(2026, 10, 26, 10, 15, 0).toISOString();
 
 async function mockConfig(page: Page) {
   await page.route('**/auth/public-config', (r) => r.fulfill(json({ data: CONFIG })));
+}
+
+async function askForLink(page: Page) {
+  await page.route('**/auth/password/forgot', (r) => r.fulfill(json({ data: { message: 'x', retryAfterSeconds: 60 } }, 202)));
+  await page.locator('#code').fill('10002');
+  await page.locator('#mail').fill('k.rao@ipl.example');
+  await Promise.all([page.waitForResponse('**/auth/password/forgot'), page.getByTestId('forgot-submit').click()]);
 }
 
 async function failSignIn(page: Page, status: number, details: Record<string, unknown>, code: string) {
@@ -60,6 +67,9 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-02-failed', hf: { file: '01-Login-User-Flow/HF-LGN-02-sso.html', suffix: '#failed' }, app: { url: '/signing-in?state=failed&ref=SSO-1F9A-1000', prepare: mockConfig }, mask: ['#c1 .hf-mono,.hf-contact .hf-mono'] },
   { id: 'UX-LGN-02-noaccount', hf: { file: '01-Login-User-Flow/HF-LGN-02-sso.html', suffix: '#noaccount' }, app: { url: '/signing-in?state=noaccount&ref=USR-S.KRISHNAN&who=s.krishnan%40ipl.example', prepare: mockConfig } },
   { id: 'UX-LGN-02-cancelled', hf: { file: '01-Login-User-Flow/HF-LGN-02-sso.html', suffix: '#denied' }, app: { url: '/signing-in?state=cancelled&ref=SSO-1F9A-1000', prepare: mockConfig }, mask: ['.hf-contact .hf-mono'] },
+  { id: 'UX-LGN-04-request', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html' }, app: { url: '/forgot-password', prepare: mockConfig } },
+  // UX-LGN-01: the HF shows 3 characters of the address, the agreed rule shows 2. The masked address (#mk, same id in both) is painted grey until IPL decides.
+  { id: 'UX-LGN-05-sent', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html', suffix: '#sent' }, app: { url: '/forgot-password', prepare: mockConfig, steps: askForLink }, mask: ['#mk'] },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
