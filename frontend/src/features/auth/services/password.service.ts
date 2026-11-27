@@ -20,7 +20,8 @@
  */
 
 import { toApiError } from '@/lib/errors';
-import type { ForgotAnswer, ForgotInput, LinkCheck, SetPasswordInput, TempInput } from '../types/password.types';
+import { getAccessToken } from '@/lib/token';
+import type { ChangeTemporaryAnswer, ForgotAnswer, ForgotInput, LinkCheck, SetPasswordInput, TempInput } from '../types/password.types';
 import { authHttp } from './auth.service';
 
 /**
@@ -107,11 +108,15 @@ export async function resetPassword(input: SetPasswordInput): Promise<void> {
  * @contract  API-PWD-04
  * @ac        AC-US-LGN02-008-02
  * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
- * @status    pseudo
+ * @status    built
  *
- * @returns Promise<{ nextStep: string }>
+ * @returns Promise<ChangeTemporaryAnswer>
  */
-export async function changeTemporaryPassword(_input: TempInput): Promise<{ nextStep: string }> {
-  // TODO: 1. POST the body; return the data part.
-  throw new Error('Not implemented (pseudo-code)');
+export async function changeTemporaryPassword(input: TempInput): Promise<ChangeTemporaryAnswer> {
+  try {
+    const headers = { Authorization: `Bearer ${getAccessToken() ?? ''}` };
+    return (await authHttp.post<{ data: ChangeTemporaryAnswer }>('/auth/password/change-temporary', input, { headers })).data.data;
+  } catch (e) {
+    throw toApiError(e);
+  }
 }

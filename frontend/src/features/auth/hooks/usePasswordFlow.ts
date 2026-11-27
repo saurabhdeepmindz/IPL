@@ -21,9 +21,11 @@
 
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import type { ApiError } from '@/lib/errors';
-import { checkResetLink, forgotPassword, resetPassword } from '../services/password.service';
-import type { ForgotAnswer, ForgotInput, LinkCheck, SetPasswordInput, TempInput } from '../types/password.types';
+import { setAccessToken } from '@/lib/token';
+import { changeTemporaryPassword, checkResetLink, forgotPassword, resetPassword } from '../services/password.service';
+import type { ChangeTemporaryAnswer, ForgotAnswer, ForgotInput, LinkCheck, SetPasswordInput, TempInput } from '../types/password.types';
 
 /**
  * useForgotPassword.
@@ -102,12 +104,17 @@ export function useSetPassword(): UseMutationResult<void, ApiError, SetPasswordI
  * @contract  API-PWD-04
  * @ac        AC-US-LGN02-008-02
  * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
- * @status    pseudo
+ * @status    built
  *
- * @returns UseMutationResult<{ nextStep: string }, ApiError, TempInput>
+ * @returns UseMutationResult<ChangeTemporaryAnswer, ApiError, TempInput>
  */
-export function useChangeTemporaryPassword(): UseMutationResult<{ nextStep: string }, ApiError, TempInput> {
-  // TODO: 1. Run a mutation with changeTemporaryPassword.
-  // TODO: 2. On success go to `/choose-work`.
-  throw new Error('Not implemented (pseudo-code)');
+export function useChangeTemporaryPassword(): UseMutationResult<ChangeTemporaryAnswer, ApiError, TempInput> {
+  const router = useRouter();
+  return useMutation<ChangeTemporaryAnswer, ApiError, TempInput>({
+    mutationFn: (input) => changeTemporaryPassword(input),
+    onSuccess: (answer) => {
+      setAccessToken(answer.accessToken);
+      router.push('/choose-work');
+    },
+  });
 }

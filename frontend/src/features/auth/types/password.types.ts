@@ -34,4 +34,5 @@ export interface ForgotAnswer { message: string; retryAfterSeconds: number }
 export interface LinkCheck { valid: true; maskedEmail: string }
 export interface ForgotInput { employeeCode: string; email: string }
 export interface SetPasswordInput { token: string; newPassword: string }
+export interface ChangeTemporaryAnswer { nextStep: string; accessToken: string; expiresIn: number }
 export interface TempInput { temporaryPassword: string; newPassword: string }
