@@ -3,7 +3,7 @@
  * @module  Tests (UX fidelity)
  *
  * @description
- * Pixel comparison of the Login screens with the high-fidelity (HF) mock-up: LGN-01 (sign-in and its error, locked and inactive states), LGN-02 (single sign-on states) and, from R14, LGN-04 and LGN-05 (forgot password, check your e-mail) and LGN-06 and LGN-07 (set a new password, changed, link expired). In plain words: for each screen the HF page and the
+ * Pixel comparison of the Login screens with the high-fidelity (HF) mock-up: LGN-01 (sign-in and its error, locked and inactive states), LGN-02 (single sign-on states) and, from R14, LGN-04 and LGN-05 (forgot password, check your e-mail) LGN-06 and LGN-07 (set a new password, changed, link expired) and LGN-08 (change the temporary password). In plain words: for each screen the HF page and the
  * application are opened at the same size and state, photographed, and the pictures are compared pixel by pixel; the pictures are kept as proof.
  *
  * @author  Deepmindz AMS team
@@ -11,9 +11,9 @@
  * @since   2026-11-26
  *
  * @epic       EPIC-LGN-01, EPIC-LGN-02
- * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007
+ * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007, US-LGN02-008
  * @workflow   UF-01
- * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07
+ * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07, UX-LGN-08
  * @lld            LLD-EPIC-LGN-01 v0.5 §15
  * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/ux/login.ux.spec.ts
@@ -67,6 +67,27 @@ async function dropConfirmationSentence(page: Page) {
   });
 }
 
+// UX-LGN-04: the sign-in answer carries the employee code but not the name (the name comes from "Who am I", EPIC-LGN-04). The app shows the code only; the HF picture gets the same words
+// (code on the first line, "Employee code" on the second) and the avatar circle is painted grey. The demo line "Demo: Temp#4821" is part of the mock-up and is taken out of the HF picture.
+async function useChipOfApp(page: Page) {
+  await page.locator('#wn').evaluate((b) => { b.textContent = '10002'; });
+  await page.locator('#wd').evaluate((s) => { s.textContent = 'Employee code'; });
+  await page.locator('#tp').evaluate((input) => {
+    const help = input.closest('.field')?.querySelector('.help');
+    help?.querySelector('code')?.remove();
+    if (help?.lastChild) help.lastChild.textContent = (help.lastChild.textContent ?? '').replace(' Demo: ', '');
+  });
+}
+
+/** Signs in with a temporary password (the answer is stubbed) so the application opens /choose-password by its own redirect, with the session in memory. */
+async function signInWithTemporaryPassword(page: Page) {
+  await page.route('**/auth/sign-in', (r) => r.fulfill(json({ data: { nextStep: 'CHANGE_PASSWORD', user: { employeeCode: '10002', name: 'A. Kumar' }, accessToken: 'tok-temp', expiresIn: 900 } })));
+  await page.locator('#code').fill('10002');
+  await page.locator('#pw').fill('Temp#4821');
+  await page.getByTestId('sign-in-submit').click();
+  await page.waitForURL('**/choose-password');
+}
+
 async function askForLink(page: Page) {
   await page.route('**/auth/password/forgot', (r) => r.fulfill(json({ data: { message: 'x', retryAfterSeconds: 60 } }, 202)));
   await page.locator('#code').fill('10002');
@@ -108,6 +129,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-06-set', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#set', steps: dropNameLine }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }) }, mask: ['#go'] },
   { id: 'UX-LGN-07-done', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#done', steps: dropConfirmationSentence }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }), steps: changePassword } },
   { id: 'UX-LGN-06-expired', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#expired' }, app: { url: '/set-password?token=old', prepare: (p) => openSetPassword(p, { status: 410, body: { error: { code: 'LINK_EXPIRED', message: 'x', fields: [], details: {} } } }) } },
+  { id: 'UX-LGN-08-change', hf: { file: '01-Login-User-Flow/HF-LGN-08-change-temporary-password.html', steps: useChipOfApp }, app: { url: '/login', prepare: mockConfig, steps: signInWithTemporaryPassword }, mask: ['#av'] },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
