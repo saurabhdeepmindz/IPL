@@ -50,7 +50,7 @@ export async function devSignIn(employeeCode: string, companyCode: string): Prom
 }
 
 /** A plain client for the Auth API: no refresh retry, so a wrong password is shown as it is (not turned into "session ended"). */
-const authHttp = axios.create({ baseURL: env.NEXT_PUBLIC_AUTH_API_BASE_URL, withCredentials: true });
+export const authHttp = axios.create({ baseURL: env.NEXT_PUBLIC_AUTH_API_BASE_URL, withCredentials: true });
 
 /**
  * Signs in with employee code and password (API-AUTH-01).
