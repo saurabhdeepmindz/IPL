@@ -45,6 +45,20 @@ export interface UserRoleGrant {
  *   contracts: none
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
+/** One role of a user in one company, as the company choice shows it. */
+export interface CompanyRoleName {
+  roleCode: string;
+  roleName: string;
+  roleStatus: RoleStatus;
+}
+
+/** One company a user can work in, with the roles the user holds there (valid on the day asked). */
+export interface UserCompanyGrants {
+  companyCode: string;
+  companyName: string;
+  roles: CompanyRoleName[];
+}
+
 /** One person who holds a role, as the role details show them. */
 export interface RoleHolderRow {
   employeeCode: string;
@@ -77,6 +91,18 @@ export abstract class UserCompanyRoleRepository {
    * @dependencies none
    */
   abstract listByUser(userId: string, companyCode: string, validOn: Date): Promise<UserRoleGrant[]>;
+
+  /**
+   * The companies a user can work in on a date, each with the roles held there.
+   *
+   * In plain words: every active company where the user has at least one role that has started and not ended, with the names of those roles. Reads every company (the company filter is off on purpose: the user has no company chosen yet).
+   *
+   * @param userId Internal key of the user
+   * @param validOn The day to check
+   * @returns One entry per company, in company-code order; the role status is returned and the caller keeps only ACTIVE roles
+   * @dependencies none
+   */
+  abstract listCompaniesByUser(userId: string, validOn: Date): Promise<UserCompanyGrants[]>;
 
   /** The people who hold the role today; `companyCode` null means every company (decision L-33). */
   abstract listByRole(roleId: string, companyCode: string | null, validOn: Date): Promise<RoleHolderRow[]>;

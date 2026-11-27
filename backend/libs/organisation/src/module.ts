@@ -16,6 +16,7 @@
 
 import { Module } from '@nestjs/common';
 import { MastersReadDatabaseRepository, MastersReadRepository } from './repositories/masters-read';
+import { FinancialYearService } from './services/financial-year.service';
 import { MastersReadService } from './services/masters-read.service';
 import { UserCompanyRoleRepository } from './repositories/user-company-role/contract';
 import { UserCompanyRoleDatabaseRepository } from './repositories/user-company-role/database';
@@ -34,7 +35,7 @@ import { UserCompanyRoleDatabaseRepository } from './repositories/user-company-r
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  providers: [{ provide: UserCompanyRoleRepository, useClass: UserCompanyRoleDatabaseRepository }, { provide: MastersReadRepository, useClass: MastersReadDatabaseRepository }, MastersReadService],
-  exports: [UserCompanyRoleRepository, MastersReadService],
+  providers: [{ provide: UserCompanyRoleRepository, useClass: UserCompanyRoleDatabaseRepository }, { provide: MastersReadRepository, useClass: MastersReadDatabaseRepository }, MastersReadService, FinancialYearService],
+  exports: [UserCompanyRoleRepository, MastersReadService, FinancialYearService],
 })
 export class OrganisationModule {}

@@ -43,6 +43,6 @@ export class SessionUserFactory {
    * @dependencies none
    */
   fromClaims(claims: AccessClaims): SessionUser {
-    return { userId: claims.sub, employeeCode: claims.emp, companyCode: claims.company, departmentId: claims.dept ?? null };
+    return { userId: claims.sub, employeeCode: claims.emp, companyCode: claims.company, departmentId: claims.dept ?? null, ...(claims.fy ? { financialYear: claims.fy } : {}) };
   }
 }

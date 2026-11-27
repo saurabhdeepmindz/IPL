@@ -45,6 +45,8 @@ export interface SessionUser {
   companyCode: string;
   /** Home department; needed for the DEPARTMENT data scope. */
   departmentId: string | null;
+  /** The financial year chosen in this session, for example 2026-27; absent until a company and year are chosen (EPIC-LGN-03). */
+  financialYear?: string;
 }
 
 /**

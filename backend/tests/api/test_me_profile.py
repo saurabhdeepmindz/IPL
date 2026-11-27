@@ -19,7 +19,7 @@ import uuid
 from datetime import date, datetime, timedelta, timezone
 
 import requests
-from conftest import bearer
+from conftest import AUTH, TEST_PASSWORD, bearer
 
 IST = timezone(timedelta(hours=5, minutes=30))
 
@@ -91,17 +91,50 @@ def test_tc_lgn03_001_p03(api, made, sign_in):
     assert [y["current"] for y in years] == [True, False, False]
 
 
-def test_tc_lgn03_001_p04(api, made, sign_in):
+def real_sign_in(code: str) -> str:
+    """Signs in through the Auth API, as the browser does; the token has no company yet."""
+    res = requests.post(f"{AUTH}/sign-in", json={"employeeCode": code, "password": TEST_PASSWORD}, timeout=15)
+    assert res.status_code == 200, res.text
+    return res.json()["data"]["accessToken"]
+
+
+def test_tc_lgn03_001_p04(api, local_user):
     """@tc TC-LGN03-001-P04
     @story US-LGN03-001
     @ac AC-US-LGN03-001-04
     @subtask ST-LGN03-001-BE-03
-    In plain words: a user whose only role has ended gets an empty list of companies and the helpdesk values (200, not an error).
+    In plain words: a user who has no company and role valid today signs in through the Auth API and reads GET /me: an empty list of companies and the helpdesk values (200, not an error).
     """
-    role_id, _ = made.role({})
-    _, code = made.user(role_id, valid_to=date.today() - timedelta(days=1))
-    res = get_me(api, sign_in(code))
+    _, code = local_user()
+    res = get_me(api, real_sign_in(code))
     assert res.status_code == 200, res.text
     data = res.json()["data"]
     assert data["companies"] == []
     assert set(data["helpdesk"]) >= {"phone", "email", "hours"}
+    assert data["context"] is None
+
+
+def test_me_after_the_real_sign_in(api, db, local_user, made):
+    """@story US-LGN03-001
+    @ac AC-US-LGN03-001-02
+    @subtask ST-LGN03-001-BE-03
+    In plain words: supporting test. A token from the real sign-in has no company; GET /me still answers and lists the user's companies, and a normal route still refuses the same token.
+    """
+    user_id, code = local_user()
+    role_id, role_name = made.role({})
+    add_company_role(db, user_id, role_id, "IPL")
+    token = real_sign_in(code)
+    res = get_me(api, token)
+    assert res.status_code == 200, res.text
+    assert [c["code"] for c in res.json()["data"]["companies"]] == ["IPL"]
+    assert res.json()["data"]["companies"][0]["roles"] == [role_name]
+    assert requests.get(f"{api}/masters/departments", headers=bearer(token), timeout=10).status_code == 401
+
+
+def test_me_needs_a_session(api):
+    """@story US-LGN03-001
+    @ac AC-US-LGN03-001-01
+    @subtask ST-LGN03-001-BE-03
+    In plain words: supporting test. No token gives 401.
+    """
+    assert requests.get(f"{api}/me", timeout=10).status_code == 401

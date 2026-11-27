@@ -19,7 +19,7 @@ import { AllFieldsValidationPipe, GlobalExceptionFilter } from '@libs/common';
 import { ConfigModule } from '@nestjs/config';
 import { configurations } from '@config';
 import { validateEnv } from '@config/env.validation';
-import { AuthorizationModule } from '@libs/core';
+import { AuthorizationModule, CompanySelectionModule } from '@libs/core';
 import { DatabaseModule } from '@libs/database';
 import { DevAuthModule } from './dev-auth/dev-auth.module';
 import { PermissionMatrixModule, RoleAssignmentModule, RolesAndPermissionsModule } from '@libs/roles-and-permissions';
@@ -32,6 +32,8 @@ import { UsersController } from './controllers/users.controller';
 import { UsersImportController } from './controllers/users-import.controller';
 import { UsersLifecycleController } from './controllers/users-lifecycle.controller';
 import { MastersController } from './controllers/masters.controller';
+import { MeController } from './controllers/me.controller';
+import { MeProfileTransformer } from './transformer/me-profile.transformer';
 import { OrganisationModule } from '@libs/organisation';
 import { RolesController } from './controllers/roles.controller';
 
@@ -50,10 +52,11 @@ import { RolesController } from './controllers/roles.controller';
  *   lld:       LLD-EPIC-ADM-01 v0.5 section 6.0
  */
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, RoleAssignmentModule, UsersModule, OrganisationModule, DevAuthModule.register()],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: configurations, validate: validateEnv }), DatabaseModule, AuthorizationModule, PermissionCacheBridgeModule, RolesAndPermissionsModule, PermissionMatrixModule, RoleAssignmentModule, UsersModule, OrganisationModule, CompanySelectionModule, DevAuthModule.register()],
   // PermissionMatrixController must come before RolesController: PUT /roles/permissions would otherwise be read as PUT /roles/:roleId (decision L-27).
-  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController, UsersController, UsersLifecycleController, UsersImportController, MastersController],
+  controllers: [HealthController, PermissionMatrixController, RolesController, RoleAssignmentController, UsersController, UsersLifecycleController, UsersImportController, MastersController, MeController],
   providers: [
+    MeProfileTransformer,
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_PIPE, useClass: AllFieldsValidationPipe },
   ],

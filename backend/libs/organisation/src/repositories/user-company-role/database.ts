@@ -20,7 +20,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@libs/database';
-import { DbTransaction, UserCompanyRoleRepository, UserRoleGrant, NewAssignment, RoleHolderRow } from './contract';
+import { DbTransaction, UserCompanyRoleRepository, UserCompanyGrants, UserRoleGrant, NewAssignment, RoleHolderRow } from './contract';
 
 /**
  * Database implementation of UserCompanyRoleRepository.
@@ -59,6 +59,28 @@ export class UserCompanyRoleDatabaseRepository extends UserCompanyRoleRepository
       validFrom: r.validFrom,
       validTo: r.validTo,
     }));
+  }
+
+  /** {@inheritDoc UserCompanyRoleRepository.listCompaniesByUser} */
+  async listCompaniesByUser(userId: string, validOn: Date): Promise<UserCompanyGrants[]> {
+    // every company is read, so this uses the unfiltered client on purpose: the session has no company yet (EPIC-LGN-03, API-ME-01)
+    const rows = await this.prisma.raw.userCompanyRole.findMany({
+      where: {
+        userId,
+        validFrom: { lte: validOn },
+        OR: [{ validTo: null }, { validTo: { gte: validOn } }],
+        company: { isActive: true },
+      },
+      include: { role: true, company: true },
+      orderBy: [{ companyCode: 'asc' }, { assignedOn: 'asc' }],
+    });
+    const byCompany = new Map<string, UserCompanyGrants>();
+    for (const r of rows) {
+      const entry = byCompany.get(r.companyCode) ?? { companyCode: r.companyCode, companyName: r.company.name, roles: [] };
+      entry.roles.push({ roleCode: r.role.code, roleName: r.role.name, roleStatus: r.role.status });
+      byCompany.set(r.companyCode, entry);
+    }
+    return [...byCompany.values()];
   }
 
   /**

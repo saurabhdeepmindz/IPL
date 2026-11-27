@@ -18,13 +18,10 @@
  */
 
 import { Test } from '@nestjs/testing';
-import { AuditService } from '@libs/audit';
 import { FinancialYearService, UserCompanyRoleRepository } from '@libs/organisation';
 import { SettingsService } from '@libs/settings';
 import { UserRepository } from '@libs/users';
 import { CompanySelectionService } from './company-selection.service';
-import { LandingResolver } from './landing.resolver';
-import { SessionContextService } from './session-context.service';
 
 interface CompanyRows {
   companyCode: string;
@@ -46,9 +43,6 @@ async function make(byUser: Record<string, CompanyRows[]>) {
       { provide: UserCompanyRoleRepository, useValue: roles },
       { provide: UserRepository, useValue: users },
       { provide: SettingsService, useValue: { get: (k: string) => HELPDESK[k] ?? '' } },
-      { provide: SessionContextService, useValue: {} },
-      { provide: LandingResolver, useValue: {} },
-      { provide: AuditService, useValue: {} },
     ],
   }).compile();
   return { service: module.get(CompanySelectionService), roles };
@@ -107,6 +101,14 @@ describe('CompanySelectionService.profile (US-LGN03-001)', () => {
     expect(profile.user).toEqual({ employeeCode: '11111', fullName: 'User A' });
     expect(profile.years).toHaveLength(3);
     expect(profile.years.filter((y) => y.current)).toHaveLength(1);
+  });
+
+  /** @story US-LGN03-001 @ac AC-US-LGN03-001-01 @subtask ST-LGN03-001-BE-03 In plain words: supporting test. The company and year of the session are passed on only when both are known. */
+  it('passes the session context on only when a company and a year are chosen', async () => {
+    const { service } = await make({});
+    expect((await service.profile(A)).context).toBeNull();
+    expect((await service.profile({ ...A, companyCode: '' })).context).toBeNull();
+    expect((await service.profile({ ...A, financialYear: '2026-27' })).context).toEqual({ companyCode: 'IPL', financialYear: '2026-27' });
   });
 
   /** @tc TC-LGN03-001-J04 @story US-LGN03-001 @ac AC-US-LGN03-001-04 @subtask ST-LGN03-001-BE-03 In plain words: a user with no company valid today gets an empty list and the helpdesk values, not an error. */

@@ -24,4 +24,6 @@ export interface AccessClaims {
   sid?: string;
   /** True while the user must change a temporary password (such a token opens only API-PWD-04). */
   mcp?: boolean;
+  /** The financial year chosen in this session (set by API-ME-02, EPIC-LGN-03). */
+  fy?: string;
 }
