@@ -12,9 +12,11 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-001
  * @subtask        ST-LGN03-001-BE-03
- * @lld            LLD-EPIC-LGN-03 v0.2 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.2.md
- * @status         elaborated
+ * @lld            LLD-EPIC-LGN-03 v0.3 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/libs/core/src/auth/company-selection.profile.spec.ts
+ * @lld-synced     v0.3
+ * @status         built
  */
 
 import { Test } from '@nestjs/testing';

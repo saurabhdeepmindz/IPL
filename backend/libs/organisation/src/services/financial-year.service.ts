@@ -12,10 +12,10 @@
  * @story          US-LGN03-001, US-LGN03-002
  * @subtask        ST-LGN03-001-BE-02
  * @contract       API-ME-01
- * @lld            LLD-EPIC-LGN-03 v0.2 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.2.md
+ * @lld            LLD-EPIC-LGN-03 v0.3 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/libs/organisation/src/services/financial-year.service.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.3
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { Injectable } from '@nestjs/common';
    *   workflows: UF-03
    *   contracts: API-ME-01
    *   ac:        AC-US-LGN03-001-03
-   *   lld:       LLD-EPIC-LGN-03 v0.2 section 6.0
+   *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.0
  */
 @Injectable()
 export class FinancialYearService {
@@ -47,7 +47,7 @@ export class FinancialYearService {
    * @workflow  UF-03
    * @contract  API-ME-01
    * @ac        AC-US-LGN03-001-03
-   * @lld       LLD-EPIC-LGN-03 v0.2 §6.0
+   * @lld       LLD-EPIC-LGN-03 v0.3 §6.0
    * @status    built
    *
    * @returns { label: string; current: boolean }[]
@@ -68,7 +68,7 @@ export class FinancialYearService {
    * @workflow  UF-03
    * @contract  API-ME-01
    * @ac        AC-US-LGN03-001-03
-   * @lld       LLD-EPIC-LGN-03 v0.2 §6.0
+   * @lld       LLD-EPIC-LGN-03 v0.3 §6.0
    * @status    built
    *
    * @returns boolean

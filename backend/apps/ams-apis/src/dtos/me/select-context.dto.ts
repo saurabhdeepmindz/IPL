@@ -12,10 +12,10 @@
  * @story          US-LGN03-002
  * @subtask        ST-LGN03-002-BE-01
  * @contract       API-ME-02
- * @lld            LLD-EPIC-LGN-03 v0.2 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.2.md
+ * @lld            LLD-EPIC-LGN-03 v0.3 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/apps/ams-apis/src/dtos/me/select-context.dto.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.3
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { IsString, Length, Matches } from 'class-validator';
  *   workflows: UF-03
  *   contracts: API-ME-02
  *   ac:        AC-US-LGN03-002-01
- *   lld:       LLD-EPIC-LGN-03 v0.2 section 6.0
+ *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.0
  */
 export class SelectContextDto {
   /** The company, for example IPL (at most 10 characters, as in the company table). */

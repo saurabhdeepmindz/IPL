@@ -13,10 +13,10 @@
  * @subtask        ST-LGN03-001-BE-01
  * @subtask        ST-LGN03-002-BE-01
  * @contract       API-ME-01, API-ME-02
- * @lld            LLD-EPIC-LGN-03 v0.2 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.2.md
+ * @lld            LLD-EPIC-LGN-03 v0.3 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/apps/ams-apis/src/controllers/me.controller.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.3
  * @status         built
  */
 
@@ -39,7 +39,7 @@ import { MeProfileTransformer } from '../transformer/me-profile.transformer';
    *   frd:       FR-040.1, FR-040.2, FR-040.4, FR-040.5, FR-040.6
    *   contracts: API-ME-01, API-ME-02
    *   ac:        AC-US-LGN03-001-01, AC-US-LGN03-001-02, AC-US-LGN03-001-03, AC-US-LGN03-001-04, AC-US-LGN03-002-01, AC-US-LGN03-002-02, AC-US-LGN03-002-03, AC-US-LGN03-002-04, AC-US-LGN03-002-05, AC-US-LGN03-002-06
-   *   lld:       LLD-EPIC-LGN-03 v0.2 section 6.0
+   *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.0
  */
 @Controller('me')
 export class MeController {
@@ -60,8 +60,8 @@ export class MeController {
    * @workflow  UF-03
    * @contract  API-ME-01
    * @ac        AC-US-LGN03-001-01, AC-US-LGN03-001-02, AC-US-LGN03-001-03, AC-US-LGN03-001-04
-   * @lld       LLD-EPIC-LGN-03 v0.2 §6.0
-   * @status    elaborated
+   * @lld       LLD-EPIC-LGN-03 v0.3 §6.0
+   * @status    built
    *
    * @dependencies CompanySelectionService.profile, MeProfileTransformer.toBody
    *
@@ -87,7 +87,7 @@ export class MeController {
    * @workflow  UF-03
    * @contract  API-ME-02
    * @ac        AC-US-LGN03-002-01, AC-US-LGN03-002-02, AC-US-LGN03-002-03, AC-US-LGN03-002-04, AC-US-LGN03-002-05, AC-US-LGN03-002-06
-   * @lld       LLD-EPIC-LGN-03 v0.2 §6.0
+   * @lld       LLD-EPIC-LGN-03 v0.3 §6.0
    * @status    built
    *
    * @dependencies CompanySelectionService.select
