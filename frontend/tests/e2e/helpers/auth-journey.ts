@@ -62,12 +62,14 @@ export function makeLocalUser(status: 'ACTIVE' | 'INACTIVE' = 'ACTIVE', mustChan
 }
 
 /**
- * Gives a user a standard role in a company (valid from 30 days ago, no end).
+ * Gives a user a standard role in a company (valid from 30 days ago, no end; with `endedDaysAgo` the role ended that many days ago).
  *
- * In plain words: the user then holds that role there today. `removeMadeUsers` removes the rows with the user.
+ * In plain words: the user then holds that role there today, or not any more when it has ended. `removeMadeUsers` removes the rows with the user.
  */
-export function grantRoleInDatabase(code: string, roleCode: string, company: string): void {
-  execSync(`${DB} "insert into user_company_roles (id, user_id, role_id, company_code, valid_from, assigned_by) select gen_random_uuid(), u.id, r.id, '${company}', current_date - 30, '10001' from users u, roles r where u.employee_code = '${code}' and r.code = '${roleCode}'"`);
+export function grantRoleInDatabase(code: string, roleCode: string, company: string, endedDaysAgo?: number): void {
+  const from = endedDaysAgo === undefined ? 30 : endedDaysAgo + 30;
+  const to = endedDaysAgo === undefined ? 'null' : `current_date - ${endedDaysAgo}`;
+  execSync(`${DB} "insert into user_company_roles (id, user_id, role_id, company_code, valid_from, valid_to, assigned_by) select gen_random_uuid(), u.id, r.id, '${company}', current_date - ${from}, ${to}, '10001' from users u, roles r where u.employee_code = '${code}' and r.code = '${roleCode}'"`);
 }
 
 export function unlockInDatabase(code: string): void {
