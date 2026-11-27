@@ -27,13 +27,16 @@ import { SignInAuditWriter } from './sign-in-audit.writer';
 import { SessionTokens, SessionUserInput } from './sign-in.types';
 import { SessionEndedException } from './errors/auth-errors';
 
-const REFRESH_SECONDS = 8 * 60 * 60;
+export const REFRESH_SECONDS = 8 * 60 * 60;
 
-interface SessionRecord {
+/** The session record kept in Redis under `session:<sid>`. */
+export interface SessionRecord {
   userId: string;
   employeeCode: string;
   departmentId: string | null;
   company: string;
+  /** The financial year chosen in this session, for example 2026-27 (set by API-ME-02, EPIC-LGN-03). */
+  financialYear?: string;
   /** True while the user must change a temporary password; every renewed token carries the `mcp` claim then (follow-up B23). */
   mustChange?: boolean;
   refreshHash: string;
@@ -163,7 +166,7 @@ export class SessionService {
     const next = this.tokens.newRefresh();
     await this.redis.setJson('refresh:' + next.hash, { sid: entry.sid, used: false } satisfies RefreshRecord, REFRESH_SECONDS);
     await this.redis.setJson('session:' + entry.sid, { ...session, refreshHash: next.hash }, REFRESH_SECONDS);
-    const access = await this.tokens.issueAccess({ sub: session.userId, emp: session.employeeCode, company: session.company, dept: session.departmentId, sid: entry.sid, ...(session.mustChange ? { mcp: true } : {}) });
+    const access = await this.tokens.issueAccess({ sub: session.userId, emp: session.employeeCode, company: session.company, dept: session.departmentId, sid: entry.sid, ...(session.financialYear ? { fy: session.financialYear } : {}), ...(session.mustChange ? { mcp: true } : {}) });
     return { accessToken: access.accessToken, refreshToken: next.token, expiresIn: access.expiresIn };
   }
 }

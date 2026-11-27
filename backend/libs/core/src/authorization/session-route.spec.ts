@@ -59,7 +59,7 @@ describe('@SessionRoute (US-LGN03-001)', () => {
     it('lets a token with no company open a session route', async () => {
       const req = request();
       await expect(guard(claims).canActivate(context(Sample.prototype.me, req))).resolves.toBe(true);
-      expect(req.user).toEqual({ userId: 'u-1', employeeCode: '10002', companyCode: '', departmentId: null });
+      expect(req.user).toEqual({ userId: 'u-1', employeeCode: '10002', companyCode: '', departmentId: null, sessionId: 's-1' });
     });
 
     /** @story US-LGN03-001 @ac AC-US-LGN03-001-01 @subtask ST-LGN03-001-BE-01 In plain words: supporting test. The same token is refused (401) on any other route. */

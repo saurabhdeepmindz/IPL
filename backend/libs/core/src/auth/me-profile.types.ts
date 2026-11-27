@@ -64,3 +64,17 @@ export interface MeProfile {
   context: SessionContextView | null;
   helpdesk: HelpdeskInfo;
 }
+
+/** The landing page chosen for the user: the role and the route of its page. */
+export interface LandingChoice {
+  role: string;
+  route: string;
+}
+
+/** The body of API-ME-02. */
+export interface ContextResult {
+  context: SessionContextView;
+  landing: LandingChoice;
+  accessToken: string;
+  expiresIn: number;
+}

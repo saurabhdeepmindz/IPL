@@ -18,10 +18,13 @@
  */
 
 import { Test } from '@nestjs/testing';
+import { AuditService } from '@libs/audit';
 import { FinancialYearService, UserCompanyRoleRepository } from '@libs/organisation';
 import { SettingsService } from '@libs/settings';
 import { UserRepository } from '@libs/users';
 import { CompanySelectionService } from './company-selection.service';
+import { LandingResolver } from './landing.resolver';
+import { SessionContextService } from './session-context.service';
 
 interface CompanyRows {
   companyCode: string;
@@ -43,6 +46,9 @@ async function make(byUser: Record<string, CompanyRows[]>) {
       { provide: UserCompanyRoleRepository, useValue: roles },
       { provide: UserRepository, useValue: users },
       { provide: SettingsService, useValue: { get: (k: string) => HELPDESK[k] ?? '' } },
+      { provide: SessionContextService, useValue: {} },
+      { provide: LandingResolver, useValue: {} },
+      { provide: AuditService, useValue: {} },
     ],
   }).compile();
   return { service: module.get(CompanySelectionService), roles };

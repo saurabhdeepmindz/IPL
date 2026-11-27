@@ -47,6 +47,8 @@ export interface SessionUser {
   departmentId: string | null;
   /** The financial year chosen in this session, for example 2026-27; absent until a company and year are chosen (EPIC-LGN-03). */
   financialYear?: string;
+  /** The session id from the token claim `sid`; absent on development tokens. Needed to change the company and year of the session. */
+  sessionId?: string;
 }
 
 /**

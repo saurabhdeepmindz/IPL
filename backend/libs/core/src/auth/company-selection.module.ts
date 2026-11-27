@@ -18,10 +18,16 @@
  */
 
 import { Module } from '@nestjs/common';
+import { AuditModule } from '@libs/audit';
 import { OrganisationModule } from '@libs/organisation';
 import { SettingsModule } from '@libs/settings';
 import { UsersModule } from '@libs/users';
+import { RedisModule } from '../redis';
+import { AuthCoreModule } from './auth-core.module';
 import { CompanySelectionService } from './company-selection.service';
+import { LandingResolver } from './landing.resolver';
+import { SessionContextService } from './session-context.service';
+import { TokenService } from './token.service';
 
 /**
  * CompanySelectionModule.
@@ -37,8 +43,8 @@ import { CompanySelectionService } from './company-selection.service';
  *   lld:       LLD-EPIC-LGN-03 v0.2 section 6.0
  */
 @Module({
-  imports: [OrganisationModule, UsersModule, SettingsModule],
-  providers: [CompanySelectionService],
+  imports: [OrganisationModule, UsersModule, SettingsModule, AuditModule, RedisModule, AuthCoreModule],
+  providers: [CompanySelectionService, SessionContextService, LandingResolver, TokenService],
   exports: [CompanySelectionService],
 })
 export class CompanySelectionModule {}
