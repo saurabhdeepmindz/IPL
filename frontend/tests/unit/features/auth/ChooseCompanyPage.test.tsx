@@ -25,6 +25,7 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChooseCompanyPage } from '@/features/auth/components/ChooseCompanyPage';
 import { useMe, useSelectContext } from '@/features/auth/hooks/useMe';
+import { readContext } from '@/features/auth/rememberChoices';
 import { authHttp } from '@/features/auth/services/auth.service';
 import { getMe, selectContext } from '@/features/auth/services/me.service';
 import { api } from '@/lib/api-client';
@@ -60,6 +61,7 @@ describe('User chooses company and financial year (US-LGN03-003)', () => {
     push.mockClear();
     replace.mockClear();
     vi.spyOn(authHttp, 'get').mockResolvedValue(config);
+    localStorage.clear();
     setAccessToken('first-token');
     useSessionStore.setState({ status: 'signedIn', user: { userId: '', employeeCode: '10002', name: 'A. Kumar', companyCode: '' }, landing: null });
   });
@@ -193,5 +195,59 @@ describe('User chooses company and financial year (US-LGN03-003)', () => {
   it('turns a failed profile call into a plain error', async () => {
     vi.spyOn(api, 'get').mockRejectedValue(Object.assign(new Error('x'), { isAxiosError: true, response: { status: 500, data: { error: { code: 'SERVER_ERROR', message: 'Something went wrong', fields: [] } } } }));
     await expect(getMe()).rejects.toBeInstanceOf(ApiError);
+  });
+
+  /** @story US-LGN03-006 @ac AC-US-LGN03-006-01 @subtask ST-LGN03-006-FE-02 In plain words: supporting test (US-LGN03-006). When the user ticked "Start with this company and year next time" and the remembered company and year are still allowed, the page is skipped: the choice is saved at once and the Opening page opens, with no click. */
+  it('skips the page when the remembered company and year are still allowed', async () => {
+    localStorage.setItem('ams.context', JSON.stringify({ companyCode: '2000', financialYear: '2025-26' }));
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: TWO } });
+    const put = vi.spyOn(api, 'put').mockResolvedValue({ data: { data: chosen } });
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    await waitFor(() => expect(put).toHaveBeenCalledWith('/me/context', { companyCode: '2000', financialYear: '2025-26' }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/landing/opening'));
+  });
+
+  /** @story US-LGN03-006 @ac AC-US-LGN03-006-01 @subtask ST-LGN03-006-FE-02 In plain words: supporting test. A remembered company the user no longer has (or a year that is no longer in the list) is not used and is forgotten; the page opens as usual. */
+  it('ignores and forgets a remembered choice that is no longer allowed', async () => {
+    localStorage.setItem('ams.context', JSON.stringify({ companyCode: '9999', financialYear: '2026-27' }));
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: TWO } });
+    const put = vi.spyOn(api, 'put').mockResolvedValue({ data: { data: chosen } });
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    const select = (await screen.findByTestId('choose-co')) as HTMLSelectElement;
+    expect(select.value).toBe('');
+    expect(put).not.toHaveBeenCalled();
+    await waitFor(() => expect(readContext()).toBeNull());
+  });
+
+  /** @story US-LGN03-006 @ac AC-US-LGN03-006-01 @subtask ST-LGN03-006-FE-02 In plain words: supporting test. A remembered company that is allowed but a year that is not in the list is not used either. */
+  it('ignores a remembered year that is no longer in the list', async () => {
+    localStorage.setItem('ams.context', JSON.stringify({ companyCode: '1000', financialYear: '1999-00' }));
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: TWO } });
+    const put = vi.spyOn(api, 'put').mockResolvedValue({ data: { data: chosen } });
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    expect(((await screen.findByTestId('choose-co')) as HTMLSelectElement).value).toBe('');
+    expect(put).not.toHaveBeenCalled();
+    await waitFor(() => expect(readContext()).toBeNull());
+  });
+
+  /** @story US-LGN03-006 @ac AC-US-LGN03-006-01 @subtask ST-LGN03-006-FE-02 In plain words: supporting test. Continue with the box ticked remembers the company and year; with the box unticked it forgets them. */
+  it('remembers the choice when the box is ticked and forgets it when it is not', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({ data: { data: TWO } });
+    vi.spyOn(api, 'put').mockResolvedValue({ data: { data: chosen } });
+    const user = userEvent.setup();
+    const first = render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    await screen.findByTestId('choose-co');
+    await user.selectOptions(screen.getByTestId('choose-co'), '1000');
+    await user.click(screen.getByTestId('choose-go'));
+    await waitFor(() => expect(readContext()).toEqual({ companyCode: '1000', financialYear: '2026-27' }));
+    first.unmount();
+    localStorage.removeItem('ams.context');
+    render(<ChooseCompanyPage />, { wrapper: wrapperOf(client()) });
+    await screen.findByTestId('choose-co');
+    await user.selectOptions(screen.getByTestId('choose-co'), '1000');
+    await user.click(screen.getByTestId('choose-rem'));
+    await user.click(screen.getByTestId('choose-go'));
+    await waitFor(() => expect(push).toHaveBeenCalled());
+    expect(readContext()).toBeNull();
   });
 });
