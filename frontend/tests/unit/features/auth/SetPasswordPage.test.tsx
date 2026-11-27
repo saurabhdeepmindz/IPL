@@ -19,9 +19,11 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SetPasswordPage } from '@/features/auth/components/SetPasswordPage';
 import { useResetLink, useSetPassword } from '@/features/auth/hooks/usePasswordFlow';
 import { evaluateRules, newPasswordSchema } from '@/features/auth/schemas/passwordSchema';
 import { authHttp } from '@/features/auth/services/auth.service';
@@ -30,9 +32,15 @@ import { ApiError } from '@/lib/errors';
 
 const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: 3, retryDelay: 1 }, mutations: { retry: false } } })}>{children}</QueryClientProvider>;
 const gone = { response: { status: 410, data: { error: { code: 'LINK_EXPIRED', message: 'This link has expired. Ask for a new one.', fields: [], details: {} } } } };
+const config = { data: { data: { ssoAvailable: true, idpMode: 'saml', helpdesk: { phone: '1', email: 'it@ipl.example', hours: 'x', placeholder: false } } } };
+const linkOk = { data: { data: { valid: true, maskedEmail: 'k.***@ipl.example' } } };
+const renderPage = (token = 'tok-1') => render(<SetPasswordPage token={token} />, { wrapper });
 const met = (password: string) => evaluateRules(password).filter((r) => r.met).map((r) => r.id);
 
 describe('User sets a new password from the link (US-LGN02-007)', () => {
+  beforeEach(() => {
+    vi.spyOn(authHttp, 'get').mockImplementation((url: string) => (url.includes('public-config') ? Promise.resolve(config) : Promise.resolve(linkOk)));
+  });
   afterEach(() => vi.restoreAllMocks());
 
   /** @tc TC-LGN02-007-J01 @story US-LGN02-007 @ac AC-US-LGN02-007-01 @subtask ST-LGN02-007-FE-01 */
@@ -48,7 +56,18 @@ describe('User sets a new password from the link (US-LGN02-007)', () => {
   });
 
   /** @tc TC-LGN02-007-J02 @story US-LGN02-007 @ac AC-US-LGN02-007-02 @subtask ST-LGN02-007-FE-02 */
-  it.todo('TC-LGN02-007-J02 (owned by Task 7, the page: ST-LGN02-007-FE-02) Given the new password equals one of the last 3, when the user saves, then a plain message is shown and the form is kept');
+  it('TC-LGN02-007-J02 a reused password shows the plain message and keeps the form', async () => {
+    vi.spyOn(authHttp, 'post').mockRejectedValue({ response: { status: 422, data: { error: { code: 'PASSWORD_REUSED', message: 'x', fields: [{ field: 'password', message: 'Choose a password you have not used before' }], details: {} } } } });
+    const user = userEvent.setup();
+    renderPage();
+    await user.type(await screen.findByTestId('set-new'), 'Abcdefg1@');
+    await user.type(screen.getByTestId('set-confirm'), 'Abcdefg1@');
+    await user.click(screen.getByTestId('set-submit'));
+    expect(await screen.findByTestId('set-error')).toHaveTextContent('Choose a password you have not used before');
+    expect(screen.getByTestId('set-new')).toHaveValue('Abcdefg1@');
+    expect(screen.getByTestId('rule-history')).toHaveAttribute('data-met', 'false');
+    expect(screen.queryByTestId('password-changed')).not.toBeInTheDocument();
+  });
 
   /** @tc TC-LGN02-007-J03 @story US-LGN02-007 @ac AC-US-LGN02-007-03 @subtask ST-LGN02-007-FE-01 */
   it('TC-LGN02-007-J03 a used or expired link gives a 410 error at once, without trying again', async () => {
@@ -70,6 +89,34 @@ describe('User sets a new password from the link (US-LGN02-007)', () => {
     const { result } = renderHook(() => useSetPassword(), { wrapper });
     result.current.mutate({ token: 'tok-1', newPassword: 'Abcdefg1@' });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  });
+
+  /** @story US-LGN02-007 @ac AC-US-LGN02-007-01, AC-US-LGN02-007-03, AC-US-LGN02-007-04 @subtask ST-LGN02-007-FE-02 In plain words: supporting test. The page keeps Save off until the rules are met, shows the changed page after a save, and the expired page for a 410 or a missing token. */
+  it('supporting: the page keeps Save off until valid, shows the changed page after a save, and the expired page for a 410 or no token', async () => {
+    vi.spyOn(authHttp, 'post').mockResolvedValue({ data: { data: { done: true } } });
+    const user = userEvent.setup();
+    const first = renderPage();
+    await user.type(await screen.findByTestId('set-new'), 'abc');
+    expect(screen.getByTestId('set-submit')).toBeDisabled();
+    expect(screen.getByTestId('rule-lower')).toHaveAttribute('data-met', 'true');
+    expect(screen.getByTestId('rule-upper')).toHaveAttribute('data-met', 'false');
+    await user.clear(screen.getByTestId('set-new'));
+    await user.type(screen.getByTestId('set-new'), 'Abcdefg1@');
+    await user.type(screen.getByTestId('set-confirm'), 'Abcdefg1@');
+    expect(screen.getByTestId('strength-bar')).toHaveAttribute('data-met', '5');
+    await user.click(screen.getByTestId('set-submit'));
+    expect(await screen.findByTestId('password-changed')).toBeInTheDocument();
+    first.unmount();
+    renderPage('');
+    expect(await screen.findByTestId('link-expired')).toBeInTheDocument();
+    expect(screen.getByTestId('ask-new-link')).toHaveAttribute('href', '/forgot-password');
+  });
+
+  /** @story US-LGN02-007 @ac AC-US-LGN02-007-03 @subtask ST-LGN02-007-FE-02 In plain words: supporting test. A 410 from the link check shows the expired page. */
+  it('supporting: a 410 from the link check shows the expired page', async () => {
+    vi.spyOn(authHttp, 'get').mockImplementation((url: string) => (url.includes('public-config') ? Promise.resolve(config) : Promise.reject(gone)));
+    renderPage('old');
+    expect(await screen.findByTestId('link-expired')).toHaveTextContent('This link has expired');
   });
 
   /** @story US-LGN02-007 @ac AC-US-LGN02-007-02, AC-US-LGN02-007-03 @subtask ST-LGN02-007-FE-01 In plain words: supporting test. A good link gives the masked address; a reused password reaches the page as a 422 with the field message. */

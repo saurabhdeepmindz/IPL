@@ -36,7 +36,9 @@ const config = { data: { data: { ssoAvailable: true, idpMode: 'saml', helpdesk: 
 const input = { employeeCode: '10002', email: 'k.rao@ipl.example' };
 
 describe('User asks for a password reset link (US-LGN02-006)', () => {
-  beforeEach(() => vi.spyOn(authHttp, 'get').mockResolvedValue(config));
+  beforeEach(() => {
+    vi.spyOn(authHttp, 'get').mockResolvedValue(config);
+  });
   afterEach(() => vi.restoreAllMocks());
 
   /** @tc TC-LGN02-006-J01 @story US-LGN02-006 @ac AC-US-LGN02-006-01 @subtask ST-LGN02-006-FE-02 */

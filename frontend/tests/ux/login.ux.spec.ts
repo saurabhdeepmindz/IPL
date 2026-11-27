@@ -45,12 +45,13 @@ async function openSetPassword(page: Page, answer: { status: number; body: unkno
 }
 
 async function changePassword(page: Page) {
-  await page.route('**/auth/password/reset', (r) => r.fulfill(json({ data: { changed: true } })));
+  await page.route('**/auth/password/reset', (r) => r.fulfill(json({ data: { done: true } })));
   await page.locator('#np').fill('Good-pass-1');
   await page.locator('#cp').fill('Good-pass-1');
   await Promise.all([page.waitForResponse('**/auth/password/reset'), page.getByTestId('set-submit').click()]);
 }
 
+// UX-LGN-06: the HF shows "Change password" enabled and checks on submit; the agreed criterion keeps it off until all rules are met. The button (#go, same id in both) is painted grey until IPL decides.
 // UX-LGN-02 and UX-LGN-03: the app leaves out the line "For A. Kumar (10002)." (it needs a token-check call that shows the name) and the sentence about a confirmation e-mail (no story).
 // The same words are taken out of the HF picture, so both pictures hold the same text.
 async function dropNameLine(page: Page) {
@@ -104,7 +105,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-04-request', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html' }, app: { url: '/forgot-password', prepare: mockConfig } },
   // UX-LGN-01: the HF shows 3 characters of the address, the agreed rule shows 2. The masked address (#mk, same id in both) is painted grey until IPL decides.
   { id: 'UX-LGN-05-sent', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html', suffix: '#sent', steps: dropDemoLink }, app: { url: '/forgot-password', prepare: mockConfig, steps: askForLink }, mask: ['#mk'] },
-  { id: 'UX-LGN-06-set', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#set', steps: dropNameLine }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }) } },
+  { id: 'UX-LGN-06-set', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#set', steps: dropNameLine }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }) }, mask: ['#go'] },
   { id: 'UX-LGN-07-done', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#done', steps: dropConfirmationSentence }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }), steps: changePassword } },
   { id: 'UX-LGN-06-expired', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#expired' }, app: { url: '/set-password?token=old', prepare: (p) => openSetPassword(p, { status: 410, body: { error: { code: 'LINK_EXPIRED', message: 'x', fields: [], details: {} } } }) } },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
