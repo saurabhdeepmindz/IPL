@@ -61,6 +61,15 @@ export function makeLocalUser(status: 'ACTIVE' | 'INACTIVE' = 'ACTIVE', mustChan
   return code;
 }
 
+/**
+ * Gives a user a standard role in a company (valid from 30 days ago, no end).
+ *
+ * In plain words: the user then holds that role there today. `removeMadeUsers` removes the rows with the user.
+ */
+export function grantRoleInDatabase(code: string, roleCode: string, company: string): void {
+  execSync(`${DB} "insert into user_company_roles (id, user_id, role_id, company_code, valid_from, assigned_by) select gen_random_uuid(), u.id, r.id, '${company}', current_date - 30, '10001' from users u, roles r where u.employee_code = '${code}' and r.code = '${roleCode}'"`);
+}
+
 export function unlockInDatabase(code: string): void {
   execSync(`${DB} "update users set locked_until = now() - interval '1 minute' where employee_code = '${code}'"`);
 }
@@ -68,7 +77,7 @@ export function unlockInDatabase(code: string): void {
 /** Removes the users made by makeLocalUser and their audit rows. */
 export function removeMadeUsers(): void {
   for (const code of made.splice(0)) {
-    for (const table of ['password_reset_tokens', 'password_history', 'one_time_passwords']) {
+    for (const table of ['user_company_roles', 'password_reset_tokens', 'password_history', 'one_time_passwords']) {
       execSync(`${DB} "delete from ${table} where user_id = (select id from users where employee_code = '${code}')"`);
     }
     execSync(`${DB} "delete from audit_log where entity_key = '${code}'"`);
