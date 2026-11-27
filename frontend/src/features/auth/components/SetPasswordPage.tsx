@@ -25,43 +25,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import type { ApiError } from '@/lib/errors';
 import { hf } from '../hf/hf';
-import { Icon } from '../hf/Icon';
 import { usePublicConfig } from '../hooks/usePublicConfig';
 import { useResetLink, useSetPassword } from '../hooks/usePasswordFlow';
 import { newPasswordSchema } from '../schemas/passwordSchema';
 import { AuthShell } from './AuthShell';
 import { LinkExpiredPage } from './LinkExpiredPage';
 import { PasswordChangedPage } from './PasswordChangedPage';
+import { FieldError, PasswordBox } from './PasswordFields';
 import { PasswordRules } from './PasswordRules';
 import { StrengthBar } from './StrengthBar';
 
 interface Values {
   newPassword: string;
   confirm: string;
-}
-
-/** One password field of the design: the box with Show inside it. */
-function PasswordBox(props: { id: string; testId: string; show: boolean; onToggle: () => void; field: object }) {
-  return (
-    <div className={hf('pw')}>
-      <input id={props.id} className={hf('input')} type={props.show ? 'text' : 'password'} autoComplete="new-password" data-testid={props.testId} {...props.field} />
-      <button className={hf('eye')} type="button" aria-label={props.show ? 'Hide password' : 'Show password'} aria-pressed={props.show} onClick={props.onToggle}>
-        {props.show ? 'Hide' : 'Show'}
-      </button>
-    </div>
-  );
-}
-
-function FieldError(props: { id: string; text?: string }) {
-  if (!props.text) return null;
-  return (
-    <span className={hf('err')} data-testid={props.id}>
-      <span>
-        <Icon name="alertC" />
-      </span>
-      <span>{props.text}</span>
-    </span>
-  );
 }
 
 /** Words for a refused save: the server's own message for a reused password, the list of unmet rules for a policy failure. */

@@ -15,6 +15,7 @@
 
 import { type ReactNode } from 'react';
 import { ThemeProvider } from 'next-themes';
+import { MustChangeRedirect } from '@/features/auth/components/MustChangeRedirect';
 import { QueryProvider } from '@/providers/QueryProvider';
 
 interface AppProvidersProps {
@@ -33,7 +34,10 @@ export function AppProviders({ children }: AppProvidersProps) {
       enableSystem={false}
       disableTransitionOnChange
     >
-      <QueryProvider>{children}</QueryProvider>
+      <QueryProvider>
+        <MustChangeRedirect />
+        {children}
+      </QueryProvider>
     </ThemeProvider>
   );
 }

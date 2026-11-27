@@ -83,6 +83,8 @@ test.describe('User changes a temporary password at first sign-in (US-LGN02-008)
     await tid(page, 'choose-submit').click();
     await page.waitForURL('**/choose-work**');
     await shot(page, 'TC-LGN02-008-E02_saved');
+    // the session cookie would send /login straight on, so start again as a new visitor
+    await page.context().clearCookies();
     await page.goto('/login');
     await submitPassword(page, code, NEW_PASSWORD);
     await page.waitForURL('**/choose-work**');

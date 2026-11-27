@@ -64,3 +64,24 @@ export const newPasswordSchema = z
     if (unmet.length) ctx.addIssue({ code: 'custom', path: ['newPassword'], message: `The password does not meet: ${unmet.map((r) => r.label.toLowerCase()).join('; ')}.` });
     if (v.confirm !== v.newPassword) ctx.addIssue({ code: 'custom', path: ['confirm'], message: 'The two passwords do not match.' });
   });
+
+/**
+ * changeTemporarySchema.
+ *
+ * In plain words: the temporary-password form needs the temporary password, a new password that meets the five rules and differs from the temporary one, and the same new password again.
+ *
+ * @epic      EPIC-LGN-02
+ * @story     US-LGN02-008
+ * @subtask   ST-LGN02-008-FE-02
+ * @ac        AC-US-LGN02-008-02, AC-US-LGN02-008-03
+ * @lld       LLD-EPIC-LGN-02 v0.4 §6.5
+ * @status    built
+ */
+export const changeTemporarySchema = z
+  .object({ temporaryPassword: z.string().min(1, 'Enter the temporary password from the e-mail').max(128), newPassword: z.string().max(128), confirm: z.string().max(128) })
+  .superRefine((v, ctx) => {
+    const unmet = evaluateRules(v.newPassword).filter((r) => !r.met);
+    if (unmet.length) ctx.addIssue({ code: 'custom', path: ['newPassword'], message: `The password does not meet: ${unmet.map((r) => r.label.toLowerCase()).join('; ')}.` });
+    else if (v.newPassword === v.temporaryPassword) ctx.addIssue({ code: 'custom', path: ['newPassword'], message: 'Choose a password different from the temporary one.' });
+    if (v.confirm !== v.newPassword) ctx.addIssue({ code: 'custom', path: ['confirm'], message: 'The two passwords do not match.' });
+  });

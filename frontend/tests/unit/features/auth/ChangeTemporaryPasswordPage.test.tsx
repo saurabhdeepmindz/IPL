@@ -19,19 +19,24 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ChangeTemporaryPasswordPage } from '@/features/auth/components/ChangeTemporaryPasswordPage';
 import { useChangeTemporaryPassword } from '@/features/auth/hooks/usePasswordFlow';
 import { authHttp } from '@/features/auth/services/auth.service';
 import { changeTemporaryPassword } from '@/features/auth/services/password.service';
 import { ApiError } from '@/lib/errors';
 import { clearAccessToken, getAccessToken, setAccessToken } from '@/lib/token';
+import { useSessionStore } from '@/store/session.store';
 
 const push = vi.hoisted(() => vi.fn());
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }) }));
 
 const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={new QueryClient({ defaultOptions: { mutations: { retry: false } } })}>{children}</QueryClientProvider>;
+const config = { data: { data: { ssoAvailable: true, idpMode: 'saml', helpdesk: { phone: '1', email: 'it@ipl.example', hours: 'x', placeholder: false } } } };
+const renderPage = () => render(<ChangeTemporaryPasswordPage />, { wrapper });
 const input = { temporaryPassword: 'Temp#4821', newPassword: 'Fresh#Pass2026' };
 const saved = { data: { data: { nextStep: 'CHOOSE_WORK', accessToken: 'tok-new', expiresIn: 900 } } };
 
@@ -39,14 +44,26 @@ describe('User changes a temporary password at first sign-in (US-LGN02-008)', ()
   beforeEach(() => {
     setAccessToken('tok-temporary');
     push.mockClear();
+    useSessionStore.getState().signIn({ userId: '', employeeCode: '20488', companyCode: '' });
+    vi.spyOn(authHttp, 'get').mockResolvedValue(config);
   });
   afterEach(() => {
     vi.restoreAllMocks();
     clearAccessToken();
+    useSessionStore.getState().signOut();
   });
 
   /** @tc TC-LGN02-008-J01 @story US-LGN02-008 @ac AC-US-LGN02-008-01 @subtask ST-LGN02-008-FE-02 */
-  it.todo('TC-LGN02-008-J01 (owned by Task 12, the page: ST-LGN02-008-FE-02) Given a user with a temporary password, when the user signs in, then this page is shown and no other page opens until the password is changed');
+  it('TC-LGN02-008-J01 the page is shown with the user chip and Sign out, and Sign out ends the session', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    expect(screen.getByTestId('choose-page')).toHaveTextContent('Choose your own password');
+    expect(screen.getByTestId('choose-chip')).toHaveTextContent('20488');
+    await user.click(screen.getByTestId('choose-sign-out'));
+    expect(push).toHaveBeenCalledWith('/login?reason=signedout');
+    expect(getAccessToken()).toBeNull();
+    expect(useSessionStore.getState().status).toBe('signedOut');
+  });
 
   /** @tc TC-LGN02-008-J02 @story US-LGN02-008 @ac AC-US-LGN02-008-02 @subtask ST-LGN02-008-FE-01 */
   it('TC-LGN02-008-J02 the call sends the temporary token, the hook keeps the new token and goes on to company and year', async () => {
@@ -61,7 +78,38 @@ describe('User changes a temporary password at first sign-in (US-LGN02-008)', ()
   });
 
   /** @tc TC-LGN02-008-J03 @story US-LGN02-008 @ac AC-US-LGN02-008-03 @subtask ST-LGN02-008-FE-02 */
-  it.todo('TC-LGN02-008-J03 (owned by Task 12, the page: ST-LGN02-008-FE-02) Given a wrong temporary password, when the user saves, then a plain error is shown');
+  it('TC-LGN02-008-J03 a wrong temporary password shows a plain error with the attempts left and keeps the form', async () => {
+    vi.spyOn(authHttp, 'post').mockRejectedValue({ response: { status: 401, data: { error: { code: 'INVALID_CREDENTIALS', message: 'x', fields: [], details: { attemptsLeft: 4 } } } } });
+    const user = userEvent.setup();
+    renderPage();
+    await user.type(screen.getByTestId('choose-temp'), 'wrong-one');
+    await user.type(screen.getByTestId('choose-new'), 'Fresh#Pass2026');
+    await user.type(screen.getByTestId('choose-confirm'), 'Fresh#Pass2026');
+    await user.click(screen.getByTestId('choose-submit'));
+    expect(await screen.findByTestId('choose-error')).toHaveTextContent('not the temporary password the IT team sent. 4 attempts left.');
+    expect(screen.getByTestId('choose-new')).toHaveValue('Fresh#Pass2026');
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  /** @story US-LGN02-008 @ac AC-US-LGN02-008-02 @subtask ST-LGN02-008-FE-02 In plain words: supporting test. Empty or unequal entries are stopped in the browser, the same password as the temporary one too, and good entries are saved and lead on. */
+  it('supporting: the form stops bad entries in the browser and saves good ones', async () => {
+    const post = vi.spyOn(authHttp, 'post').mockResolvedValue(saved);
+    const user = userEvent.setup();
+    renderPage();
+    await user.click(screen.getByTestId('choose-submit'));
+    expect(await screen.findByTestId('choose-error')).toHaveTextContent('Enter the temporary password');
+    await user.type(screen.getByTestId('choose-temp'), 'Fresh#Pass2026');
+    await user.type(screen.getByTestId('choose-new'), 'Fresh#Pass2026');
+    await user.type(screen.getByTestId('choose-confirm'), 'Fresh#Pass2026');
+    await user.click(screen.getByTestId('choose-submit'));
+    expect(await screen.findByTestId('choose-error-new')).toHaveTextContent('different from the temporary one');
+    expect(post).not.toHaveBeenCalled();
+    await user.clear(screen.getByTestId('choose-temp'));
+    await user.type(screen.getByTestId('choose-temp'), 'Temp#4821');
+    await user.click(screen.getByTestId('choose-submit'));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/choose-work'));
+    expect(post).toHaveBeenCalledTimes(1);
+  });
 
   /** @story US-LGN02-008 @ac AC-US-LGN02-008-03 @subtask ST-LGN02-008-FE-01 In plain words: supporting test. A wrong temporary password reaches the page as a 401 with the attempts left, and the token is not replaced. */
   it('supporting: a wrong temporary password is an ApiError 401 with the attempts left and the token stays', async () => {

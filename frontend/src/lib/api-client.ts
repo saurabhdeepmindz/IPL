@@ -24,6 +24,17 @@ export const REFRESH_PATH = '/auth/refresh';
 
 type Retryable = InternalAxiosRequestConfig & { _retried?: boolean };
 
+let mustChangeHandler: (() => void) | null = null;
+
+/**
+ * Registers what happens when an API answers 403 MUST_CHANGE_PASSWORD.
+ *
+ * In plain words: the app registers a function that sends the user to /choose-password without reloading the page (a reload would lose the token held in memory). Decision S-2 of EPIC-LGN-02.
+ */
+export function setMustChangeHandler(handler: (() => void) | null): void {
+  mustChangeHandler = handler;
+}
+
 /**
  * Build an API client.
  *
@@ -65,6 +76,7 @@ export function createApiClient(adapter?: AxiosAdapter, refreshUrl: string = REF
     async (error: unknown) => {
       const apiError = toApiError(error);
       const config = (error as { config?: Retryable }).config;
+      if (apiError.status === 403 && apiError.code === 'MUST_CHANGE_PASSWORD') mustChangeHandler?.();
       if (apiError.status !== 401 || !config) throw apiError;
       if (config._retried) {
         endSession();
