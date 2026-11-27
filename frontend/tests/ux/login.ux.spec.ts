@@ -11,9 +11,9 @@
  * @since   2026-11-26
  *
  * @epic       EPIC-LGN-01, EPIC-LGN-02
- * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007, US-LGN02-008, US-LGN03-003
+ * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007, US-LGN02-008, US-LGN03-003, US-LGN03-004
  * @workflow   UF-01
- * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07, UX-LGN-08, UX-LGN-09
+ * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07, UX-LGN-08, UX-LGN-09, UX-LGN-10
  * @lld            LLD-EPIC-LGN-01 v0.5 §15
  * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/ux/login.ux.spec.ts
@@ -135,6 +135,17 @@ async function waitForChoosePage(page: Page) {
   await page.getByTestId('choose-company').waitFor();
 }
 
+// UX-LGN-10 (R15): "No company access yet". The profile has no company; the helpdesk values are the placeholders of the design. The reference ("Quote reference ...") is computed by the app and is a fixed sample in the HF, so it is painted grey (UX-LGN-11).
+async function mockNoCompany(page: Page) {
+  await mockConfig(page);
+  await page.context().addCookies([{ name: 'ams_session', value: '1', url: BASE }]);
+  await page.route('**/me', (r) => r.fulfill(json({ data: { ...PROFILE_10002.data, companies: [], helpdesk: CONFIG.helpdesk } })));
+}
+
+async function waitForNoAccessPage(page: Page) {
+  await page.getByTestId('no-access').waitFor();
+}
+
 async function useDepartmentOfApp(page: Page) {
   await page.locator('#wd').evaluate((s) => { s.textContent = 'Employee code 10002'; });
 }
@@ -168,6 +179,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-06-expired', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#expired' }, app: { url: '/set-password?token=old', prepare: (p) => openSetPassword(p, { status: 410, body: { error: { code: 'LINK_EXPIRED', message: 'x', fields: [], details: {} } } }) } },
   { id: 'UX-LGN-08-change', hf: { file: '01-Login-User-Flow/HF-LGN-08-change-temporary-password.html', steps: useChipOfApp }, app: { url: '/login', prepare: mockConfig, steps: signInWithTemporaryPassword }, mask: ['#av'] },
   { id: 'UX-LGN-09-company', hf: { file: '01-Login-User-Flow/HF-LGN-09-choose-company.html', steps: useDepartmentOfApp }, app: { url: '/choose-work', prepare: mockChoose, steps: waitForChoosePage } },
+  { id: 'UX-LGN-10-no-access', hf: { file: '01-Login-User-Flow/HF-LGN-10-no-company-access.html', steps: useDepartmentOfApp }, app: { url: '/no-company-access', prepare: mockNoCompany, steps: waitForNoAccessPage }, mask: ['.hf-contact .hf-mono'] },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
