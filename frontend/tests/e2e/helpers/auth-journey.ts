@@ -34,9 +34,28 @@ const made: string[] = [];
 export const tid = (page: Page, id: string): Locator => page.getByTestId(id).filter({ visible: true });
 export const shot = (page: Page, name: string) => page.screenshot({ path: `${SHOTS}/${name}.png`, fullPage: true });
 
+const drawnCodes = new Set<string>();
+
+/**
+ * Draws an employee code that is free.
+ *
+ * In plain words: picks a five-digit code from `low` up to (not including) `low + span`, and tries again when a user already has it or an earlier draw of this run took it, so a journey never fails with "employee_code already exists" (follow-up B24).
+ */
+export function freeEmployeeCode(low: number, span: number): string {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const code = String(low + Math.floor(Math.random() * span));
+    if (drawnCodes.has(code)) continue;
+    const rows = execSync(`${DB} "select 1 from users where employee_code = '${code}'"`).toString();
+    if (!rows.includes('(0 rows)')) continue;
+    drawnCodes.add(code);
+    return code;
+  }
+  throw new Error(`no free employee code in ${low}..${low + span - 1}`);
+}
+
 /** Makes an Active (or other status) password user with a known password. Returns the employee code. */
 export function makeLocalUser(status: 'ACTIVE' | 'INACTIVE' = 'ACTIVE', mustChange = false): string {
-  const code = String(70000 + (Math.floor(Math.random() * 9000) + (Date.now() % 1000)) % 9999);
+  const code = freeEmployeeCode(70000, 9999);
   execSync(`${DB} "insert into users (id, employee_code, full_name, email, auth_type, password_hash, must_change_password, status, updated_at) values (gen_random_uuid(), '${code}', 'Journey ${code}', 'j${code}@example.invalid', 'LOCAL', '${HASH}', ${mustChange}, '${status}', now())"`);
   made.push(code);
   return code;

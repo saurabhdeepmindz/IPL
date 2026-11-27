@@ -20,7 +20,7 @@
 
 import { execSync } from 'node:child_process';
 import { expect, test, type APIRequestContext } from '@playwright/test';
-import { DB, PASSWORD, removeMadeUsers, shot, submitPassword, tid } from '../helpers/auth-journey';
+import { DB, freeEmployeeCode, PASSWORD, removeMadeUsers, shot, submitPassword, tid } from '../helpers/auth-journey';
 
 const API = process.env.API_URL ?? 'http://localhost:3100/api/v1';
 const HASH = '$2b$12$2jFUI/81n4RIbETaphMEPOz9agYiEQ9ssh5jia3BPY87Dt8B1ectq';
@@ -30,7 +30,7 @@ const admin = async (request: APIRequestContext) => ({ Authorization: `Bearer ${
 
 /** The Administrator adds a password user through the API; the one-time password e-mail arrives with EPIC-LGN-02, so a known password hash is set in the database instead (stand-in register). */
 async function adminCreates(request: APIRequestContext): Promise<string> {
-  const code = String(50000 + (Math.floor(Math.random() * 9000) + (Date.now() % 1000)) % 9999);
+  const code = freeEmployeeCode(50000, 9999);
   const json = async (path: string) => (await (await request.get(`${API}${path}`, { headers: await admin(request) })).json()).data.items as { id?: string; roleId?: string; name: string; isHighest?: boolean }[];
   const dept = (await json('/masters/departments'))[0];
   const desig = (await json('/masters/designations')).find((d) => !d.isHighest) ?? (await json('/masters/designations'))[0];

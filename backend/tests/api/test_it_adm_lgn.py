@@ -21,6 +21,7 @@ import uuid
 import pytest
 import requests
 from conftest import bearer
+from codes import free_code
 
 
 @pytest.fixture()
@@ -32,7 +33,7 @@ def admin_made(api, admin_token, db, made):
     desig = str(db.run("SELECT id FROM designations WHERE NOT is_highest ORDER BY code LIMIT 1")[0][0])
 
     def _make() -> str:
-        code = str(60000 + int(uuid.uuid4().hex[:4], 16) % 9999)
+        code = free_code(db, 60000, 9999)
         codes.append(code)
         body = {
             "employeeCode": code, "fullName": f"IT Login {code}", "email": f"itlogin{code}@example.invalid", "mobile": "9876543210",

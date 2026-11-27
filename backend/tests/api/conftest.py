@@ -27,6 +27,7 @@ from urllib.parse import urlparse
 import pg8000.native
 import pytest
 import requests
+from codes import free_code
 
 API = os.environ.get("AMS_API_URL", "http://localhost:3000/api/v1")
 DB_URL = os.environ.get("AMS_DATABASE_URL", "postgresql://ams:ams@localhost:5433/ams")
@@ -97,7 +98,7 @@ def made(db):
         def user(self, role_id: str, company: str = "IPL", valid_to: date | None = None, department: str | None = None) -> tuple[str, str]:
             """Make an Active user holding the role in the company. Returns (user id, employee code)."""
             user_id = str(uuid.uuid4())
-            code = str(90000 + int(user_id[:4], 16) % 9999)
+            code = free_code(db, 90000, 9999)
             dept_id = None
             if department:
                 dept_id = str(db.run("SELECT id FROM departments WHERE code = :c", c=department)[0][0])
@@ -156,7 +157,7 @@ def local_user(db):
 
     def _make(status: str = "ACTIVE", must_change: bool = False) -> tuple[str, str]:
         user_id = str(uuid.uuid4())
-        code = str(80000 + int(user_id[:4], 16) % 9999)
+        code = free_code(db, 80000, 9999)
         db.run(
             "INSERT INTO users (id, employee_code, full_name, email, auth_type, password_hash, must_change_password, status, updated_at) "
             "VALUES (CAST(:id AS uuid), :code, 'Login Test', :email, 'LOCAL', :h, :m, CAST(:s AS \"UserStatus\"), now())",

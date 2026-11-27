@@ -20,7 +20,7 @@
 
 import { execSync } from 'node:child_process';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
-import { DB, shot, submitPassword, tid, waitForOneTimePassword } from '../helpers/auth-journey';
+import { DB, freeEmployeeCode, shot, submitPassword, tid, waitForOneTimePassword } from '../helpers/auth-journey';
 
 const API = process.env.API_URL ?? 'http://localhost:3100/api/v1';
 let code = '';
@@ -73,7 +73,7 @@ test.describe('QA engineer verifies the Administrator one-time password e-mail g
     browser,
     request,
   }) => {
-    code = String(63000 + ((Math.floor(Math.random() * 900) + (Date.now() % 100)) % 999));
+    code = freeEmployeeCode(63000, 999);
     const email = `itadmmail${code}@example.invalid`;
     const dept = (await names(request, 'departments'))[0].name;
     const desig = (await names(request, 'designations')).find((d) => !d.isHighest)!.name;

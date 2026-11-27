@@ -19,6 +19,7 @@ import uuid
 
 import requests
 from conftest import bearer, message_text, trap_messages, wait_for_mail
+from codes import free_code
 
 SUBJECT = "one-time password"
 
@@ -37,7 +38,7 @@ def test_tc_lgn02_010_p01(api, auth_api, admin_token, db, made):
     role_id, _ = made.role({})
     dept = str(db.run("SELECT id FROM departments ORDER BY code LIMIT 1")[0][0])
     desig = str(db.run("SELECT id FROM designations WHERE NOT is_highest ORDER BY code LIMIT 1")[0][0])
-    code = str(62000 + int(uuid.uuid4().hex[:3], 16) % 999)
+    code = free_code(db, 62000, 999)
     address = f"itadm{code}@example.invalid"
     body = {"employeeCode": code, "fullName": f"It Adm {code}", "email": address, "mobile": "9876543210", "departmentId": dept, "designationId": desig,
             "reportingManagerCode": "10001", "signIn": "LOCAL", "companies": [{"companyCode": "IPL", "roleIds": [role_id], "validFrom": "2026-12-01"}]}

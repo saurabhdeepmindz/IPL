@@ -22,6 +22,7 @@ import uuid
 import pytest
 import requests
 from conftest import bearer
+from codes import free_code
 
 
 @pytest.fixture()
@@ -40,7 +41,7 @@ def wr(api, admin_token, db, made):
         top = highest
 
         def code(self) -> str:
-            code = str(40000 + int(uuid.uuid4().hex[:4], 16) % 9999)
+            code = free_code(db, 40000, 9999)
             codes.append(code)
             return code
 

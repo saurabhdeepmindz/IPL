@@ -21,6 +21,7 @@ import uuid
 import pytest
 import requests
 from conftest import bearer
+from codes import free_code
 
 
 @pytest.fixture()
@@ -33,7 +34,7 @@ def imp(api, admin_token, db, made):
 
     class Import:
         def row(self, n: int | None = None, **over) -> dict:
-            code = str(50000 + int(uuid.uuid4().hex[:4], 16) % 9999) if n is None else str(n)
+            code = free_code(db, 50000, 9999) if n is None else str(n)
             codes.append(code)
             base = {
                 "employeeCode": code, "fullName": f"Import {code}", "email": f"imp{code}@example.invalid", "mobile": "9876543210",

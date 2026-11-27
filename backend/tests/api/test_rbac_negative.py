@@ -28,6 +28,7 @@ from pathlib import Path
 import pytest
 import requests
 from conftest import bearer
+from codes import free_code
 from rbac_routes import ROUTES, SIX_ROLES, Route
 
 OUT = Path(os.environ.get("RBAC_OUT", "rbac-out"))
@@ -60,13 +61,13 @@ def allowed(matrix: dict, role: str, permission: str) -> bool:
 @pytest.fixture(scope="session")
 def role_tokens(api, db, sign_in, matrix):
     """One test user per role in company IPL, signed in; the users are removed after the run."""
-    base = 60000 + (int(uuid.uuid4().hex[:4], 16) % 3000) * 10
+    codes6 = [free_code(db, 60000, 30000) for _ in SIX_ROLES]
     made: list[str] = []
     tokens: dict[str, str] = {}
     for i, role in enumerate(SIX_ROLES):
         role_id = next(r["roleId"] for r in matrix["roles"] if r["name"] == role)
         user_id = str(uuid.uuid4())
-        code = str(base + i)
+        code = codes6[i]
         db.run(
             "INSERT INTO users (id, employee_code, full_name, email, updated_at) VALUES (CAST(:id AS uuid), :code, :name, :email, now())",
             id=user_id, code=code, name=f"RBAC {role}", email=f"rbac{user_id[:8]}@example.invalid",

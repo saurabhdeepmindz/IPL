@@ -23,6 +23,7 @@ import uuid
 
 import requests
 from conftest import AUTH, bearer, link_token, message_text, trap_messages, user_email, wait_for_mail
+from codes import free_code
 
 
 def ask(code: str, email: str):
@@ -68,7 +69,7 @@ def test_tc_lgn02_005_p03(api, auth_api, admin_token, db, made):
     role_id, _ = made.role({})
     dept = str(db.run("SELECT id FROM departments ORDER BY code LIMIT 1")[0][0])
     desig = str(db.run("SELECT id FROM designations WHERE NOT is_highest ORDER BY code LIMIT 1")[0][0])
-    code = str(61000 + int(uuid.uuid4().hex[:3], 16) % 999)
+    code = free_code(db, 61000, 999)
     address = f"mail{code}@example.invalid"
     body = {"employeeCode": code, "fullName": f"Mail Test {code}", "email": address, "mobile": "9876543210", "departmentId": dept, "designationId": desig,
             "reportingManagerCode": "10001", "signIn": "LOCAL", "companies": [{"companyCode": "IPL", "roleIds": [role_id], "validFrom": "2026-12-01"}]}

@@ -20,6 +20,7 @@
 import uuid
 
 import pytest
+from codes import free_code
 import requests
 from conftest import AUTH, link_token, make_reset_token, trap_messages, user_email, wait_for_mail  # noqa: F401
 
@@ -33,7 +34,7 @@ def test_tc_lgn02_001_p01(local_user, db):
     In plain words: the answer is the same 202 whether or not the code and e-mail match."""
     _, code = local_user()
     hit = ask(code, user_email(db, code))
-    miss = ask(str(90000 + int(uuid.uuid4().hex[:4], 16) % 9999), "nobody@example.invalid")
+    miss = ask(free_code(db, 90000, 9999), "nobody@example.invalid")
     wrong = ask(code, "wrong@example.invalid")
     assert hit.status_code == miss.status_code == 202
     assert hit.json() == miss.json()
