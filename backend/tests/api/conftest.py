@@ -176,6 +176,25 @@ def local_user(db):
         db.run("DELETE FROM users WHERE id = CAST(:u AS uuid)", u=user_id)
 
 
+@pytest.fixture()
+def grant_role(db):
+    """Give a user a role in a company (valid from 30 days ago unless a range is given); the rows are removed after the test. Ask for it AFTER `local_user` so it is removed first."""
+    given: list[str] = []
+
+    def _grant(user_id: str, role_id: str, company: str, valid_from: date | None = None, valid_to: date | None = None) -> None:
+        row_id = str(uuid.uuid4())
+        db.run(
+            "INSERT INTO user_company_roles (id, user_id, role_id, company_code, valid_from, valid_to, assigned_by) VALUES (CAST(:id AS uuid), CAST(:u AS uuid), CAST(:r AS uuid), :c, :vf, :vt, '10001')",
+            id=row_id, u=user_id, r=role_id, c=company, vf=valid_from or date.today() - timedelta(days=30), vt=valid_to,
+        )
+        given.append(row_id)
+
+    yield _grant
+
+    for row_id in given:
+        db.run("DELETE FROM user_company_roles WHERE id = CAST(:i AS uuid)", i=row_id)
+
+
 def audit_after(db, code: str) -> list[str]:
     """The `after` text of every sign-in audit row written for an employee code, oldest first."""
     return [r[0] for r in db.run("SELECT after::text FROM audit_log WHERE entity_key = :c ORDER BY created_at", c=code)]

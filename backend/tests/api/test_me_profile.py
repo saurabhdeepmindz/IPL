@@ -114,7 +114,7 @@ def test_tc_lgn03_001_p04(api, local_user):
     assert data["context"] is None
 
 
-def test_me_after_the_real_sign_in(api, db, local_user, made):
+def test_me_after_the_real_sign_in(api, local_user, grant_role, made):
     """@story US-LGN03-001
     @ac AC-US-LGN03-001-02
     @subtask ST-LGN03-001-BE-03
@@ -122,7 +122,7 @@ def test_me_after_the_real_sign_in(api, db, local_user, made):
     """
     user_id, code = local_user()
     role_id, role_name = made.role({})
-    add_company_role(db, user_id, role_id, "IPL")
+    grant_role(user_id, role_id, "IPL")
     token = real_sign_in(code)
     res = get_me(api, token)
     assert res.status_code == 200, res.text
