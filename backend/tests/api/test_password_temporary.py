@@ -59,3 +59,21 @@ def test_tc_lgn02_004_p03(local_user, db):
     res = change(token, "wrong-temp", "Newpass1!")
     assert res.status_code == 401 and res.json()["error"]["code"] == "INVALID_CREDENTIALS"
     assert db.run("SELECT failed_attempts FROM users WHERE id = CAST(:u AS uuid)", u=user_id)[0][0] == 1
+
+
+def test_change_clears_the_flag_for_good(api, local_user):
+    """@story US-LGN03-002
+    @ac AC-US-LGN03-002-01
+    @subtask ST-LGN03-002-BE-02
+    In plain words: follow-up B23. After the temporary password is changed, the new session is a normal one: its token opens GET /me, and so does every token it is refreshed into.
+    """
+    _, code = local_user(must_change=True)
+    token = sign_in(code).json()["data"]["accessToken"]
+    res = change(token, TEST_PASSWORD, "Newpass1!")
+    assert res.status_code == 200
+    new_token = res.json()["data"]["accessToken"]
+    assert requests.get(f"{api}/me", headers=bearer(new_token), timeout=10).status_code == 200
+    cookie = res.headers["set-cookie"].split("ams_refresh=")[1].split(";")[0]
+    renewed = requests.post(f"{AUTH}/refresh", headers={"Cookie": f"ams_refresh={cookie}"}, timeout=15)
+    assert renewed.status_code == 200
+    assert requests.get(f"{api}/me", headers=bearer(renewed.json()["data"]["accessToken"]), timeout=10).status_code == 200

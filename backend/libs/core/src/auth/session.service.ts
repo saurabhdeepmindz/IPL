@@ -34,6 +34,8 @@ interface SessionRecord {
   employeeCode: string;
   departmentId: string | null;
   company: string;
+  /** True while the user must change a temporary password; every renewed token carries the `mcp` claim then (follow-up B23). */
+  mustChange?: boolean;
   refreshHash: string;
 }
 
@@ -84,7 +86,7 @@ export class SessionService {
   async create(user: SessionUserInput): Promise<SessionTokens> {
     const sid = randomUUID();
     const refresh = this.tokens.newRefresh();
-    const record: SessionRecord = { userId: user.id, employeeCode: user.employeeCode, departmentId: user.departmentId, company: '', refreshHash: refresh.hash };
+    const record: SessionRecord = { userId: user.id, employeeCode: user.employeeCode, departmentId: user.departmentId, company: '', refreshHash: refresh.hash, ...(user.mustChange ? { mustChange: true } : {}) };
     await this.redis.setJson('session:' + sid, record, REFRESH_SECONDS);
     await this.redis.setJson('refresh:' + refresh.hash, { sid, used: false } satisfies RefreshRecord, REFRESH_SECONDS);
     const known = (await this.redis.getJson<string[]>('usersessions:' + user.id)) ?? [];
@@ -161,7 +163,7 @@ export class SessionService {
     const next = this.tokens.newRefresh();
     await this.redis.setJson('refresh:' + next.hash, { sid: entry.sid, used: false } satisfies RefreshRecord, REFRESH_SECONDS);
     await this.redis.setJson('session:' + entry.sid, { ...session, refreshHash: next.hash }, REFRESH_SECONDS);
-    const access = await this.tokens.issueAccess({ sub: session.userId, emp: session.employeeCode, company: session.company, dept: session.departmentId, sid: entry.sid });
+    const access = await this.tokens.issueAccess({ sub: session.userId, emp: session.employeeCode, company: session.company, dept: session.departmentId, sid: entry.sid, ...(session.mustChange ? { mcp: true } : {}) });
     return { accessToken: access.accessToken, refreshToken: next.token, expiresIn: access.expiresIn };
   }
 }

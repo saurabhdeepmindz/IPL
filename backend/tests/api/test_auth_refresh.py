@@ -53,3 +53,23 @@ def test_tc_lgn01_003_p02(auth_api, local_user):
     assert again.status_code == 401 and again.json()["error"]["code"] == "SESSION_ENDED"
     assert refresh(auth_api, second).status_code == 401  # the whole session was ended
     assert refresh(auth_api, None).status_code == 401
+
+
+def test_refresh_keeps_the_must_change_flag(auth_api, api, local_user):
+    """@story US-LGN03-002
+    @ac AC-US-LGN03-002-01
+    @subtask ST-LGN03-002-BE-02
+    In plain words: follow-up B23. A user with a temporary password signs in, refreshes, and the new token still gets 403 MUST_CHANGE_PASSWORD on a normal route; the flag is not lost by a refresh.
+    """
+    _, code = local_user(must_change=True)
+    first = sign_in(auth_api, code)
+    r = refresh(auth_api, first)
+    assert r.status_code == 200
+    token = r.json()["data"]["accessToken"]
+    res = requests.get(f"{api}/masters/departments", headers={"Authorization": f"Bearer {token}"}, timeout=10)
+    assert res.status_code == 403 and res.json()["error"]["code"] == "MUST_CHANGE_PASSWORD", res.text
+    second = r.headers["set-cookie"].split("ams_refresh=")[1].split(";")[0]
+    again = refresh(auth_api, second)
+    assert again.status_code == 200
+    res = requests.get(f"{api}/me", headers={"Authorization": f"Bearer {again.json()['data']['accessToken']}"}, timeout=10)
+    assert res.status_code == 403 and res.json()["error"]["code"] == "MUST_CHANGE_PASSWORD", res.text

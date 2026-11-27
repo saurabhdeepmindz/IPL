@@ -69,3 +69,38 @@ describe('System keeps the session and renews the access token (US-LGN01-003)', 
     await expect(svc.renew('not-a-token')).rejects.toBeInstanceOf(SessionEndedException);
   });
 });
+
+/**
+ * Follow-up B23 (R15 S29 Task 5, decision S-3 of US-LGN03-002). In plain words: a user who must change a temporary password keeps that flag through every refresh, so a refreshed token can never open more than the change-password page.
+ *
+ * @story    US-LGN03-002
+ * @subtask  ST-LGN03-002-BE-02
+ */
+describe('The must-change-password flag survives a refresh (B23)', () => {
+  /** @story US-LGN03-002 @ac AC-US-LGN03-002-01 @subtask ST-LGN03-002-BE-02 In plain words: supporting test. A session started for a user who must change the password stores the flag and the first token carries it. */
+  it('create stores the flag in the session record and puts it on the first token', async () => {
+    const { svc, redis, jwt } = build();
+    const s = await svc.create({ ...user, mustChange: true });
+    expect(jwt.verify(s.accessToken).mcp).toBe(true);
+    const record = [...redis.store.entries()].find(([k]) => k.startsWith('session:'))?.[1];
+    expect(JSON.stringify(record)).toContain('"mustChange":true');
+  });
+
+  /** @story US-LGN03-002 @ac AC-US-LGN03-002-01 @subtask ST-LGN03-002-BE-02 In plain words: the refreshed token still carries the flag. */
+  it('renew puts the flag back on the refreshed token', async () => {
+    const { svc, jwt } = build();
+    const s = await svc.create({ ...user, mustChange: true });
+    const r = await svc.renew(s.refreshToken);
+    expect(jwt.verify(r.accessToken).mcp).toBe(true);
+    const again = await svc.renew(r.refreshToken);
+    expect(jwt.verify(again.accessToken).mcp).toBe(true);
+  });
+
+  /** @story US-LGN03-002 @ac AC-US-LGN03-002-01 @subtask ST-LGN03-002-BE-02 In plain words: supporting test. A normal user never gets the flag on a refresh. */
+  it('renew adds no flag for a normal user', async () => {
+    const { svc, jwt } = build();
+    const s = await svc.create(user);
+    const r = await svc.renew(s.refreshToken);
+    expect(jwt.verify(r.accessToken).mcp).toBeUndefined();
+  });
+});
