@@ -116,3 +116,18 @@ export async function countMails(email: string): Promise<number> {
   const res = await fetch(`${TRAP}/api/v2/search?kind=to&query=${encodeURIComponent(email)}&limit=50`);
   return ((await res.json()) as { items: unknown[] }).items.length;
 }
+
+/** Waits for the one-time password e-mail of an address in the mail trap and returns the password written in it. */
+export async function waitForOneTimePassword(email: string, timeoutMs = 25000): Promise<string> {
+  const end = Date.now() + timeoutMs;
+  while (Date.now() < end) {
+    const res = await fetch(`${TRAP}/api/v2/search?kind=to&query=${encodeURIComponent(email)}&limit=10`);
+    const items = ((await res.json()) as { items: { Raw: { Data: string } }[] }).items;
+    for (const item of items) {
+      const found = /account:\s*(\S+)/.exec(decodeQuotedPrintable(item.Raw.Data));
+      if (found) return found[1];
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`No one-time password e-mail reached ${email} in ${timeoutMs} ms. Is the mail worker running?`);
+}
