@@ -32,6 +32,11 @@ async function mockConfig(page: Page) {
   await page.route('**/auth/public-config', (r) => r.fulfill(json({ data: CONFIG })));
 }
 
+// UX-LGN-05: the HF page has a shortcut "Open the link from the e-mail (demo)" that is part of the mock-up, not of the product; it is removed from the HF picture.
+async function dropDemoLink(page: Page) {
+  await page.locator('a[href*="HF-LGN-06"]').evaluate((a) => a.remove());
+}
+
 async function askForLink(page: Page) {
   await page.route('**/auth/password/forgot', (r) => r.fulfill(json({ data: { message: 'x', retryAfterSeconds: 60 } }, 202)));
   await page.locator('#code').fill('10002');
@@ -69,7 +74,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-02-cancelled', hf: { file: '01-Login-User-Flow/HF-LGN-02-sso.html', suffix: '#denied' }, app: { url: '/signing-in?state=cancelled&ref=SSO-1F9A-1000', prepare: mockConfig }, mask: ['.hf-contact .hf-mono'] },
   { id: 'UX-LGN-04-request', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html' }, app: { url: '/forgot-password', prepare: mockConfig } },
   // UX-LGN-01: the HF shows 3 characters of the address, the agreed rule shows 2. The masked address (#mk, same id in both) is painted grey until IPL decides.
-  { id: 'UX-LGN-05-sent', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html', suffix: '#sent' }, app: { url: '/forgot-password', prepare: mockConfig, steps: askForLink }, mask: ['#mk'] },
+  { id: 'UX-LGN-05-sent', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html', suffix: '#sent', steps: dropDemoLink }, app: { url: '/forgot-password', prepare: mockConfig, steps: askForLink }, mask: ['#mk'] },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
