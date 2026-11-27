@@ -47,7 +47,6 @@ function wrapper({ children }: { children: ReactNode }) {
 }
 
 describe('User without a company sees the no-access page (US-LGN03-004)', () => {
-  let writeText: ReturnType<typeof vi.fn>;
   beforeEach(() => {
     push.mockClear();
     replace.mockClear();
@@ -55,8 +54,6 @@ describe('User without a company sees the no-access page (US-LGN03-004)', () => 
     useSessionStore.setState({ status: 'signedIn', user: { userId: '', employeeCode: '10002', name: 'A. Kumar', companyCode: '' }, landing: null });
     vi.spyOn(authHttp, 'get').mockResolvedValue(config);
     vi.spyOn(api, 'get').mockResolvedValue({ data: { data: noCompany } });
-    writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
   });
   afterEach(() => {
     vi.restoreAllMocks();
@@ -92,6 +89,7 @@ describe('User without a company sees the no-access page (US-LGN03-004)', () => 
   /** @story US-LGN03-004 @ac AC-US-LGN03-004-01 @subtask ST-LGN03-004-FE-01 In plain words: supporting test. Copy my details writes the name, employee code and reference to the clipboard and says so. */
   it('copies the details for the IT team', async () => {
     const user = userEvent.setup();
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText');
     render(<NoCompanyAccessPage />, { wrapper });
     await screen.findByTestId('no-access');
     await user.click(screen.getByRole('button', { name: 'Copy my details for the IT team' }));
@@ -103,13 +101,18 @@ describe('User without a company sees the no-access page (US-LGN03-004)', () => 
     expect(await screen.findByText('Details copied')).toBeInTheDocument();
   });
 
-  /** @story US-LGN03-004 @ac AC-US-LGN03-004-01 @subtask ST-LGN03-004-FE-01 In plain words: supporting test. Sign out clears the browser session and goes to the sign-in page (until EPIC-LGN-04 ends the server session). */
+  /** @story US-LGN03-004 @ac AC-US-LGN03-004-01 @subtask ST-LGN03-004-FE-01 In plain words: supporting test. Sign out clears the token, the marker cookie, the session store and every cached answer, and goes to the sign-in page (until EPIC-LGN-04 ends the server session). */
   it('signs out', async () => {
+    document.cookie = 'ams_session=1; Path=/';
+    const qc = client();
+    qc.setQueryData(['me'], noCompany);
     const user = userEvent.setup();
-    render(<NoCompanyAccessPage />, { wrapper });
+    render(<NoCompanyAccessPage />, { wrapper: ({ children }: { children: ReactNode }) => <QueryClientProvider client={qc}>{children}</QueryClientProvider> });
     await screen.findByTestId('no-access');
     await user.click(screen.getByRole('button', { name: 'Sign out' }));
     expect(getAccessToken()).toBeNull();
+    expect(document.cookie).not.toContain('ams_session');
+    expect(qc.getQueryData(['me'])).toBeUndefined();
     expect(useSessionStore.getState().status).toBe('signedOut');
     expect(push).toHaveBeenCalledWith('/login?reason=signedout');
   });

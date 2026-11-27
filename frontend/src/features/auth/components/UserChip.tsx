@@ -20,21 +20,15 @@
  * @status         built
  */
 
-import { useRouter } from 'next/navigation';
-import { clearAccessToken } from '@/lib/token';
 import { useSessionStore } from '@/store/session.store';
 import { hf } from '../hf/hf';
 import { Icon } from '../hf/Icon';
+import { useSignOut } from '../hooks/useSignOut';
 
 /** The user chip: the sign-in answer gives the employee code, not the name (decision UX-LGN-04). */
 export function UserChip() {
-  const router = useRouter();
   const code = useSessionStore((s) => s.user?.employeeCode) ?? '';
-  const signOut = () => {
-    clearAccessToken();
-    useSessionStore.getState().signOut();
-    router.push('/login?reason=signedout');
-  };
+  const signOut = useSignOut();
   return (
     <div className={hf('who')} data-testid="choose-chip">
       <span className={hf('avatar')} id="av">

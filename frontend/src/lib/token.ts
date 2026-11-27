@@ -46,3 +46,12 @@ export function setAccessToken(token: string): void {
 export function clearAccessToken(): void {
   accessToken = null;
 }
+
+/**
+ * Remove the session marker cookie.
+ *
+ * In plain words: the sign-in leaves a readable marker `ams_session` that the route gate looks for; a browser-side sign-out removes it so the gate lets the user reach the sign-in page. (The server session itself is ended by EPIC-LGN-04.)
+ */
+export function clearSessionMarker(): void {
+  if (typeof document !== 'undefined') document.cookie = 'ams_session=; Max-Age=0; Path=/';
+}

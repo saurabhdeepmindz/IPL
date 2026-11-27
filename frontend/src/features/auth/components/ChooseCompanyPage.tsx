@@ -24,12 +24,11 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { clearAccessToken } from '@/lib/token';
-import { useSessionStore } from '@/store/session.store';
 import { hf } from '../hf/hf';
 import { Icon } from '../hf/Icon';
 import { useMe, useSelectContext } from '../hooks/useMe';
 import { usePublicConfig } from '../hooks/usePublicConfig';
+import { useSignOut } from '../hooks/useSignOut';
 import type { MeProfile } from '../types/me.types';
 import { AuthShell } from './AuthShell';
 import { CompanyCard } from './CompanyCard';
@@ -41,13 +40,7 @@ export function initialsOf(name: string): string {
 }
 
 function WhoChip({ profile }: { profile: MeProfile }) {
-  const router = useRouter();
-  const signOut = () => {
-    // Until EPIC-LGN-04 ends the server session, sign-out clears the browser session (TBD-LGN03-04).
-    clearAccessToken();
-    useSessionStore.getState().signOut();
-    router.push('/login?reason=signedout');
-  };
+  const signOut = useSignOut();
   return (
     <div className={hf('who')} data-testid="choose-chip">
       <span className={hf('avatar')} id="av">
