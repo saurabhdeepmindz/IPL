@@ -3,7 +3,7 @@
  * @module  Tests (UX fidelity)
  *
  * @description
- * Pixel comparison of the Login screens with the high-fidelity (HF) mock-up: LGN-01 (sign-in and its error, locked and inactive states), LGN-02 (single sign-on states) and, from R14, LGN-04 and LGN-05 (forgot password, check your e-mail). In plain words: for each screen the HF page and the
+ * Pixel comparison of the Login screens with the high-fidelity (HF) mock-up: LGN-01 (sign-in and its error, locked and inactive states), LGN-02 (single sign-on states) and, from R14, LGN-04 and LGN-05 (forgot password, check your e-mail) and LGN-06 and LGN-07 (set a new password, changed, link expired). In plain words: for each screen the HF page and the
  * application are opened at the same size and state, photographed, and the pictures are compared pixel by pixel; the pictures are kept as proof.
  *
  * @author  Deepmindz AMS team
@@ -11,9 +11,9 @@
  * @since   2026-11-26
  *
  * @epic       EPIC-LGN-01, EPIC-LGN-02
- * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006
+ * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007
  * @workflow   UF-01
- * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05
+ * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07
  * @lld            LLD-EPIC-LGN-01 v0.5 §15
  * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/ux/login.ux.spec.ts
@@ -35,6 +35,35 @@ async function mockConfig(page: Page) {
 // UX-LGN-05: the HF page has a shortcut "Open the link from the e-mail (demo)" that is part of the mock-up, not of the product; it is removed from the HF picture.
 async function dropDemoLink(page: Page) {
   await page.locator('a[href*="HF-LGN-06"]').evaluate((a) => a.remove());
+}
+
+const LINK_OK = { data: { valid: true, maskedEmail: 'k.***@ipl.example' } };
+
+async function openSetPassword(page: Page, answer: { status: number; body: unknown }) {
+  await mockConfig(page);
+  await page.route('**/auth/password/reset/*', (r) => r.fulfill(json(answer.body, answer.status)));
+}
+
+async function changePassword(page: Page) {
+  await page.route('**/auth/password/reset', (r) => r.fulfill(json({ data: { changed: true } })));
+  await page.locator('#np').fill('Good-pass-1');
+  await page.locator('#cp').fill('Good-pass-1');
+  await Promise.all([page.waitForResponse('**/auth/password/reset'), page.getByTestId('set-submit').click()]);
+}
+
+// UX-LGN-02 and UX-LGN-03: the app leaves out the line "For A. Kumar (10002)." (it needs a token-check call that shows the name) and the sentence about a confirmation e-mail (no story).
+// The same words are taken out of the HF picture, so both pictures hold the same text.
+async function dropNameLine(page: Page) {
+  await page.locator('#who').evaluate((b) => {
+    const p = b.parentElement as HTMLElement;
+    p.textContent = 'Choose a password you have not used before.';
+  });
+}
+
+async function dropConfirmationSentence(page: Page) {
+  await page.locator('#v-done .sub').evaluate((p) => {
+    p.textContent = 'Your new password works from now on. For safety, you have been signed out of AMS on other devices.';
+  });
 }
 
 async function askForLink(page: Page) {
@@ -75,6 +104,9 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-04-request', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html' }, app: { url: '/forgot-password', prepare: mockConfig } },
   // UX-LGN-01: the HF shows 3 characters of the address, the agreed rule shows 2. The masked address (#mk, same id in both) is painted grey until IPL decides.
   { id: 'UX-LGN-05-sent', hf: { file: '01-Login-User-Flow/HF-LGN-04-forgot-password.html', suffix: '#sent', steps: dropDemoLink }, app: { url: '/forgot-password', prepare: mockConfig, steps: askForLink }, mask: ['#mk'] },
+  { id: 'UX-LGN-06-set', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#set', steps: dropNameLine }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }) } },
+  { id: 'UX-LGN-07-done', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#done', steps: dropConfirmationSentence }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }), steps: changePassword } },
+  { id: 'UX-LGN-06-expired', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#expired' }, app: { url: '/set-password?token=old', prepare: (p) => openSetPassword(p, { status: 410, body: { error: { code: 'LINK_EXPIRED', message: 'x', fields: [], details: {} } } }) } },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
