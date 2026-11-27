@@ -70,3 +70,6 @@ export const REQUIRE_PERMISSION_KEY = 'ams:require-permission';
 
 /** Metadata key under which `@Public` marks an open route. */
 export const PUBLIC_ROUTE_KEY = 'ams:public-route';
+
+/** Metadata key under which `@SessionRoute` marks a route a signed-in user may open before a company is chosen. */
+export const SESSION_ROUTE_KEY = 'ams:session-route';

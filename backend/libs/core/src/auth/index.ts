@@ -36,3 +36,4 @@ export * from './password-reset.service';
 export * from './temporary-password-change.service';
 export * from './repositories/password-history/contract';
 export * from './repositories/password-reset-token/contract';
+export * from './me-profile.types';

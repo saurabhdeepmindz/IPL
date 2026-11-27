@@ -22,7 +22,7 @@ import { ForbiddenAppException, UnauthenticatedAppException } from '@libs/common
 import { CompanyContext } from '@libs/database';
 import { SessionUserFactory } from './session-user.factory';
 import { AccessClaims } from './session-user.shape';
-import { PUBLIC_ROUTE_KEY, SessionUser } from '../authorization/session-user.interface';
+import { PUBLIC_ROUTE_KEY, SESSION_ROUTE_KEY, SessionUser } from '../authorization/session-user.interface';
 
 /** A request that carries the session user. */
 export type AuthedRequest = Request & { user?: SessionUser };
@@ -51,7 +51,7 @@ export class JwtAuthGuard implements CanActivate {
   /**
    * Decide whether the request may go on.
    *
-   * In plain words: verifies the token, sets request.user and the session company. An open route (`@Public`) is let through with no token; if a good token is sent, the user is still set.
+   * In plain words: verifies the token, sets request.user and the session company. A token with no company (the session before a company is chosen) is accepted only on a route marked `@SessionRoute`. An open route (`@Public`) is let through with no token; if a good token is sent, the user is still set.
    *
    * @param context The request context
    * @returns true when the token is good
@@ -62,7 +62,9 @@ export class JwtAuthGuard implements CanActivate {
     const req = context.switchToHttp().getRequest<AuthedRequest>();
     const header = req.headers.authorization ?? '';
     const token = header.startsWith('Bearer ') ? header.slice(7) : '';
-    const open = this.reflector.getAllAndOverride<boolean>(PUBLIC_ROUTE_KEY, [context.getHandler(), context.getClass()]) === true;
+    const targets = [context.getHandler(), context.getClass()];
+    const open = this.reflector.getAllAndOverride<boolean>(PUBLIC_ROUTE_KEY, targets) === true;
+    const sessionRoute = this.reflector.getAllAndOverride<boolean>(SESSION_ROUTE_KEY, targets) === true;
     if (!token) {
       if (open) return true;
       throw new UnauthenticatedAppException('UNAUTHENTICATED', 'Sign in to continue');
@@ -70,9 +72,9 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const claims = await this.jwt.verifyAsync<AccessClaims>(token);
       if (claims.mcp) throw new ForbiddenAppException('MUST_CHANGE_PASSWORD', 'Change your temporary password first');
-      if (!claims.company) throw new Error('not an access token');
+      if (!claims.company && !sessionRoute) throw new Error('not an access token');
       req.user = this.factory.fromClaims(claims);
-      CompanyContext.enter(req.user.companyCode);
+      if (req.user.companyCode) CompanyContext.enter(req.user.companyCode);
       return true;
     } catch (e) {
       if (e instanceof ForbiddenAppException) throw e;

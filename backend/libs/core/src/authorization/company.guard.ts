@@ -20,7 +20,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 import { Reflector } from '@nestjs/core';
 import { AuditService } from '@libs/audit';
 import { PermissionResolver } from './permission-resolver.service';
-import { PUBLIC_ROUTE_KEY, SessionUser } from './session-user.interface';
+import { PUBLIC_ROUTE_KEY, SESSION_ROUTE_KEY, SessionUser } from './session-user.interface';
 
 /** Permission that lets an Administrator list the records of ALL companies (decision L-07). */
 const VIEW_ALL_COMPANIES = 'companies.view-all';
@@ -80,6 +80,7 @@ export class CompanyGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const targets = [context.getHandler(), context.getClass()];
     if (this.reflector.getAllAndOverride<boolean>(PUBLIC_ROUTE_KEY, targets)) return true;
+    if (this.reflector.getAllAndOverride<boolean>(SESSION_ROUTE_KEY, targets)) return true; // no company is chosen yet on a session route
     const request = context.switchToHttp().getRequest<CompanyRequest>();
     const user = request.user;
     if (!user) return true; // no session: the permission guard answers 401

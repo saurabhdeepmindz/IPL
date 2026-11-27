@@ -20,6 +20,7 @@
 export * from './authorization.module';
 export * from './require-permission.decorator';
 export * from './public.decorator';
+export * from './session-route.decorator';
 export * from './permission.guard';
 export * from './company.guard';
 export * from './permission.cache';

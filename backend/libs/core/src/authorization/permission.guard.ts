@@ -20,7 +20,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Unauthor
 import { Reflector } from '@nestjs/core';
 import { AuditService } from '@libs/audit';
 import { PermissionResolver } from './permission-resolver.service';
-import { PUBLIC_ROUTE_KEY, REQUIRE_PERMISSION_KEY, SessionUser } from './session-user.interface';
+import { PUBLIC_ROUTE_KEY, REQUIRE_PERMISSION_KEY, SESSION_ROUTE_KEY, SessionUser } from './session-user.interface';
 
 /**
  * Global guard: permission check on every route.
@@ -73,6 +73,7 @@ export class PermissionGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<{ user?: SessionUser; dataScope?: unknown }>();
     const user = request.user;
     if (!user) throw new UnauthorizedException({ code: 'UNAUTHENTICATED', message: 'Sign in to continue' });
+    if (this.reflector.getAllAndOverride<boolean>(SESSION_ROUTE_KEY, targets)) return true; // a session route needs a signed-in user and no permission
     const key = this.reflector.getAllAndOverride<string | undefined>(REQUIRE_PERMISSION_KEY, targets);
     if (!key) return this.refuse(user, 'none', 'NO_PERMISSION_DECLARED');
     const access = await this.resolver.resolve(user, key);
