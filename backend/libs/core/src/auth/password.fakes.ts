@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-001, US-LGN02-002, US-LGN02-004
  * @subtask        ST-LGN02-001-BE-04
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/core/src/auth/password.fakes.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 import { PasswordResetTokenRepository, ResetTokenOwner } from './repositories/password-reset-token/contract';

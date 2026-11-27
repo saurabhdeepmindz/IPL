@@ -100,9 +100,9 @@ test.describe('User action journeys (story 008)', () => {
    * @story     US-ADM01-008
    * @ac        AC-US008-02
    * @subtask   ST-ADM01-008-FE-03
-   * In plain words: journey: the failed e-mail message with Resend. Not live yet (decision L-94): the e-mail stand-in always answers SENT; the case is proved by J02 with the contract mock and becomes live with the real e-mail adapter.
+   * In plain words: journey: the failed e-mail message with Resend. Not live (decision L-20 of EPIC-LGN-02, open): the real e-mail adapter exists since R14 and the stand-in is deleted; it answers FAILED only when the e-mail cannot be queued (the queue is down), because a failing mail server is retried in the background and shows no error to the user (decision L-11). The case is proved by J02 with the contract mock and by the Jest cases of the real mailer; a live proof needs a test that stops the queue.
    */
-  test.fixme('E02 the failed e-mail message with Resend (needs the real e-mail adapter, decision L-94)', async () => {});
+  test.fixme('E02 the failed e-mail message with Resend (needs a test that stops the queue, decision L-20 of EPIC-LGN-02)', async () => {});
 
   /**
    * @tc        TC-ADM01-008-E03

@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-005
  * @subtask        ST-LGN02-005-BE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/apps/background-worker/src/processors/mail.processor.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import { MAIL_QUEUE, MAIL_TEMPLATES, MailJob, MailTemplates, Mailman } from '@li
  *   stories:   US-LGN02-005
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-005-01, AC-US-LGN02-005-02, AC-US-LGN02-005-03, AC-US-LGN02-005-04
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 @Injectable()
 export class MailProcessor {
@@ -60,7 +60,7 @@ export class MailProcessor {
  * @subtask   ST-LGN02-005-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-005-01
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @dependencies Mailman.sendNow

@@ -11,9 +11,10 @@
  *
  * @story          US-LGN02-008
  * @subtask        ST-LGN02-008-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.4 §6.5
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.4.md
- * @lld-synced     v0.4
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.5
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
+ * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/tests/unit/lib/api-client.mustchange.test.ts
+ * @lld-synced     v0.5
  * @status         built
  */
 

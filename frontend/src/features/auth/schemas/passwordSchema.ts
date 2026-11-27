@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-007, US-LGN02-008, US-LGN02-006
  * @subtask        ST-LGN02-007-FE-01
- * @lld            LLD-EPIC-LGN-02 v0.2 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.2.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/schemas/passwordSchema.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -30,7 +30,7 @@ import { z } from 'zod';
  * @subtask   ST-LGN02-007-FE-01
  * @workflow  UF-02
  * @ac        AC-US-LGN02-007-01
- * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns { id: string; label: string; met: boolean }[]
@@ -54,7 +54,7 @@ export function evaluateRules(password: string): { id: string; label: string; me
  * @story     US-LGN02-007
  * @subtask   ST-LGN02-007-FE-01
  * @ac        AC-US-LGN02-007-01
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  */
 export const newPasswordSchema = z
@@ -74,7 +74,7 @@ export const newPasswordSchema = z
  * @story     US-LGN02-008
  * @subtask   ST-LGN02-008-FE-02
  * @ac        AC-US-LGN02-008-02, AC-US-LGN02-008-03
- * @lld       LLD-EPIC-LGN-02 v0.4 §6.5
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.5
  * @status    built
  */
 export const changeTemporarySchema = z

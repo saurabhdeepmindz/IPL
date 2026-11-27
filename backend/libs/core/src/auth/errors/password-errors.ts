@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-003, US-LGN02-002, US-LGN02-004
  * @subtask        ST-LGN02-003-BE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/core/src/auth/errors/password-errors.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -39,7 +39,7 @@ export const RULE_TEXT: Record<string, string> = {
  *   stories:   US-LGN02-002, US-LGN02-003, US-LGN02-004
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-003-01, AC-US-LGN02-003-02
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 
 /** 422 PASSWORD_POLICY: the password breaks one or more rules; `unmet` lists every rule code that is not met. */

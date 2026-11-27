@@ -12,10 +12,10 @@
  * @story          US-LGN02-002
  * @subtask        ST-LGN02-002-BE-02
  * @contract       API-PWD-02, API-PWD-03
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/core/src/auth/password-reset.service.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -47,7 +47,7 @@ function mask(email: string): string {
  *   stories:   US-LGN02-002
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-002-01, AC-US-LGN02-002-02
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 @Injectable()
 export class PasswordResetService {
@@ -71,7 +71,7 @@ export class PasswordResetService {
  * @subtask   ST-LGN02-002-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-002-01
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @throws LinkExpiredException
@@ -91,7 +91,7 @@ export class PasswordResetService {
  * @subtask   ST-LGN02-002-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-002-01, AC-US-LGN02-002-02
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @dependencies PasswordPolicyService.check, PasswordHasher.hash, UserPasswordWrites.setPasswordHash, SessionService.endAll

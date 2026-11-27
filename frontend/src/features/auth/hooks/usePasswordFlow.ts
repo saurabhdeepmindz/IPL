@@ -12,10 +12,10 @@
  * @story          US-LGN02-006, US-LGN02-007, US-LGN02-008
  * @subtask        ST-LGN02-006-FE-01
  * @contract       API-PWD-01, API-PWD-02, API-PWD-03, API-PWD-04
- * @lld            LLD-EPIC-LGN-02 v0.2 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.2.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/hooks/usePasswordFlow.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -38,7 +38,7 @@ import type { ChangeTemporaryAnswer, ForgotAnswer, ForgotInput, LinkCheck, SetPa
  * @workflow  UF-02
  * @contract  API-PWD-01
  * @ac        AC-US-LGN02-006-02, AC-US-LGN02-006-03
- * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns UseMutationResult<ForgotAnswer, ApiError, ForgotInput>
@@ -58,7 +58,7 @@ export function useForgotPassword(): UseMutationResult<ForgotAnswer, ApiError, F
  * @workflow  UF-02
  * @contract  API-PWD-02
  * @ac        AC-US-LGN02-007-03
- * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns UseQueryResult<LinkCheck>
@@ -83,7 +83,7 @@ export function useResetLink(token: string): UseQueryResult<LinkCheck> {
  * @workflow  UF-02
  * @contract  API-PWD-03
  * @ac        AC-US-LGN02-007-04
- * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns UseMutationResult<void, ApiError, SetPasswordInput>
@@ -103,7 +103,7 @@ export function useSetPassword(): UseMutationResult<void, ApiError, SetPasswordI
  * @workflow  UF-02
  * @contract  API-PWD-04
  * @ac        AC-US-LGN02-008-02
- * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns UseMutationResult<ChangeTemporaryAnswer, ApiError, TempInput>

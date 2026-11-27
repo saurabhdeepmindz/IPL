@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-007
  * @subtask        ST-LGN02-007-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/components/LinkExpiredPage.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { Icon } from '../hf/Icon';
  * @workflow  UF-02
  * @screen    LGN-06
  * @ac        AC-US-LGN02-007-03
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns nothing

@@ -12,10 +12,10 @@
  * @story          US-LGN02-001
  * @subtask        ST-LGN02-001-BE-01
  * @contract       API-PWD-01
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/apps/auth-apis/src/dtos/forgot-password.dto.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -31,7 +31,7 @@ import { IsEmail, Matches } from 'class-validator';
  *   stories:   US-LGN02-001
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-001-01
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 export class ForgotPasswordDto {
   @Matches(/^\d{5}$/, { message: 'Employee code must be 5 digits' })

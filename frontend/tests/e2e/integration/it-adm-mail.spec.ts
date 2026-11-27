@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-010
  * @subtask        ST-LGN02-010-IN-02
- * @lld            LLD-EPIC-LGN-02 v0.2 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.2.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/tests/e2e/integration/it-adm-mail.spec.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -50,6 +50,7 @@ async function openAddUser(page: Page): Promise<void> {
   await expect(page.getByRole('option', { name: /· IPL$/ }).first()).toBeAttached();
 }
 
+/** @tc IT-ADM-MAIL @workflow UF-02 (the Administrator one-time password e-mail through the real adapter) @story US-LGN02-010 @subtask ST-LGN02-010-IN-02 */
 test.describe('QA engineer verifies the Administrator one-time password e-mail goes out through the real adapter (US-LGN02-010)', () => {
   test.afterAll(async ({ request }) => {
     if (!code) return;

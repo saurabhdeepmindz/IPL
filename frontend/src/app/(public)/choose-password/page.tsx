@@ -11,9 +11,10 @@
  *
  * @story          US-LGN02-008
  * @subtask        ST-LGN02-008-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.4 §6.5
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.4.md
- * @lld-synced     v0.4
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.5
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
+ * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/app/(public)/choose-password/page.tsx
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -34,7 +35,7 @@ export const metadata: Metadata = { title: 'Choose your own password' };
  * @workflow  UF-02
  * @screen    LGN-08
  * @ac        AC-US-LGN02-008-01
- * @lld       LLD-EPIC-LGN-02 v0.4 §6.5
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.5
  */
 export default function ChoosePasswordRoute() {
   return (

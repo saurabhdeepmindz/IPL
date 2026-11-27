@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-003
  * @subtask        ST-LGN02-003-BE-03
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/core/src/auth/repositories/password-history/database.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -32,7 +32,7 @@ import { PasswordHistoryRepository } from './contract';
  *   stories:   US-LGN02-003
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-003-02
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 @Injectable()
 export class PasswordHistoryDatabaseRepository extends PasswordHistoryRepository {

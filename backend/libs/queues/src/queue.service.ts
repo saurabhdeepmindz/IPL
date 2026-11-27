@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-005
  * @subtask        ST-LGN02-005-BE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.4
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.4
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/queues/src/queue.service.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -38,7 +38,7 @@ export interface QueueJobOptions {
  *   stories:   US-LGN02-005
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-005-01, AC-US-LGN02-005-02
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.1
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.1
  */
 @Injectable()
 export class QueueService implements OnModuleDestroy {

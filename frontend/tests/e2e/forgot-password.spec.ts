@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-006
  * @subtask        ST-LGN02-006-FE-03
- * @lld            LLD-EPIC-LGN-02 v0.2 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.2.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/tests/e2e/forgot-password.spec.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.5
  * @status         built
  */
 

@@ -10,10 +10,10 @@
 @story          US-LGN02-000
 @subtask        ST-LGN02-000-BE-01, ST-LGN02-000-BE-02
 
-@lld            LLD-EPIC-LGN-02 v0.3 1
-@lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+@lld            LLD-EPIC-LGN-02 v0.5 1
+@lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
 @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/tests/api/test_lgn02_setup.py
-@lld-synced     v0.3
+@lld-synced     v0.5
 @status         built
 """
 import os

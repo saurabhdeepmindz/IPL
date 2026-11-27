@@ -13,9 +13,10 @@
  *
  * @story          US-LGN02-008
  * @subtask        ST-LGN02-008-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.4 §6.5
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.4.md
- * @lld-synced     v0.4
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.5
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
+ * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/components/ChangeTemporaryPasswordPage.tsx
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -156,7 +157,7 @@ function ChangeForm() {
  * @screen    LGN-08
  * @contract  API-PWD-04
  * @ac        AC-US-LGN02-008-01, AC-US-LGN02-008-02, AC-US-LGN02-008-03
- * @lld       LLD-EPIC-LGN-02 v0.4 §6.5
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.5
  */
 export function ChangeTemporaryPasswordPage() {
   const { data } = usePublicConfig();

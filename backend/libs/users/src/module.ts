@@ -14,7 +14,7 @@
  */
 
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { AuditModule } from '@libs/audit';
 import { MailmanModule } from '@libs/mailman';
 import { OneTimePasswordDatabaseRepository, OneTimePasswordRepository } from './repositories/one-time-password';
@@ -32,7 +32,6 @@ import { WorkflowPort } from './ports/workflow.port';
 import { WorkflowStandIn } from './ports/workflow.stand-in';
 import { TemporaryPasswordMailer } from './ports/temporary-password-mailer.port';
 import { RealTemporaryPasswordMailer } from './ports/temporary-password-mailer.real';
-import { TemporaryPasswordMailerStandIn } from './ports/temporary-password-mailer.stand-in';
 import { OneTimePasswordService } from './services/one-time-password.service';
 import { PasswordHasher } from './services/password-hasher';
 import { UserInputValidator } from './services/user-input-validator';
@@ -63,13 +62,8 @@ import { UsersQueryService } from './services/users-query.service';
     { provide: OneTimePasswordRepository, useClass: OneTimePasswordDatabaseRepository },
     UsersQueryService,
     RealTemporaryPasswordMailer,
-    TemporaryPasswordMailerStandIn,
-    // The real mailer is used when MAIL_TRANSPORT is set (ses, smtp or log); without it the stand-in answers (development and the earlier tests). Decision S-4 of US-LGN02-005.
-    {
-      provide: TemporaryPasswordMailer,
-      useFactory: (config: ConfigService, real: RealTemporaryPasswordMailer, standIn: TemporaryPasswordMailerStandIn) => (config.get('MAIL_TRANSPORT') ? real : standIn),
-      inject: [ConfigService, RealTemporaryPasswordMailer, TemporaryPasswordMailerStandIn],
-    },
+    // The one-time password e-mail always goes through the real mail adapter (the stand-in was deleted after IT-ADM-MAIL passed; decision L-05 of EPIC-LGN-02).
+    { provide: TemporaryPasswordMailer, useExisting: RealTemporaryPasswordMailer },
     PasswordHasher,
     OneTimePasswordService,
     UsersLifecycleService,

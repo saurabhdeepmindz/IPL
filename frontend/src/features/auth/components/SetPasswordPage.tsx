@@ -13,10 +13,10 @@
  *
  * @story          US-LGN02-007
  * @subtask        ST-LGN02-007-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/components/SetPasswordPage.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -91,7 +91,7 @@ function SetForm(props: { token: string; onDone: () => void; onExpired: () => vo
  * @screen    LGN-06, LGN-07
  * @contract  API-PWD-02, API-PWD-03
  * @ac        AC-US-LGN02-007-01, AC-US-LGN02-007-02, AC-US-LGN02-007-03, AC-US-LGN02-007-04
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  * @status    built
  *
  * @returns nothing

@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-009
  * @subtask        ST-LGN02-009-IN-02
- * @lld            LLD-EPIC-LGN-02 v0.2 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.2.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/tests/e2e/workflows/wf-uf-02.spec.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -45,6 +45,7 @@ async function askForTheLink(page: Page, code: string): Promise<string> {
   return email;
 }
 
+/** @tc WF-UF-02 @workflow UF-02 (Forgot password, the e-mail, the link, the new password, and the temporary-password change) @story US-LGN02-009 @subtask ST-LGN02-009-IN-02 */
 test.describe('Workflow UF-02: reset a password and change a temporary password', () => {
   test.afterAll(() => removeMadeUsers());
 

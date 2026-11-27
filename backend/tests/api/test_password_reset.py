@@ -10,10 +10,10 @@
 @story          US-LGN02-002
 @subtask        ST-LGN02-002-BE-04
 
-@lld            LLD-EPIC-LGN-02 v0.3 section 8
-@lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+@lld            LLD-EPIC-LGN-02 v0.5 section 8
+@lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
 @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/tests/api/test_password_reset.py
-@lld-synced     v0.3
+@lld-synced     v0.5
 @status         built
 """
 

@@ -13,10 +13,10 @@
  *
  * @story          US-LGN02-006
  * @subtask        ST-LGN02-006-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/components/ForgotPasswordPage.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -176,7 +176,7 @@ function SentView(props: { values: Values; wait: number; onResend: () => Promise
  * @screen    LGN-04, LGN-05
  * @contract  API-PWD-01
  * @ac        AC-US-LGN02-006-01, AC-US-LGN02-006-02, AC-US-LGN02-006-03, AC-US-LGN02-006-04, AC-US-LGN02-006-05
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  */
 export function ForgotPasswordPage() {
   const { data } = usePublicConfig();

@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-006
  * @subtask        ST-LGN02-006-FE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/app/(public)/forgot-password/page.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -35,7 +35,7 @@ export const metadata: Metadata = { title: 'Reset your password' };
  * @workflow  UF-02
  * @screen    LGN-04
  * @ac        AC-US-LGN02-006-01
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.2
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.2
  */
 export default function ForgotPasswordRoute() {
   return (

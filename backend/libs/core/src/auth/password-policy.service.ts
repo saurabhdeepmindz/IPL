@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-003, US-LGN02-002, US-LGN02-004
  * @subtask        ST-LGN02-003-BE-02
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/core/src/auth/password-policy.service.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -37,7 +37,7 @@ const HASH_TYPE = 'bcrypt';
  *   stories:   US-LGN02-002, US-LGN02-003, US-LGN02-004
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-003-01, AC-US-LGN02-003-02
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 @Injectable()
 export class PasswordPolicyService {
@@ -57,7 +57,7 @@ export class PasswordPolicyService {
  * @subtask   ST-LGN02-003-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-003-01
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @returns Rule codes: MIN_LENGTH, UPPER, LOWER, NUMBER, SYMBOL
@@ -82,7 +82,7 @@ export class PasswordPolicyService {
  * @subtask   ST-LGN02-003-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-003-01, AC-US-LGN02-003-02
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @dependencies PasswordHistoryRepository.lastHashes, PasswordHasher.verify
@@ -108,7 +108,7 @@ export class PasswordPolicyService {
  * @subtask   ST-LGN02-003-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-003-02
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @dependencies PasswordHistoryRepository.add, PasswordHistoryRepository.trim

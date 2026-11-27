@@ -12,10 +12,10 @@
  * @story          US-LGN02-004
  * @subtask        ST-LGN02-004-BE-02
  * @contract       API-PWD-04
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/libs/core/src/auth/temporary-password-change.service.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -46,7 +46,7 @@ export interface PendingUser {
  *   stories:   US-LGN02-004
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-004-01, AC-US-LGN02-004-02, AC-US-LGN02-004-03
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 @Injectable()
 export class TemporaryPasswordChangeService {
@@ -71,7 +71,7 @@ export class TemporaryPasswordChangeService {
  * @subtask   ST-LGN02-004-BE-02
  * @workflow  UF-02
  * @ac        AC-US-LGN02-004-01, AC-US-LGN02-004-02, AC-US-LGN02-004-03
- * @lld       LLD-EPIC-LGN-02 v0.3 §6.0
+ * @lld       LLD-EPIC-LGN-02 v0.5 §6.0
  * @status    built
    *
    * @dependencies UserRepository.findCredentials, PasswordHasher.verify, PasswordPolicyService.check, UserPasswordWrites.setPasswordHash, SessionService.create

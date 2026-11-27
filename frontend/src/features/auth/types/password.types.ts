@@ -11,10 +11,10 @@
  *
  * @story          US-LGN02-006, US-LGN02-007, US-LGN02-008
  * @subtask        ST-LGN02-006-FE-01
- * @lld            LLD-EPIC-LGN-02 v0.2 §6.2
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.2.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.2
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/src/features/auth/types/password.types.ts
- * @lld-synced     v0.2
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -28,7 +28,7 @@
    *   stories:   US-LGN02-006, US-LGN02-007, US-LGN02-008
    *   workflows: UF-02
    *   ac:        AC-US-LGN02-006-02
-   *   lld:       LLD-EPIC-LGN-02 v0.2 section 6.2
+   *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.2
  */
 export interface ForgotAnswer { message: string; retryAfterSeconds: number }
 export interface LinkCheck { valid: true; maskedEmail: string }

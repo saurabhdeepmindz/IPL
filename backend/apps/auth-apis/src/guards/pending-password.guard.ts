@@ -14,10 +14,10 @@
  * @subtask        ST-LGN02-002-BE-01
  * @subtask        ST-LGN02-004-BE-01
  * @contract       API-PWD-01, API-PWD-02, API-PWD-03, API-PWD-04
- * @lld            LLD-EPIC-LGN-02 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.3.md
+ * @lld            LLD-EPIC-LGN-02 v0.5 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-02/LLD-EPIC-LGN-02-Passwords-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-02/pseudo-code/apps/auth-apis/src/guards/pending-password.guard.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.5
  * @status         built
  */
 
@@ -40,7 +40,7 @@ export type PendingRequest = Request & { pending?: PendingUser };
  *   stories:   US-LGN02-001, US-LGN02-002, US-LGN02-004
  *   workflows: UF-02
  *   ac:        AC-US-LGN02-001-01, AC-US-LGN02-002-01, AC-US-LGN02-004-02
- *   lld:       LLD-EPIC-LGN-02 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-02 v0.5 section 6.0
  */
 @Injectable()
 export class PendingPasswordGuard implements CanActivate {
