@@ -19,10 +19,10 @@
  * @status         built
  */
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import type { ApiError } from '@/lib/errors';
-import { forgotPassword } from '../services/password.service';
+import { checkResetLink, forgotPassword, resetPassword } from '../services/password.service';
 import type { ForgotAnswer, ForgotInput, LinkCheck, SetPasswordInput, TempInput } from '../types/password.types';
 
 /**
@@ -57,13 +57,17 @@ export function useForgotPassword(): UseMutationResult<ForgotAnswer, ApiError, F
  * @contract  API-PWD-02
  * @ac        AC-US-LGN02-007-03
  * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
- * @status    pseudo
+ * @status    built
  *
  * @returns UseQueryResult<LinkCheck>
  */
-export function useResetLink(_token: string): UseQueryResult<LinkCheck> {
-  // TODO: 1. Run a query with checkResetLink; do not retry on 410.
-  throw new Error('Not implemented (pseudo-code)');
+export function useResetLink(token: string): UseQueryResult<LinkCheck> {
+  return useQuery<LinkCheck>({
+    queryKey: ['reset-link', token],
+    queryFn: () => checkResetLink(token),
+    retry: (count, error) => (error as ApiError).status !== 410 && count < 2,
+    staleTime: Infinity,
+  });
 }
 
 /**
@@ -78,13 +82,12 @@ export function useResetLink(_token: string): UseQueryResult<LinkCheck> {
  * @contract  API-PWD-03
  * @ac        AC-US-LGN02-007-04
  * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
- * @status    pseudo
+ * @status    built
  *
  * @returns UseMutationResult<void, ApiError, SetPasswordInput>
  */
 export function useSetPassword(): UseMutationResult<void, ApiError, SetPasswordInput> {
-  // TODO: 1. Run a mutation with resetPassword.
-  throw new Error('Not implemented (pseudo-code)');
+  return useMutation<void, ApiError, SetPasswordInput>({ mutationFn: (input) => resetPassword(input) });
 }
 
 /**

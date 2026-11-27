@@ -59,13 +59,16 @@ export async function forgotPassword(input: ForgotInput): Promise<ForgotAnswer> 
  * @contract  API-PWD-02
  * @ac        AC-US-LGN02-007-03
  * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
- * @status    pseudo
+ * @status    built
  *
  * @returns Promise<LinkCheck>
  */
-export async function checkResetLink(_token: string): Promise<LinkCheck> {
-  // TODO: 1. GET the link check; return the data part.
-  throw new Error('Not implemented (pseudo-code)');
+export async function checkResetLink(token: string): Promise<LinkCheck> {
+  try {
+    return (await authHttp.get<{ data: LinkCheck }>(`/auth/password/reset/${encodeURIComponent(token)}`)).data.data;
+  } catch (e) {
+    throw toApiError(e);
+  }
 }
 
 /**
@@ -80,13 +83,16 @@ export async function checkResetLink(_token: string): Promise<LinkCheck> {
  * @contract  API-PWD-03
  * @ac        AC-US-LGN02-007-04
  * @lld       LLD-EPIC-LGN-02 v0.2 §6.2
- * @status    pseudo
+ * @status    built
  *
  * @returns Promise<void>
  */
-export async function resetPassword(_input: SetPasswordInput): Promise<void> {
-  // TODO: 1. POST the body.
-  throw new Error('Not implemented (pseudo-code)');
+export async function resetPassword(input: SetPasswordInput): Promise<void> {
+  try {
+    await authHttp.post('/auth/password/reset', input);
+  } catch (e) {
+    throw toApiError(e);
+  }
 }
 
 /**
