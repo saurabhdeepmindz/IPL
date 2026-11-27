@@ -45,7 +45,11 @@ export const LANDING_ROUTES: Record<string, string> = {
 /** The neutral page of a user who holds only custom roles (suggested, IPL to confirm). */
 export const NEUTRAL_LANDING = '/landing/home';
 
-/** The routes whose dashboards are built. A module adds its route here when its dashboard exists. */
+/**
+ * The routes whose dashboards are built. A module adds its route here when its dashboard exists.
+ * Until then the placeholder opens; each missing route and the module that replaces it are in the Coming soon register (docs/module-checklist/MODULE-CHECKLIST.md, section 5b):
+ * /landing/finance (FIN), /landing/initiator (INI), /landing/inbox (FPR), /landing/reports (RPT), /landing/home (LGN, after IPL answers decision L-29).
+ */
 const BUILT_DASHBOARDS: readonly string[] = ['/dashboard'];
 
 /** The name of each dashboard, as the design calls it. */
