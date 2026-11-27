@@ -271,3 +271,4 @@ date,story,file,lld_version,result
 2026-11-27,US-LGN03-002,libs/core/src/auth/session-context.service.ts,v0.2,copied
 2026-11-27,US-LGN03-002,libs/organisation/src/services/financial-year.service.ts,v0.2,identical
 2026-11-27,US-LGN03-002,tests/api/test_me_context.py,v0.2,copied
+2026-11-27,US-LGN03-007,tests/api/test_it_company_separation.py,v0.3,copied

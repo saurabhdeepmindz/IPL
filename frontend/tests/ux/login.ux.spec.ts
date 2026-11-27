@@ -11,9 +11,9 @@
  * @since   2026-11-26
  *
  * @epic       EPIC-LGN-01, EPIC-LGN-02
- * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007, US-LGN02-008
+ * @story      US-LGN01-005, US-LGN01-006, US-LGN01-007, US-LGN02-006, US-LGN02-007, US-LGN02-008, US-LGN03-003
  * @workflow   UF-01
- * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07, UX-LGN-08
+ * @tc         UX-LGN-01, UX-LGN-02, UX-LGN-04, UX-LGN-05, UX-LGN-06, UX-LGN-07, UX-LGN-08, UX-LGN-09
  * @lld            LLD-EPIC-LGN-01 v0.5 §15
  * @lld-file       docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/tests/ux/login.ux.spec.ts
@@ -104,6 +104,44 @@ async function failSignIn(page: Page, status: number, details: Record<string, un
   await Promise.all([page.waitForResponse('**/auth/sign-in'), page.getByTestId('sign-in-submit').click()]);
 }
 
+// UX-LGN-09 (R15): "Choose where to work". The sign-in answer is stubbed so the application opens /choose-work by its own redirect, and GET /me is stubbed with the two companies of the HF demo user 10002.
+// The HF line under the name holds the department ("Information Technology · Senior Manager"), which the profile does not carry; the HF picture gets the app's words (UX-LGN-13, suggested: leave the department out).
+const PROFILE_10002 = {
+  data: {
+    employeeCode: '10002',
+    name: 'A. Kumar',
+    companies: [
+      { code: '1000', name: 'Indian Potash Limited', roles: ['Administrator'] },
+      { code: '2000', name: 'IPL Subsidiary (illustrative)', roles: ['Administrator'] },
+    ],
+    financialYears: [
+      { label: '2026-27', current: true },
+      { label: '2025-26', current: false },
+      { label: '2024-25', current: false },
+    ],
+    context: null,
+    helpdesk: { phone: '+91 00000 00000', email: 'it.helpdesk@ipl.example', hours: 'Mon-Sat, 9:00-18:00', placeholder: true },
+  },
+};
+
+async function mockChoose(page: Page) {
+  await mockConfig(page);
+  await page.route('**/auth/sign-in', (r) => r.fulfill(json({ data: { nextStep: 'CHOOSE_WORK', user: { employeeCode: '10002', name: 'A. Kumar' }, accessToken: 'tok-choose', expiresIn: 900 } })));
+  await page.route('**/me', (r) => r.fulfill(json(PROFILE_10002)));
+}
+
+async function signInToChoose(page: Page) {
+  await page.locator('#code').fill('10002');
+  await page.locator('#pw').fill('Ipl@2026');
+  await page.getByTestId('sign-in-submit').click();
+  await page.waitForURL('**/choose-work');
+  await page.getByTestId('choose-company').waitFor();
+}
+
+async function useDepartmentOfApp(page: Page) {
+  await page.locator('#wd').evaluate((s) => { s.textContent = 'Employee code 10002'; });
+}
+
 const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-01-sign-in', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig } },
   {
@@ -132,6 +170,7 @@ const SCREENS: UxScreen[] = [
   { id: 'UX-LGN-07-done', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#done', steps: dropConfirmationSentence }, app: { url: '/set-password?token=tok-1', prepare: (p) => openSetPassword(p, { status: 200, body: LINK_OK }), steps: changePassword } },
   { id: 'UX-LGN-06-expired', hf: { file: '01-Login-User-Flow/HF-LGN-06-reset-password.html', suffix: '#expired' }, app: { url: '/set-password?token=old', prepare: (p) => openSetPassword(p, { status: 410, body: { error: { code: 'LINK_EXPIRED', message: 'x', fields: [], details: {} } } }) } },
   { id: 'UX-LGN-08-change', hf: { file: '01-Login-User-Flow/HF-LGN-08-change-temporary-password.html', steps: useChipOfApp }, app: { url: '/login', prepare: mockConfig, steps: signInWithTemporaryPassword }, mask: ['#av'] },
+  { id: 'UX-LGN-09-company', hf: { file: '01-Login-User-Flow/HF-LGN-09-choose-company.html', steps: useDepartmentOfApp }, app: { url: '/login', prepare: mockChoose, steps: signInToChoose } },
   { id: 'UX-LGN-01-sign-in-mobile', hf: { file: '01-Login-User-Flow/HF-LGN-01-sign-in.html' }, app: { url: '/login', prepare: mockConfig }, viewport: { width: 390, height: 844 } },
 ];
 
