@@ -12,11 +12,11 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-003, US-LGN03-004, US-LGN03-005
  * @subtask        ST-LGN03-003-FE-03
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/stories/auth/CompanyStates.stories.tsx
- * @lld-synced     v0.3
- * @status         elaborated
+ * @lld-synced     v0.4
+ * @status         built
  */
 
 import type { Meta, StoryObj } from '@storybook/react';

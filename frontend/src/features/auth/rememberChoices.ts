@@ -12,10 +12,10 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-006
  * @subtask        ST-LGN03-006-FE-02
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1 (the employee-code key is the one the sign-in page already uses; see the next LLD version)
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1 (the employee-code key is the one the sign-in page already uses; see section 6.4)
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/src/features/auth/rememberChoices.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -30,7 +30,7 @@
  *   workflows: UF-03
  *   frd:       FR-040.7
  *   ac:        AC-US-LGN03-006-01, AC-US-LGN03-006-02
- *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.1
+ *   lld:       LLD-EPIC-LGN-03 v0.4 section 6.1
  */
 
 /** The key the sign-in page has always used for the remembered employee code. */
@@ -55,7 +55,7 @@ export interface RememberedContext {
  * @story     US-LGN03-006
  * @subtask   ST-LGN03-006-FE-02
  * @ac        AC-US-LGN03-006-02
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @param code The employee code, or null to forget it
@@ -78,7 +78,7 @@ export function rememberEmployeeCode(code: string | null): void {
  * @story     US-LGN03-006
  * @subtask   ST-LGN03-006-FE-02
  * @ac        AC-US-LGN03-006-02
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @returns The code or null
@@ -101,7 +101,7 @@ export function readEmployeeCode(): string | null {
  * @story     US-LGN03-006
  * @subtask   ST-LGN03-006-FE-02
  * @ac        AC-US-LGN03-006-01
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @param context The company and year, or null to forget them
@@ -124,7 +124,7 @@ export function rememberContext(context: RememberedContext | null): void {
  * @story     US-LGN03-006
  * @subtask   ST-LGN03-006-FE-02
  * @ac        AC-US-LGN03-006-01
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @returns The company and year or null

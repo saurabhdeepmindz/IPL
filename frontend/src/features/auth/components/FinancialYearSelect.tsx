@@ -13,10 +13,10 @@
  * @story          US-LGN03-003
  * @subtask        ST-LGN03-003-FE-02
  * @screen         LGN-09
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/src/features/auth/components/FinancialYearSelect.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -35,7 +35,7 @@ import type { FinancialYear } from '../types/me.types';
  * @workflow  UF-03
  * @screen    LGN-09
  * @ac        AC-US-LGN03-003-02
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @param years The years of the profile

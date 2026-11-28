@@ -11,11 +11,11 @@
  *
  * @story          US-LGN03-003
  * @subtask        ST-LGN03-003-FE-01
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/tests/unit/features/auth/ChooseCompanyPage.test.tsx
- * @lld-synced     v0.3
- * @status         elaborated
+ * @lld-synced     v0.4
+ * @status         built
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -50,11 +50,8 @@ const config = { data: { data: { ssoAvailable: true, idpMode: 'saml', helpdesk: 
 const chosen = { context: { companyCode: '1000', financialYear: '2026-27' }, landing: { role: 'ADMINISTRATOR', route: '/dashboard' }, accessToken: 'new-token', expiresIn: 900 };
 
 const client = () => new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-function wrapperOf(qc: QueryClient) {
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={qc}>{children}</QueryClientProvider>;
-  };
-}
+const wrapperOf = (qc: QueryClient) =>
+  function Wrapper({ children }: { children: ReactNode }) { return <QueryClientProvider client={qc}>{children}</QueryClientProvider>; };
 
 describe('User chooses company and financial year (US-LGN03-003)', () => {
   beforeEach(() => {

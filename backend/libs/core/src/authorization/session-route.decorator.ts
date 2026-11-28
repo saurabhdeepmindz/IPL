@@ -12,10 +12,10 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-001
  * @subtask        ST-LGN03-001-BE-01
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.0 (see section 6.3)
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.0 (see section 6.3)
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/libs/core/src/authorization/session-route.decorator.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -33,7 +33,7 @@ import { SESSION_ROUTE_KEY } from './session-user.interface';
  *   workflows: UF-03
  *   contracts: API-ME-01, API-ME-02
  *   ac:        AC-US-LGN03-001-01
- *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-03 v0.4 section 6.0
  */
 export const SessionRoute = (): MethodDecorator & ClassDecorator => {
   return SetMetadata(SESSION_ROUTE_KEY, true);

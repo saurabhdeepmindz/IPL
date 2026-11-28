@@ -11,11 +11,11 @@
  *
  * @story          US-LGN03-006
  * @subtask        ST-LGN03-006-FE-01
- * @lld            LLD-EPIC-LGN-03 v0.3 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/tests/unit/features/auth/rememberChoices.test.ts
- * @lld-synced     v0.3
- * @status         elaborated
+ * @lld-synced     v0.4
+ * @status         built
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

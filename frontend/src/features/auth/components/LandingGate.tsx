@@ -13,10 +13,10 @@
  * @story          US-LGN03-005
  * @subtask        ST-LGN03-005-FE-02
  * @screen         LGN-11
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/src/features/auth/components/LandingGate.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 'use client';
@@ -45,7 +45,7 @@ export const OPENING_MS = 2500;
  * @workflow  UF-03
  * @screen    LGN-11
  * @ac        AC-US-LGN03-005-03, AC-US-LGN03-005-04, AC-US-LGN03-005-05, AC-US-LGN03-005-06
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @dependencies useSessionStore, useMe, dashboardName

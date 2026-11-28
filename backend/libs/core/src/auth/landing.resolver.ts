@@ -12,10 +12,10 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-002
  * @subtask        ST-LGN03-002-BE-02
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.0
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.0
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/libs/core/src/auth/landing.resolver.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -46,7 +46,7 @@ export const NEUTRAL_LANDING = '/landing/home';
  *   frd:       FR-040.4, FR-040.5
  *   contracts: API-ME-02
  *   ac:        AC-US-LGN03-002-04, AC-US-LGN03-002-05, AC-US-LGN03-002-06
- *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.0
+ *   lld:       LLD-EPIC-LGN-03 v0.4 section 6.0
  */
 @Injectable()
 export class LandingResolver {
@@ -62,7 +62,7 @@ export class LandingResolver {
    * @workflow  UF-03
    * @contract  API-ME-02
    * @ac        AC-US-LGN03-002-04, AC-US-LGN03-002-05, AC-US-LGN03-002-06
-   * @lld       LLD-EPIC-LGN-03 v0.3 §6.0
+   * @lld       LLD-EPIC-LGN-03 v0.4 §6.0
    * @status    built
    *
    * @dependencies none

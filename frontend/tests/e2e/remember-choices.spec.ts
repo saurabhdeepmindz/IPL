@@ -13,11 +13,11 @@
  * @story          US-LGN03-006
  * @subtask        ST-LGN03-006-FE-03
  * @workflow       UF-03
- * @lld            LLD-EPIC-LGN-03 v0.3 §10
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §10
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/tests/e2e/remember-choices.spec.ts
- * @lld-synced     v0.3
- * @status         elaborated
+ * @lld-synced     v0.4
+ * @status         built
  */
 
 import { execSync } from 'node:child_process';

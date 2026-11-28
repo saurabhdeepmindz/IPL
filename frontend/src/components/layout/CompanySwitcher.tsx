@@ -12,10 +12,10 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-005
  * @subtask        ST-LGN03-005-FE-02
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/src/components/layout/CompanySwitcher.tsx
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 'use client';
@@ -42,7 +42,7 @@ import { useSessionStore } from '@/store/session.store';
  * @screen    LGN-11
  * @contract  API-ME-01, API-ME-02
  * @ac        AC-US-LGN03-005-01, AC-US-LGN03-005-02
- * @lld       LLD-EPIC-LGN-03 v0.3 §6.1
+ * @lld       LLD-EPIC-LGN-03 v0.4 §6.1
  * @status    built
  *
  * @dependencies useSessionStore, useMe, useSelectContext, getCompanies

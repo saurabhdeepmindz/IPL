@@ -12,10 +12,10 @@
  * @epic           EPIC-LGN-03
  * @story          US-LGN03-003, US-LGN03-004, US-LGN03-005
  * @subtask        ST-LGN03-003-FE-01
- * @lld            LLD-EPIC-LGN-03 v0.3 §6.1
- * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.3.md
+ * @lld            LLD-EPIC-LGN-03 v0.4 §6.1
+ * @lld-file       docs/modules/LGN/lld/EPIC-LGN-03/LLD-EPIC-LGN-03-Company-year-landing-v0.4.md
  * @pseudo-source  docs/modules/LGN/lld/EPIC-LGN-03/pseudo-code/src/features/auth/types/me.types.ts
- * @lld-synced     v0.3
+ * @lld-synced     v0.4
  * @status         built
  */
 
@@ -30,7 +30,7 @@
  *   workflows: UF-03
  *   contracts: API-ME-01, API-ME-02
  *   ac:        AC-US-LGN03-003-01
- *   lld:       LLD-EPIC-LGN-03 v0.3 section 6.1
+ *   lld:       LLD-EPIC-LGN-03 v0.4 section 6.1
  */
 
 /** One company the user can work in today, with the names of the user's roles in it. */
