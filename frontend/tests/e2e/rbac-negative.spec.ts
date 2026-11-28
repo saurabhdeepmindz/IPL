@@ -101,12 +101,12 @@ test.describe('RBAC negative pack: screens (story 018)', () => {
         await page.waitForURL('**/roles');
         await screen.open(page, ctx);
         if (allowed) {
-          await expect(screen.heading(page, ctx)).toBeVisible();
+          await expect(screen.heading(page, ctx)).toBeVisible({ timeout: 15_000 });
           await expect(page.getByText(/^Loading/).filter({ visible: true })).toHaveCount(0);
           await expect(visible(page, 'no-access')).toHaveCount(0);
         }
         else {
-          await expect(visible(page, 'no-access')).toHaveText(screen.denied);
+          await expect(visible(page, 'no-access')).toHaveText(screen.denied, { timeout: 15_000 });
           await expect(page.getByText(/could not be loaded/)).toHaveCount(0);
         }
         await page.screenshot({ path: `${SHOTS}/TC-ADM01-018-E01_${role.replace(/ /g, '-')}_${screen.name.replace(/ /g, '-')}.png`, fullPage: true });

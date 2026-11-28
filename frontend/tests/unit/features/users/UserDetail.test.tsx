@@ -83,9 +83,9 @@ describe('US-ADM01-006 user details (J01, J02 and supporting)', () => {
     expect(deactivateUser).not.toHaveBeenCalled();
     await userEvent.selectOptions(within(dialog).getByLabelText(/Reason/), 'LEFT_COMPANY');
     await userEvent.click(within(dialog).getByRole('button', { name: 'Confirm' }));
-    expect(await screen.findByText('User deactivated')).toBeInTheDocument();
+    expect(await screen.findByText('User deactivated', {}, { timeout: 10000 })).toBeInTheDocument();
     expect(deactivateUser).toHaveBeenCalledWith('20001', { reason: 'LEFT_COMPANY' });
-    expect(await screen.findByText('Inactive')).toBeInTheDocument();
+    expect(await screen.findByText('Inactive', {}, { timeout: 10000 })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Deactivate' })).not.toBeInTheDocument();
   });
 

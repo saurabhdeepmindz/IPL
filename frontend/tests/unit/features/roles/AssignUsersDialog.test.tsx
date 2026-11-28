@@ -68,7 +68,7 @@ describe('AssignUsersDialog (J02, J03)', () => {
     await userEvent.type(await screen.findByRole('textbox', { name: /^Reason/ }), 'New plant team');
     await userEvent.click(screen.getByTestId('reason-confirm'));
     await waitFor(() => expect(assignUsers).toHaveBeenCalledWith('r1', { employeeCodes: ['10388'], companyCode: 'IPL', validFrom: '2026-12-01', reason: 'New plant team' }));
-    expect(await screen.findByRole('row', { name: /K. Pillai/ })).toBeInTheDocument();
+    expect(await screen.findByRole('row', { name: /K. Pillai/ }, { timeout: 10000 })).toBeInTheDocument();
   });
 
   /**

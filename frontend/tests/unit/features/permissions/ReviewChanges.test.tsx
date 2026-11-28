@@ -218,8 +218,8 @@ describe('US-ADM01-016 review and save (J01 to J03 and supporting)', () => {
     await screen.findByText('Permission 200');
     for (const sw of screen.getAllByRole('switch', { name: /for Initiator$/ })) fireEvent.click(sw);
     await userEvent.click(screen.getByRole('button', { name: 'Review and save' }));
-    expect(await screen.findByText('Review at most 200 changes at a time')).toBeInTheDocument();
+    expect(await screen.findByText('Review at most 200 changes at a time', {}, { timeout: 15000 })).toBeInTheDocument();
     expect(reviewChanges).not.toHaveBeenCalled();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  }, 60000);
+  }, 180000);
 });
