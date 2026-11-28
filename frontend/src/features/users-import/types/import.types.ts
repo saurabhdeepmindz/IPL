@@ -18,7 +18,8 @@
  * @status         built
  */
 
-import type { CompanyItem, MasterItem, UserFormData } from '@/features/users';
+import type { CompanyItem, MasterItem } from '@/features/directory';
+import type { UserFormData } from '@/features/users';
 
 export const MAX_ROWS = 5000;
 export const GROUP_SIZE = 200;

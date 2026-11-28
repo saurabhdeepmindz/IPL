@@ -19,4 +19,4 @@
  */
 
 export * from './rate-limit/rate-limiter.service';
-export * from './rate-limit/rate-limit.module';
+export * from './module';

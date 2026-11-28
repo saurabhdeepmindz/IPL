@@ -1,5 +1,5 @@
 /**
- * @file    mailman.module.ts
+ * @file    module.ts
  * @module  MailmanModule
  *
  * @description
@@ -20,6 +20,7 @@
 
 import { Module } from '@nestjs/common';
 import mailConfig from '@config/mail';
+import { readEnv } from '@config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { QueuesModule } from '@libs/queues';
 import { LogMailTransport } from './log-mail-transport';
@@ -74,7 +75,7 @@ export function chooseTransport(name: string, appEnv: string, config: ConfigServ
   providers: [
     Mailman,
     { provide: MailLogRepository, useClass: MailLogDatabaseRepository },
-    { provide: MailTransport, useFactory: (config: ConfigService) => chooseTransport(config.get<string>('mail.transport') ?? mailConfig().transport, config.get<string>('APP_ENV') ?? process.env.APP_ENV ?? 'dev', config), inject: [ConfigService] },
+    { provide: MailTransport, useFactory: (config: ConfigService) => chooseTransport(config.get<string>('mail.transport') ?? mailConfig().transport, config.get<string>('APP_ENV') ?? readEnv('APP_ENV', 'dev') ?? 'dev', config), inject: [ConfigService] },
   ],
   exports: [Mailman, MailTransport, MailLogRepository],
 })

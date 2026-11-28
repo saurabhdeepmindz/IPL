@@ -25,9 +25,9 @@ import { Body, Controller, Get, HttpCode, Param, Post, Req, Res, UseGuards } fro
 import type { Request, Response } from 'express';
 import { okResponse } from '@libs/common';
 import { PasswordResetRequestService, PasswordResetService, TemporaryPasswordChangeService } from '@libs/core';
-import { ChangeTemporaryPasswordDto } from '../dtos/change-temporary-password.dto';
-import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
-import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { ChangeTemporaryPasswordDto } from '../dtos/password/change-temporary-password.dto';
+import { ForgotPasswordDto } from '../dtos/password/forgot-password.dto';
+import { ResetPasswordDto } from '../dtos/password/reset-password.dto';
 import { PendingPasswordGuard, PendingRequest } from '../guards/pending-password.guard';
 import { setRefreshCookie } from '../utils/session-cookie.util';
 

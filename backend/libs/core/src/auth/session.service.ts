@@ -20,12 +20,12 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis';
+import { RedisService } from '@libs/infrastructure';
 import { randomUUID } from 'node:crypto';
 import { TokenService } from './token.service';
 import { SignInAuditWriter } from './sign-in-audit.writer';
 import { SessionTokens, SessionUserInput } from './sign-in.types';
-import { SessionEndedException } from './errors/auth-errors';
+import { SessionEndedException } from './errors';
 
 export const REFRESH_SECONDS = 8 * 60 * 60;
 

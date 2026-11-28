@@ -15,6 +15,7 @@ import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Noto_Sans, Noto_Sans_Mono } from 'next/font/google';
 import { AppProviders } from '@/providers';
+import { MustChangeRedirect } from '@/features/auth/components/MustChangeRedirect';
 import { APP_CONFIG } from '@/constants/config';
 import { UX4G_ASSETS } from '@/constants/ux4g';
 import './globals.css';
@@ -59,7 +60,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <a href="#main-content" className="skip-link btn btn-primary">
           Skip to main content
         </a>
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          <MustChangeRedirect />
+          {children}
+        </AppProviders>
         {/* UX4G JS (dropdowns, modals, tooltips, offcanvas) */}
         <Script src={UX4G_ASSETS.js} strategy="afterInteractive" />
       </body>

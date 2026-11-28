@@ -22,8 +22,8 @@
 import { Injectable } from '@nestjs/common';
 import { PasswordHasher, UserPasswordWrites, UserRepository, UserWriteRepository } from '@libs/users';
 import { AccountLockPolicy, MAX_FAILED_ATTEMPTS } from './account-lock.policy';
-import { AccountLockedException, InvalidCredentialsException } from './errors/auth-errors';
-import { NotRequiredException, SameAsTemporaryException } from './errors/password-errors';
+import { AccountLockedException, InvalidCredentialsException } from './errors';
+import { NotRequiredException, SameAsTemporaryException } from './errors';
 import { PasswordPolicyService } from './password-policy.service';
 import { SessionService } from './session.service';
 import { SignInAuditWriter } from './sign-in-audit.writer';

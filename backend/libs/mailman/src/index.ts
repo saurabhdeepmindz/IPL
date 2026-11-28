@@ -16,5 +16,5 @@
 export * from './mail.types';
 export * from './mail-transport';
 export * from './mailman.service';
-export * from './mailman.module';
+export * from './module';
 export * from './repositories/mail-log/contract';

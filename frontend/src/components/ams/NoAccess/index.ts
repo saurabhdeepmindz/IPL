@@ -3,7 +3,7 @@
  * @module  Ams
  *
  * @description
- * Exports the component folder. In plain words: lets other files import NoAccess from the folder.
+ * Exports the component folder. In plain words: lets other files import {name} from the folder.
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0

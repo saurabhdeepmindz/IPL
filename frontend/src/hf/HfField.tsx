@@ -11,9 +11,8 @@
  *
  * @story          US-ADM01-001
  * @subtask        ST-ADM01-001-FE-03
- * @lld            LLD-EPIC-ADM-01 v0.30 §6
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @hf             HF-ADM-01 #new #edit #view
+ * @source         built outside the LLD (a helper ported from the high-fidelity design)
  * @status         built
  */
 

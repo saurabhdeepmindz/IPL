@@ -20,7 +20,7 @@
 
 import { ConfigService } from '@nestjs/config';
 import { SettingsService } from '@libs/settings';
-import { RateLimitedException } from './errors/auth-errors';
+import { RateLimitedException } from './errors';
 import { FakeAudit, FakeMailman, FakeRates, FakeTokens } from './password.fakes';
 import { PasswordResetRequestService } from './password-reset-request.service';
 

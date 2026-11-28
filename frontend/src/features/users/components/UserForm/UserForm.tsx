@@ -24,12 +24,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
-import { useRoles } from '@/features/roles';
+import { useRoleOptions } from '@/features/directory';
 import { hf } from '@/hf/hf';
 import { HfField } from '@/hf/HfField';
 import { HfIcon } from '@/hf/HfIcon';
 import { toApiError } from '@/lib/errors';
-import { useCompanies, useDepartments, useDesignations } from '../../hooks/useMasters';
+import { useCompanies, useDepartments, useDesignations } from '@/features/directory';
 import { useSaveUser } from '../../hooks/useSaveUser';
 import { useUser } from '../../hooks/useUser';
 import { useUsers } from '../../hooks/useUsers';
@@ -60,7 +60,7 @@ export function UserForm({ employeeCode }: UserFormProps) {
   const designations = useDesignations().data ?? [];
   const companies = useCompanies().data?.items ?? [];
   const managers = useUsers({ status: 'active', pageSize: 100 }).data?.items ?? [];
-  const roles = useRoles({}).data?.items ?? [];
+  const roles = useRoleOptions({}).data?.items ?? [];
   const save = useSaveUser();
   const locked = Boolean(employeeCode && user?.firstSignInAt);
   const form = useForm<UserFormValues>({

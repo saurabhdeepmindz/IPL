@@ -9,11 +9,13 @@
  * @version 0.2.0
  * @since   2026-11-26
  *
- * @story          US-ADM01-009
- * @subtask        ST-ADM01-009-FE-05
- * @lld            LLD-EPIC-ADM-01 v0.30 §6
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @hf             HF-ADM-01 #list
+ * @story         US-ADM01-009
+ * @subtask       ST-ADM01-009-IN-02
+ * @lld           LLD-EPIC-ADM-01 v0.30 §6.2
+ * @lld-file      docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @pseudo-source docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/ImportUsersButton.tsx
+ * @lld-synced    v0.30
  * @status         built
  */
 

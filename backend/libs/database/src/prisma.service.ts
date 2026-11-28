@@ -16,6 +16,7 @@
 
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { readEnv } from '@config';
 import { PrismaClient } from './generated/client';
 import { companyFilterExtension } from './extensions/company-filter.extension';
 
@@ -41,7 +42,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly db: ReturnType<PrismaClient['$extends']> & PrismaClient;
 
   constructor() {
-    const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+    const adapter = new PrismaPg({ connectionString: readEnv('DATABASE_URL') });
     this.raw = new PrismaClient({ adapter });
     this.db = this.raw.$extends(companyFilterExtension) as unknown as PrismaService['db'];
   }

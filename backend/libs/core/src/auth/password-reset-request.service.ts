@@ -27,7 +27,7 @@ import { Mailman } from '@libs/mailman';
 import { RateLimiterService } from '@libs/security';
 import { SettingsService } from '@libs/settings';
 import { UserRepository } from '@libs/users';
-import { RateLimitedException } from './errors/auth-errors';
+import { RateLimitedException } from './errors';
 import { PasswordResetTokenRepository } from './repositories/password-reset-token/contract';
 
 /** The same answer for every request. */

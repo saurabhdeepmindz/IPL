@@ -22,7 +22,7 @@ import { ConfigService } from '@nestjs/config';
 import { createHash } from 'node:crypto';
 import { SettingsService } from '@libs/settings';
 import { FakeHasher } from './auth.fakes';
-import { LinkExpiredException, PasswordPolicyException, PasswordReusedException } from './errors/password-errors';
+import { LinkExpiredException, PasswordPolicyException, PasswordReusedException } from './errors';
 import { FakeAudit, FakeHistoryRepo, FakePasswordWrites, FakeTokens } from './password.fakes';
 import { PasswordPolicyService } from './password-policy.service';
 import { PasswordResetService } from './password-reset.service';

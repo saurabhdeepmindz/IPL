@@ -19,7 +19,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { mapUsersRows, problemsFromServer } from '@/features/users-import/services/mapUsersRows';
+import { mapUsersRows, problemsFromServer } from '@/features/users-import/utils/mapUsersRows';
 import type { Column, RawRow, Reference } from '@/features/users-import/types/import.types';
 
 const ref: Reference = {

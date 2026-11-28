@@ -15,7 +15,6 @@
 
 import { type ReactNode } from 'react';
 import { ThemeProvider } from 'next-themes';
-import { MustChangeRedirect } from '@/features/auth';
 import { QueryProvider } from '@/providers/QueryProvider';
 
 interface AppProvidersProps {
@@ -35,7 +34,6 @@ export function AppProviders({ children }: AppProvidersProps) {
       disableTransitionOnChange
     >
       <QueryProvider>
-        <MustChangeRedirect />
         {children}
       </QueryProvider>
     </ThemeProvider>

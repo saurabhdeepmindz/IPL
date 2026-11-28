@@ -21,7 +21,7 @@
 import { Injectable } from '@nestjs/common';
 import { FieldError } from '@libs/common';
 import { AuthType } from '@libs/database';
-import { MastersPort } from '../ports/masters.port';
+import { MastersPort } from '@libs/organisation';
 import { UserRepository } from '../repositories/user';
 
 /** One company assignment of a user input. */

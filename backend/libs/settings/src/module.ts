@@ -1,5 +1,5 @@
 /**
- * @file    settings.module.ts
+ * @file    module.ts
  * @module  SettingsModule
  *
  * @description

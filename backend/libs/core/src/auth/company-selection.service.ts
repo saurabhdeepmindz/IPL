@@ -26,8 +26,8 @@ import { FinancialYearService, UserCompanyRoleRepository } from '@libs/organisat
 import { SettingsService } from '@libs/settings';
 import { UserRepository } from '@libs/users';
 import { SessionUser } from '../authorization/session-user.interface';
-import { SessionEndedException } from './errors/auth-errors';
-import { CompanyNotAllowedException, InvalidYearException } from './errors/context-errors';
+import { SessionEndedException } from './errors';
+import { CompanyNotAllowedException, InvalidYearException } from './errors';
 import { LandingResolver } from './landing.resolver';
 import { ContextResult, MeCompany, ProfileInput } from './me-profile.types';
 import { SessionContextService } from './session-context.service';

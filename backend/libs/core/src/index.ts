@@ -14,6 +14,5 @@
  */
 
 export * from './module';
-export * from './redis';
 export * from './auth';
 export * from './authorization';

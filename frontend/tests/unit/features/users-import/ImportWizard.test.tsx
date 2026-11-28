@@ -23,9 +23,9 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ImportWizard } from '@/features/users-import/components/ImportWizard';
-import type * as ReadFile from '@/features/users-import/services/readUsersFile';
-import { ImportFileError, readUsersFile } from '@/features/users-import/services/readUsersFile';
-import { buildUsersTemplate } from '@/features/users-import/services/buildUsersTemplate';
+import type * as ReadFile from '@/features/users-import/utils/readUsersFile';
+import { ImportFileError, readUsersFile } from '@/features/users-import/utils/readUsersFile';
+import { buildUsersTemplate } from '@/features/users-import/utils/buildUsersTemplate';
 import { checkAll, importAll } from '@/features/users-import/services/usersImport.service';
 import { useImportReference } from '@/features/users-import/hooks/useImportReference';
 import type { Column, RawRow, Reference } from '@/features/users-import/types/import.types';
@@ -33,8 +33,8 @@ import { ApiError } from '@/lib/errors';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => '/users/import' }));
 vi.mock('@/features/users-import/hooks/useImportReference', () => ({ useImportReference: vi.fn() }));
-vi.mock('@/features/users-import/services/readUsersFile', async (original) => ({ ...(await original<typeof ReadFile>()), readUsersFile: vi.fn() }));
-vi.mock('@/features/users-import/services/buildUsersTemplate', () => ({ buildUsersTemplate: vi.fn() }));
+vi.mock('@/features/users-import/utils/readUsersFile', async (original) => ({ ...(await original<typeof ReadFile>()), readUsersFile: vi.fn() }));
+vi.mock('@/features/users-import/utils/buildUsersTemplate', () => ({ buildUsersTemplate: vi.fn() }));
 vi.mock('@/features/users-import/services/usersImport.service', () => ({ checkAll: vi.fn(), importAll: vi.fn() }));
 
 const reference: Reference = {

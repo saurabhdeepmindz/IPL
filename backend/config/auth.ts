@@ -16,6 +16,7 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('auth', () => ({
+  port: Number(process.env.AUTH_PORT ?? 3200),
   jwtSecret: process.env.JWT_SECRET ?? '',
   accessTtl: process.env.JWT_ACCESS_TTL ?? '15m',
   refreshTtl: process.env.JWT_REFRESH_TTL ?? '8h',

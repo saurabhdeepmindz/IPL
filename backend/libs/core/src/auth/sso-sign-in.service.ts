@@ -27,7 +27,7 @@ import { SessionService } from './session.service';
 import { SignInAuditWriter } from './sign-in-audit.writer';
 import { SsoStateStore } from './sso-state.store';
 import { SsoResult, SignInResultCode } from './sign-in.types';
-import { InvalidStateException } from './errors/auth-errors';
+import { InvalidStateException } from './errors';
 
 /** A return path is local when it starts with one slash and carries no scheme or backslash (open-redirect rule). */
 export function isLocalPath(path: string | undefined): path is string {

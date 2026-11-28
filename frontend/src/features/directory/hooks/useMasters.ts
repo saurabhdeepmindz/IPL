@@ -19,7 +19,7 @@
  */
 import { useQuery } from '@tanstack/react-query';
 import { getCompanies, getDepartments, getDesignations } from '../services/masters.service';
-import { usersKeys } from './users.keys';
+import { directoryKeys } from './directory.keys';
 
 const TEN_MINUTES = 10 * 60 * 1000;
 
@@ -42,7 +42,7 @@ const TEN_MINUTES = 10 * 60 * 1000;
  * @returns The query result
  */
 export function useDepartments() {
-  return useQuery({ queryKey: usersKeys.masters('departments'), queryFn: getDepartments, staleTime: TEN_MINUTES });
+  return useQuery({ queryKey: directoryKeys.masters('departments'), queryFn: getDepartments, staleTime: TEN_MINUTES });
 }
 
 /**
@@ -64,7 +64,7 @@ export function useDepartments() {
  * @returns The query result
  */
 export function useDesignations() {
-  return useQuery({ queryKey: usersKeys.masters('designations'), queryFn: getDesignations, staleTime: TEN_MINUTES });
+  return useQuery({ queryKey: directoryKeys.masters('designations'), queryFn: getDesignations, staleTime: TEN_MINUTES });
 }
 
 /**
@@ -86,5 +86,5 @@ export function useDesignations() {
  * @returns The query result
  */
 export function useCompanies() {
-  return useQuery({ queryKey: usersKeys.masters('companies'), queryFn: getCompanies, staleTime: TEN_MINUTES });
+  return useQuery({ queryKey: directoryKeys.masters('companies'), queryFn: getCompanies, staleTime: TEN_MINUTES });
 }

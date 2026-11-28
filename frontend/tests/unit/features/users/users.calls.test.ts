@@ -22,7 +22,7 @@ import type { AxiosAdapter, AxiosResponse, InternalAxiosRequestConfig } from 'ax
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as ApiClient from '@/lib/api-client';
 import type { ApiError } from '@/lib/errors';
-import { getCompanies, getDepartments, getDesignations } from '@/features/users/services/masters.service';
+import { getCompanies, getDepartments, getDesignations } from '@/features/directory/services/masters.service';
 import { createUser, deactivateUser, getUser, listUsers, readHolds, resendOneTimePassword, resetUserPassword, unlockUser, updateUser } from '@/features/users/services/users.service';
 
 const seen = vi.hoisted(() => ({ calls: [] as { method?: string; url?: string; params?: unknown; data?: unknown; headers?: Record<string, unknown> }[], next: { status: 200, data: {} as unknown } }));

@@ -24,7 +24,7 @@ import { createHash } from 'node:crypto';
 import { AuditService } from '@libs/audit';
 import { SettingsService } from '@libs/settings';
 import { PasswordHasher, UserPasswordWrites } from '@libs/users';
-import { LinkExpiredException } from './errors/password-errors';
+import { LinkExpiredException } from './errors';
 import { PasswordPolicyService } from './password-policy.service';
 import { PasswordResetTokenRepository, ResetTokenOwner } from './repositories/password-reset-token/contract';
 import { SessionService } from './session.service';

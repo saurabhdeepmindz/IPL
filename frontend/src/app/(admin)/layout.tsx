@@ -18,9 +18,11 @@
  * @status         built
  */
 import { Suspense, type ReactNode } from 'react';
+import { ShellSlotsProvider } from '@/components/layout/ShellSlots';
+import { CompanySwitcher } from '@/features/auth/components/CompanySwitcher';
 
 /**
- * Admin layout. In plain words: thin; the pages of the (admin) routes show their own shell with their own breadcrumb, so the layout only holds a Suspense boundary (the shell reads the route and dynamic segments, which Next 16 needs behind one).
+ * Admin layout. In plain words: thin; the pages of the (admin) routes show their own shell with their own breadcrumb; the layout hands the shell the company box through a slot, and only holds a Suspense boundary (the shell reads the route and dynamic segments, which Next 16 needs behind one).
  *
  * @epic      EPIC-ADM-01
  * @story     US-ADM01-012
@@ -37,5 +39,9 @@ import { Suspense, type ReactNode } from 'react';
  * @returns The children
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <Suspense fallback={<p role="status">Loading…</p>}>{children}</Suspense>;
+  return (
+    <ShellSlotsProvider companySwitcher={<CompanySwitcher />}>
+      <Suspense fallback={<p role="status">Loading…</p>}>{children}</Suspense>
+    </ShellSlotsProvider>
+  );
 }

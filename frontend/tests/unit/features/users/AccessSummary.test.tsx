@@ -25,12 +25,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AccessSummary } from '@/features/users/components/AccessSummary';
 import { CompanyRoleTable } from '@/features/users/components/CompanyRoleTable';
-import { getCompanies } from '@/features/users/services/masters.service';
-import { listRoles } from '@/features/roles/services/roles.service';
+import { getCompanies } from '@/features/directory/services/masters.service';
+import { listRoleOptions } from '@/features/directory/services/directory.service';
 import type { CompanyRoleInput } from '@/features/users/types/user.types';
 
-vi.mock('@/features/users/services/masters.service', () => ({ getCompanies: vi.fn(), getDepartments: vi.fn(), getDesignations: vi.fn() }));
-vi.mock('@/features/roles/services/roles.service', () => ({ listRoles: vi.fn() }));
+vi.mock('@/features/directory/services/masters.service', () => ({ getCompanies: vi.fn(), getDepartments: vi.fn(), getDesignations: vi.fn() }));
+vi.mock('@/features/directory/services/directory.service', () => ({ listRoleOptions: vi.fn() }));
 
 const rows: CompanyRoleInput[] = [{ companyCode: 'IPL', roleIds: ['r1', 'r2'], validFrom: '2026-12-01' }, { companyCode: 'IPLFB', roleIds: ['r1'], validFrom: '2026-12-01' }];
 const names = { r1: 'Initiator', r2: 'Auditor' };
@@ -65,7 +65,7 @@ describe('AccessSummary and CompanyRoleTable (supporting tests)', () => {
    */
   it('CompanyRoleTable adds and removes rows', async () => {
     vi.mocked(getCompanies).mockResolvedValue({ items: [{ code: 'IPL', name: 'IPL' }, { code: 'IPLFB', name: 'IPLFB' }], canViewAll: false });
-    vi.mocked(listRoles).mockResolvedValue({ items: [] });
+    vi.mocked(listRoleOptions).mockResolvedValue({ items: [] });
     render(<Harness />);
     expect(screen.getByRole('button', { name: 'Remove company 1' })).toBeDisabled();
     await userEvent.click(screen.getByRole('button', { name: 'Add company' }));

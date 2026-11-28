@@ -24,7 +24,7 @@ import { AuditModule } from '@libs/audit';
 import { OrganisationModule } from '@libs/organisation';
 import { SettingsModule } from '@libs/settings';
 import { UsersModule } from '@libs/users';
-import { RedisModule } from '../redis';
+import { RedisModule } from '@libs/infrastructure';
 import { AuthCoreModule } from './auth-core.module';
 import { CompanySelectionService } from './company-selection.service';
 import { LandingResolver } from './landing.resolver';

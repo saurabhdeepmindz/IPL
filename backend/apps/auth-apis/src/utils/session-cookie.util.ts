@@ -20,13 +20,14 @@
  */
 
 import type { Request, Response } from 'express';
+import { readEnv } from '@config';
 
 const REFRESH_COOKIE = 'ams_refresh';
 const MARKER_COOKIE = 'ams_session';
 const COOKIE_PATH = '/api/v1/auth';
 
 function secure(): boolean {
-  return !['dev', 'test'].includes(process.env.APP_ENV ?? 'dev');
+  return !['dev', 'test'].includes(readEnv('APP_ENV', 'dev') ?? 'dev');
 }
 
 /**

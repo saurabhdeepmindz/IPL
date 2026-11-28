@@ -57,8 +57,11 @@ const rules = (root: string) => checkStructure({ root, config: CONFIG }).violati
 
 const GOOD: Record<string, string> = {
   'libs/common/src/index.ts': 'export {};\n',
+  'libs/common/src/module.ts': 'export {};\n',
   'libs/database/src/index.ts': "import { x } from '@libs/common/errors';\nexport {};\n",
+  'libs/database/src/module.ts': 'export {};\n',
   'libs/users/src/index.ts': "import { db } from '@libs/database';\nexport {};\n",
+  'libs/users/src/module.ts': 'export {};\n',
   'libs/users/src/errors/duplicate-email.exception.ts': 'export {};\n',
   'apps/ams-apis/src/controllers/users/users.controller.ts': "import { u } from '@libs/users';\nexport {};\n",
   'apps/ams-apis/src/controllers/roles/roles.controller.ts': 'export {};\n',
@@ -103,11 +106,53 @@ describe('structure checker (back end)', () => {
   it('G4: an ignore file that misses a machine-made folder is named', () => {
     expect(rules(tree({ ...GOOD, '.gitignore': 'node_modules\n' }))).toEqual(expect.arrayContaining(['G4 dist', 'G4 rbac-out', 'G4 .env']));
   });
+  it('B2: a library without src/module.ts is named', () => {
+    const files = { ...GOOD, 'libs/queues/src/index.ts': 'export {};\n', 'libs/queues/src/queues.module.ts': 'export {};\n' };
+    expect(rules(tree(files))).toContain('B2 libs/queues/src/module.ts');
+  });
+  it('B5: a repository folder that lacks contract.ts, database.ts or index.ts, and a loose repository file, are named', () => {
+    const files = {
+      ...GOOD,
+      'libs/users/src/repositories/user/contract.ts': 'export {};\n',
+      'libs/users/src/repositories/user/database.ts': 'export {};\n',
+      'libs/users/src/repositories/audit-log/contract.ts': 'export {};\n',
+      'libs/users/src/repositories/audit-log/database.ts': 'export {};\n',
+      'libs/users/src/repositories/audit-log/index.ts': 'export {};\n',
+      'libs/users/src/repositories/users-prisma.repository.ts': 'export {};\n',
+    };
+    const r = rules(tree(files));
+    expect(r).toContain('B5 libs/users/src/repositories/user');
+    expect(r).toContain('B5 libs/users/src/repositories/users-prisma.repository.ts');
+    expect(r).not.toContain('B5 libs/users/src/repositories/audit-log');
+  });
+  it('B8: a DTO directly in dtos/ is named; a DTO in an area folder passes', () => {
+    const files = { ...GOOD, 'apps/auth-apis/src/dtos/sign-in.dto.ts': 'export {};\n' };
+    const r = rules(tree(files));
+    expect(r).toContain('B8 apps/auth-apis/src/dtos/sign-in.dto.ts');
+    expect(r).not.toContain('B8 apps/ams-apis/src/dtos/users/create-user.dto.ts');
+  });
+  it('B12: a file outside config/ that reads process.env is named; a test file may', () => {
+    const files = { ...GOOD, 'libs/users/src/port.ts': 'export const u = process.env.URL;\n', 'libs/users/src/port.spec.ts': 'process.env.X = "1";\n' };
+    const r = rules(tree(files));
+    expect(r).toContain('B12 libs/users/src/port.ts');
+    expect(r).not.toContain('B12 libs/users/src/port.spec.ts');
+  });
+  it('B4: a controller that imports a repository or the database is named', () => {
+    const files = {
+      ...GOOD,
+      'apps/ams-apis/src/controllers/users/bad.controller.ts': "import { UserRepository } from '@libs/users/repositories/user';\n",
+      'apps/ams-apis/src/controllers/roles/worse.controller.ts': "import { PrismaService } from '@libs/database';\n",
+    };
+    const r = rules(tree(files));
+    expect(r).toContain('B4 apps/ams-apis/src/controllers/users/bad.controller.ts');
+    expect(r).toContain('B4 apps/ams-apis/src/controllers/roles/worse.controller.ts');
+    expect(r).not.toContain('B4 apps/ams-apis/src/controllers/users/users.controller.ts');
+  });
   it('an allow-list entry turns a known finding into a listed one; an unused entry is reported', () => {
     const root = tree({ ...GOOD, 'libs/queues/src/queue.service.ts': 'export {};\n' });
-    const res = checkStructure({ root, config: CONFIG, allowlist: [{ rule: 'B2', key: 'libs/queues', owner: 'o', reason: 'r' }, { rule: 'B2', key: 'gone', owner: 'o', reason: 'r' }] });
+    const res = checkStructure({ root, config: CONFIG, allowlist: [{ rule: 'B2', key: 'libs/queues', owner: 'o', reason: 'r' }, { rule: 'B2', key: 'libs/queues/src/module.ts', owner: 'o', reason: 'r' }, { rule: 'B2', key: 'gone', owner: 'o', reason: 'r' }] });
     expect(res.violations).toEqual([]);
-    expect(res.allowed.map((a) => a.key)).toEqual(['libs/queues']);
+    expect(res.allowed.map((a) => a.key).sort()).toEqual(['libs/queues', 'libs/queues/src/module.ts']);
     expect(res.stale.map((a) => a.key)).toEqual(['gone']);
   });
 });

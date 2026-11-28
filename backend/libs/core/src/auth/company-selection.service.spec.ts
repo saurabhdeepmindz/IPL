@@ -26,7 +26,7 @@ import { FinancialYearService, UserCompanyRoleRepository } from '@libs/organisat
 import { SETTING_DEFAULTS, SettingsService } from '@libs/settings';
 import { UserRepository } from '@libs/users';
 import { CompanySelectionService } from './company-selection.service';
-import { CompanyNotAllowedException, InvalidYearException } from './errors/context-errors';
+import { CompanyNotAllowedException, InvalidYearException } from './errors';
 import { LandingResolver } from './landing.resolver';
 import { SessionContextService } from './session-context.service';
 

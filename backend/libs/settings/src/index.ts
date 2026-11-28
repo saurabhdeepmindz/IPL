@@ -20,4 +20,4 @@
 
 export * from './settings.defaults';
 export * from './settings.service';
-export * from './settings.module';
+export * from './module';

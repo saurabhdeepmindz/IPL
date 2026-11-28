@@ -19,10 +19,10 @@
  */
 'use client';
 
-import { useRoles } from '@/features/roles';
+import { useRoleOptions } from '@/features/directory';
 import { hf } from '@/hf/hf';
 import { HfIcon } from '@/hf/HfIcon';
-import { useCompanies } from '../../hooks/useMasters';
+import { useCompanies } from '@/features/directory';
 import type { CompanyRoleInput } from '../../types/user.types';
 
 interface CompanyRoleTableProps {
@@ -41,7 +41,7 @@ interface CompanyRoleTableProps {
  */
 export function CompanyRoleTable({ rows, onChange, errors = {} }: CompanyRoleTableProps) {
   const companies = useCompanies().data?.items ?? [];
-  const roles = useRoles({ status: 'ACTIVE' }).data?.items ?? [];
+  const roles = useRoleOptions({ status: 'ACTIVE' }).data?.items ?? [];
   const set = (i: number, patch: Partial<CompanyRoleInput>) => onChange(rows.map((r, n) => (n === i ? { ...r, ...patch } : r)));
   const nameOf = (id: string) => roles.find((r) => r.roleId === id)?.name ?? id;
 

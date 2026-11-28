@@ -12,7 +12,7 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `libs/users` models folder | Left out | Prisma generates the models |
 | `libs/audit`, `libs/organisation` | Added | Needed by EPIC-ADM-01 (Foundation §2.2) |
 | `libs/location`, `libs/payment-and-subscription`, `libs/sample-domain`, `libs/settings` | Left out | Not part of AMS |
-| `libs/core/src/redis` | Added | `RedisService` helpers (ST-ADM01-000-BE-05) |
+| `libs/infrastructure/src/redis` | Added (first in `libs/core/src/redis`; moved to `infrastructure` in R18 S35, so that `security` need not import `core`) | `RedisService` helpers (ST-ADM01-000-BE-05) |
 | `tests/api`, `tests/e2e` | Added | pytest and Playwright (Standard section 10) |
 
 ## Folders
@@ -20,7 +20,10 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | Folder | Purpose |
 |---|---|
 | `apps/ams-apis/src/constants` | Application constants |
-| `apps/ams-apis/src/controllers` | HTTP routes. Thin: route, guards, one service call |
+| `apps/ams-apis/src/controllers/<module>` | HTTP routes, one folder per module: `users`, `roles`, `permissions`, `masters`, `me`, `health`, `dev`. Thin: route, guards, one service call; no repository and no database client (rule B4) |
+| `apps/auth-apis/src/dtos/sign-in`, `apps/auth-apis/src/dtos/password` | Request shapes of the Auth API, one folder per area (rule B8) |
+| `config/env.ts` | The one reader of the process environment for code that runs before the settings are loaded (rule B12) |
+| `scripts/check-structure.js`, `scripts/boot-check.js` | The structure check (rules in `structure.config.json`, known findings in `structure-allowlist.json`) and the boot check of both APIs in dev, test, uat and prod |
 | `apps/ams-apis/src/dtos/permissions` | Request and response shapes for the permission matrix |
 | `apps/ams-apis/src/dtos/roles` | Request and response shapes for roles |
 | `apps/ams-apis/src/dtos/users` | Request and response shapes for users (validation) |
@@ -51,7 +54,7 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `libs/common/src/utils` | Generic helpers |
 | `libs/core/src/auth` | Password and token services |
 | `libs/core/src/authorization` | Permission guard, company guard, data-scope filter, cache (EPIC-ADM-01 US-ADM01-017) |
-| `libs/core/src/redis` | RedisService helpers (getJson, setJson, deleteByPrefix) |
+| `libs/infrastructure/src/redis` | RedisService helpers (getJson, setJson, deleteByPrefix); exported by `@libs/infrastructure` |
 | `libs/database/src/extensions` | Prisma client extension: company filter and audit columns |
 | `libs/database/src/repositories` | Shared repository bases |
 | `libs/dmz/src/console` | Console command runner |
@@ -60,10 +63,9 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `libs/infrastructure/src/mail` | Mail provider (SES or SMTP) |
 | `libs/infrastructure/src/storage` | Storage contract and S3 implementation |
 | `libs/mailman/src` | Mail service used by applications and jobs |
-| `libs/organisation/src/ports` | MastersPort and other ports to later epics (with stand-ins) |
-| `libs/organisation/src/repositories/company` | Companies (read) |
-| `libs/organisation/src/repositories/department` | Departments (read) |
-| `libs/organisation/src/repositories/designation` | Designations (read) |
+| `libs/organisation/src/repositories/masters` | Masters questions: `contract.ts` re-exports `MastersPort`, `database.ts`, `index.ts` |
+| `libs/organisation/src/repositories/masters-read` | Reads of departments, designations and companies |
+| `libs/organisation/src/ports` | `MastersPort` (moved from `libs/users` in R18 S35) |
 | `libs/organisation/src/repositories/user-company-role` | User, company and role rows |
 | `libs/organisation/src/services` | Reads of companies, departments, designations |
 | `libs/queues/src/contracts` | Job payload contracts |

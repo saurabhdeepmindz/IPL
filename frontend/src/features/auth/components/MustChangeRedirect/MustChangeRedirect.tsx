@@ -20,14 +20,12 @@
  * @status         built
  */
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { setMustChangeHandler } from '@/lib/api-client';
+import { useMustChangeRedirect } from '../../hooks/useMustChangeRedirect';
 
 /**
  * MustChangeRedirect.
  *
- * In plain words: renders nothing; it registers the redirect with the API client (decision S-2).
+ * In plain words: renders nothing; the hook `useMustChangeRedirect` registers the redirect with the API client (decision S-2).
  *
  * @epic      EPIC-LGN-02
  * @story     US-LGN02-008
@@ -36,12 +34,6 @@ import { setMustChangeHandler } from '@/lib/api-client';
  * @lld       LLD-EPIC-LGN-02 v0.5 §6.5
  */
 export function MustChangeRedirect() {
-  const router = useRouter();
-  useEffect(() => {
-    setMustChangeHandler(() => {
-      if (window.location.pathname !== '/choose-password') router.replace('/choose-password');
-    });
-    return () => setMustChangeHandler(null);
-  }, [router]);
+  useMustChangeRedirect();
   return null;
 }

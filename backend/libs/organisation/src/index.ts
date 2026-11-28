@@ -16,6 +16,8 @@
 
 export * from './module';
 export * from './repositories/user-company-role';
+export * from './ports/masters.port';
+export * from './repositories/masters';
 export * from './repositories/masters-read';
 export * from './services/masters-read.service';
 export * from './services/financial-year.service';

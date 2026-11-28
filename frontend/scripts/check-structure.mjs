@@ -3,8 +3,8 @@
  * @module  Tooling
  *
  * @description
- * Structure checker of the front end. In plain words: reads the folders and the imports of `src` and fails when a rule of the structure document is broken (loose component file, kebab-case component folder, loose file in a feature root, wrong file name, import against the direction, import cycle between features, missing ignore entry). Known findings are listed in `structure-allowlist.json` with owner and reason; only new findings fail.
- * Rules are in `structure.config.json`; the numbers F2, F4, F6, F7, F13, F14, G3, G4 and G5 are those of Section 0 of the structure document.
+ * Structure checker of the front end. In plain words: reads the folders and the imports of `src` and fails when a rule of the structure document is broken (loose component file, kebab-case component folder, loose file in a feature root, wrong file name, a component or page that imports the HTTP client, a CSS module, import against the direction, import cycle between features, missing ignore entry). Known findings are listed in `structure-allowlist.json` with owner and reason; only new findings fail.
+ * Rules are in `structure.config.json`; the numbers F2, F4, F6, F7, F8, F11, F13, F14, G3, G4 and G5 are those of Section 0 of the structure document.
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
@@ -97,6 +97,7 @@ export function checkStructure({ root, config, allowlist = [] }) {
       ['hooks', /^(use[A-Z][A-Za-z0-9]*\.tsx?|[a-z0-9-]+\.keys\.ts)$/, 'use<Thing>.ts or <feature>.keys.ts'],
       ['types', /\.types\.ts$/, '<thing>.types.ts'],
       ['schemas', /Schema\.ts$/, '<thing>Schema.ts'],
+      ['services', /\.service\.ts$/, '<thing>.service.ts'],
     ];
     for (const [sub, re, hint] of rules) {
       const d = join(featuresDir, f, sub);
@@ -115,6 +116,11 @@ export function checkStructure({ root, config, allowlist = [] }) {
     }
   }
 
+  // F11: styling is Tailwind and tokens, no CSS modules
+  for (const file of walk(join(R, 'src'))) {
+    if (file.endsWith('.module.css')) add('F11', rel(file), 'no CSS modules: use Tailwind classes and the design tokens');
+  }
+
   // imports: F7, G3 and the cycles
   const edges = new Map();
   const files = walk(join(R, 'src')).filter((p) => /\.(ts|tsx)$/.test(p) && !p.endsWith('.d.ts'));
@@ -122,6 +128,7 @@ export function checkStructure({ root, config, allowlist = [] }) {
     const r = rel(file);
     const text = read(file);
     const own = features.find((f) => r.startsWith(`src/features/${f}/`));
+    if ((r.includes('/components/') || r.startsWith('src/app/')) && /from '(@\/lib\/api-client|axios)'/.test(text)) add('F8', r, 'a component or a page does not call the HTTP client: use a hook that calls a service');
     const imports = [...text.matchAll(/from '@\/(features|components)(?:\/([a-z-]+))?(\/[^']*)?'/g)];
     for (const m of imports) {
       const [, kind, feat, sub] = m;

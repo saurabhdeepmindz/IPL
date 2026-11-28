@@ -32,6 +32,7 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `src/components/ams` | Shared AMS pieces (DataTable, FilterBar, StatusBadge). Each has a story |
 | `src/components/dashboard` | Dashboard widgets |
 | `src/components/layout` | Page shell, sidebar, header |
+| `src/components/layout/ShellSlots` | A slot the page layout fills (the company box), so the shell imports no feature |
 | `src/components/ui` | Typed wrappers over UX4G (Button, Input, Modal, Tabs, Switch, Select ...). Each has a story |
 | `src/constants` | Route policy and validation settings |
 | `src/features/auth/components` | Sign-in and password screens |
@@ -39,6 +40,10 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `src/features/auth/schemas` | Zod schemas of the auth forms |
 | `src/features/auth/services` | Sign-in API functions |
 | `src/features/auth/types` | Auth types |
+| `src/features/auth/utils` | Landing map and the remembered employee code and company |
+| `src/features/directory/hooks`, `services`, `types` | Read-only lists several features use: role options, departments, designations, companies (R18 S36) |
+| `src/features/users-import/components`, `hooks`, `services`, `types`, `utils` | The import wizard; helpers (template, file reading, mapping, saving) are in `utils/` |
+| `src/features/coming-soon/components` | The placeholder screen of a later release |
 | `src/features/permissions/components` | Matrix, switches, review panel |
 | `src/features/permissions/hooks` | Matrix hooks and permissions.keys.ts |
 | `src/features/permissions/schemas` | Zod schemas |

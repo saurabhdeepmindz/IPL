@@ -22,7 +22,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable, from, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { ValidationFailedException } from '@libs/common';
-import { RedisService } from '@libs/core';
+import { RedisService } from '@libs/infrastructure';
 
 /**
  * Idempotency interceptor.

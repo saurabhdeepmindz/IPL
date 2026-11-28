@@ -21,4 +21,6 @@ import database from './database';
 import mail from './mail';
 import storage from './storage';
 
+export { readEnv, processEnv } from './env';
+
 export const configurations = [app, http, auth, cache, database, mail, storage];

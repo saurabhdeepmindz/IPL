@@ -19,6 +19,7 @@
  */
 export { ChangeTemporaryPasswordPage } from './components/ChangeTemporaryPasswordPage';
 export { ChooseCompanyPage } from './components/ChooseCompanyPage';
+export { CompanySwitcher } from './components/CompanySwitcher';
 export { DevSignInForm } from './components/DevSignInForm';
 export { ForgotPasswordPage } from './components/ForgotPasswordPage';
 export { LandingGate } from './components/LandingGate';

@@ -19,9 +19,9 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis';
+import { RedisService } from '@libs/infrastructure';
 import { randomBytes } from 'node:crypto';
-import { InvalidStateException } from './errors/auth-errors';
+import { InvalidStateException } from './errors';
 
 /**
  * SsoStateStore.

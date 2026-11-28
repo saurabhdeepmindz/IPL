@@ -21,7 +21,7 @@
 import { Injectable } from '@nestjs/common';
 import { SettingsService } from '@libs/settings';
 import { PasswordHasher } from '@libs/users';
-import { PasswordPolicyException, PasswordReusedException } from './errors/password-errors';
+import { PasswordPolicyException, PasswordReusedException } from './errors';
 import { PasswordHistoryRepository } from './repositories/password-history/contract';
 
 /** The hash method of every new hash (PasswordHasher uses bcrypt). */

@@ -21,23 +21,23 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { listRoles } from '@/features/roles/services/roles.service';
+import { listRoleOptions } from '@/features/directory/services/directory.service';
 import { ImportUsersButton } from '@/features/users/components/ImportUsersButton';
 import { UserListPage } from '@/features/users/components/UserListPage';
-import { getCompanies, getDepartments } from '@/features/users/services/masters.service';
+import { getCompanies, getDepartments } from '@/features/directory/services/masters.service';
 import { listUsers } from '@/features/users/services/users.service';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => '/users', useSearchParams: () => new URLSearchParams('') }));
 vi.mock('@/features/users/services/users.service', () => ({ listUsers: vi.fn() }));
-vi.mock('@/features/users/services/masters.service', () => ({ getDepartments: vi.fn(), getCompanies: vi.fn(), getDesignations: vi.fn() }));
-vi.mock('@/features/roles/services/roles.service', () => ({ listRoles: vi.fn() }));
+vi.mock('@/features/directory/services/masters.service', () => ({ getDepartments: vi.fn(), getCompanies: vi.fn(), getDesignations: vi.fn() }));
+vi.mock('@/features/directory/services/directory.service', () => ({ listRoleOptions: vi.fn() }));
 
 describe('US-ADM01-009 the Import users button (supporting test)', () => {
   beforeEach(() => {
     vi.mocked(listUsers).mockResolvedValue({ items: [], counts: { all: 0, active: 0, inactive: 0, locked: 0 }, page: 1, pageSize: 25, total: 0 });
     vi.mocked(getDepartments).mockResolvedValue([]);
     vi.mocked(getCompanies).mockResolvedValue({ items: [], canViewAll: false });
-    vi.mocked(listRoles).mockResolvedValue({ items: [] });
+    vi.mocked(listRoleOptions).mockResolvedValue({ items: [] });
   });
 
   /**

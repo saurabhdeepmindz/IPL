@@ -20,9 +20,9 @@
 
 import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
-import { buildUsersTemplate } from '@/features/users-import/services/buildUsersTemplate';
-import { errorReportCsv } from '@/features/users-import/services/errorReportCsv';
-import { readUsersFile } from '@/features/users-import/services/readUsersFile';
+import { buildUsersTemplate } from '@/features/users-import/utils/buildUsersTemplate';
+import { errorReportCsv } from '@/features/users-import/utils/errorReportCsv';
+import { readUsersFile } from '@/features/users-import/utils/readUsersFile';
 import { COLUMNS, type Reference } from '@/features/users-import/types/import.types';
 
 const ref: Reference = {

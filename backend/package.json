@@ -16,6 +16,7 @@
     "start:prod": "node dist/apps/ams-apis/apps/ams-apis/src/main.js",
     "lint": "eslint \"{apps,libs,config,tests}/**/*.ts\" && node scripts/check-headers.js && node scripts/check-structure.js .",
     "lint:structure": "node scripts/check-structure.js .",
+    "boot:check": "node scripts/boot-check.js",
     "lint:headers": "node scripts/check-headers.js",
     "format": "prettier --write \"{apps,libs,config,scripts}/**/*.{ts,js}\"",
     "test": "jest",

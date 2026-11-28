@@ -11,11 +11,13 @@
  * @version 0.2.0
  * @since   2026-11-26
  *
- * @story          US-ADM01-017
- * @subtask        ST-ADM01-017-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.30 §6
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @hf             HF-ADM shell (all HF-ADM pages)
+ * @story         US-ADM01-012
+ * @subtask       ST-ADM01-012-FE-04
+ * @lld           LLD-EPIC-ADM-01 v0.30 §6.5
+ * @lld-file      docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @pseudo-source docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/components/layout/AdminShell.tsx
+ * @lld-synced    v0.30
  * @status         built
  */
 
@@ -23,7 +25,7 @@ import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { hf, HF_SCOPE_PAGE } from '@/hf/hf';
-import { CompanySwitcher } from '../CompanySwitcher';
+import { useShellSlots } from '../ShellSlots';
 import { HfIcon } from '@/hf/HfIcon';
 import { ADMIN_NAV } from '@/hf/admin-nav';
 import { useSessionStore } from '@/store/session.store';
@@ -105,6 +107,7 @@ function Sidebar({ path }: { path: string }) {
 /** The top bar of the design: notifications, company, financial year, workspace and the user. */
 function TopBar() {
   const user = useSessionStore((s) => s.user);
+  const { companySwitcher } = useShellSlots();
   const name = user?.name ?? user?.employeeCode ?? '-';
   return (
     <header className={hf('topbar')} data-testid="layout-topbar">
@@ -114,7 +117,7 @@ function TopBar() {
             <HfIcon name="bell" />
           </Link>
         </div>
-        <CompanySwitcher />
+        {companySwitcher}
         <div className={hf('menu-wrap fy')}>
           <button className={hf('ctx-select')} type="button" aria-haspopup="true">
             <small>Financial year</small>

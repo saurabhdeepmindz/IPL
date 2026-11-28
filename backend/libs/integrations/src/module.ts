@@ -1,5 +1,5 @@
 /**
- * @file    identity.module.ts
+ * @file    module.ts
  * @module  IntegrationsModule
  *
  * @description
@@ -20,10 +20,10 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IdentityProviderPort } from './identity-provider.port';
-import { OidcIdentityProvider } from './oidc-identity-provider';
-import { SamlIdentityProvider } from './saml-identity-provider';
-import { TestIdentityProvider } from './test-identity-provider';
+import { IdentityProviderPort } from './identity/identity-provider.port';
+import { OidcIdentityProvider } from './identity/oidc-identity-provider';
+import { SamlIdentityProvider } from './identity/saml-identity-provider';
+import { TestIdentityProvider } from './identity/test-identity-provider';
 
 /**
  * Picks the identity provider.

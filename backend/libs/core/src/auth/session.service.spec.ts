@@ -22,7 +22,7 @@ import { JwtService } from '@nestjs/jwt';
 import { SessionService } from './session.service';
 import { SignInAuditWriter } from './sign-in-audit.writer';
 import { TokenService } from './token.service';
-import { SessionEndedException } from './errors/auth-errors';
+import { SessionEndedException } from './errors';
 import { FakeRedis, fakeAuditService } from './auth.fakes';
 
 function build() {

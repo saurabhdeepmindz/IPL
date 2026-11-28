@@ -23,7 +23,7 @@ import { AccountLockPolicy } from './account-lock.policy';
 import { LocalSignInService } from './local-sign-in.service';
 import { SessionService } from './session.service';
 import { TokenService } from './token.service';
-import { AccountInactiveException, AccountLockedException, InvalidCredentialsException, RateLimitedException } from './errors/auth-errors';
+import { AccountInactiveException, AccountLockedException, InvalidCredentialsException, RateLimitedException } from './errors';
 import { FakeHasher, FakeRedis, FakeUserStore, fakeAuditService, makeCredentials } from './auth.fakes';
 import { JwtService } from '@nestjs/jwt';
 import { RateLimiterService } from '@libs/security';

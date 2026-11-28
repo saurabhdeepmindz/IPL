@@ -106,20 +106,6 @@ export interface CreateUserResult {
   oneTimePassword: { required: boolean; emailStatus: 'SENT' | 'FAILED' | null };
 }
 
-/** A department or a designation (API-MST-01, API-MST-02). */
-export interface MasterItem {
-  id: string;
-  code: string;
-  name: string;
-  isHighest?: boolean;
-}
-
-/** A company (API-MST-03). */
-export interface CompanyItem {
-  code: string;
-  name: string;
-}
-
 /** The reasons API-USR-05 accepts. */
 export type DeactivationReason = 'LEFT_COMPANY' | 'TRANSFERRED' | 'LONG_LEAVE' | 'DUPLICATE' | 'OTHER';
 

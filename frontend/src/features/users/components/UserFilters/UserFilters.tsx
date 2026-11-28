@@ -11,19 +11,21 @@
  * @version 0.2.0
  * @since   2026-11-26
  *
- * @story          US-ADM01-001
- * @subtask        ST-ADM01-001-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @hf             HF-ADM-01 #list
+ * @story         US-ADM01-002
+ * @subtask       ST-ADM01-002-FE-02
+ * @lld           LLD-EPIC-ADM-01 v0.30 §6.3
+ * @lld-file      docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @pseudo-source docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/users/components/UserFilters.tsx
+ * @lld-synced    v0.30
  * @status         built
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useRoles } from '@/features/roles';
+import { useRoleOptions } from '@/features/directory';
 import { hf } from '@/hf/hf';
 import { HfIcon } from '@/hf/HfIcon';
-import { useCompanies, useDepartments } from '../../hooks/useMasters';
+import { useCompanies, useDepartments } from '@/features/directory';
 import type { UserFilters as Filters } from '../../types/user.types';
 
 interface UserFiltersProps {
@@ -41,7 +43,7 @@ const clean = (f: Filters): Filters => Object.fromEntries(Object.entries(f).filt
 export function UserFilters({ value, onChange }: UserFiltersProps) {
   const departments = useDepartments().data ?? [];
   const companies = useCompanies().data;
-  const roles = useRoles({}).data?.items ?? [];
+  const roles = useRoleOptions({}).data?.items ?? [];
   const [text, setText] = useState(value.q ?? '');
   const [seenQ, setSeenQ] = useState(value.q);
   const latest = useRef({ value, onChange });

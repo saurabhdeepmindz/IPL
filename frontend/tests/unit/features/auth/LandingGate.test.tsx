@@ -23,7 +23,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CompanySwitcher } from '@/components/layout/CompanySwitcher';
+import { CompanySwitcher } from '@/features/auth/components/CompanySwitcher';
 import { LandingGate } from '@/features/auth/components/LandingGate';
 import { RoleDashboardPlaceholder } from '@/features/auth/components/RoleDashboardPlaceholder';
 import { LANDING_ROUTES, NEUTRAL_LANDING, dashboardName, isBuilt } from '@/features/auth/utils/landing.map';

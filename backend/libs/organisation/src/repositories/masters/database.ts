@@ -20,7 +20,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@libs/database';
-import { MastersPort } from '@libs/users/ports/masters.port';
+import { MastersPort } from './contract';
 
 /**
  * Masters database adapter.

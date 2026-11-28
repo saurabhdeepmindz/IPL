@@ -20,7 +20,7 @@
 
 import ExcelJS from 'exceljs';
 import { describe, expect, it } from 'vitest';
-import { ImportFileError, readUsersFile } from '@/features/users-import/services/readUsersFile';
+import { ImportFileError, readUsersFile } from '@/features/users-import/utils/readUsersFile';
 import { COLUMNS } from '@/features/users-import/types/import.types';
 
 type Cell = string | number | Date | null;

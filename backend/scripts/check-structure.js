@@ -3,8 +3,8 @@
  * @module  Tooling
  *
  * @description
- * Structure checker of the back end. In plain words: reads the folders and the imports of `apps` and `libs` and fails when a rule of the structure document is broken (library without index.ts, import against the layers, import cycle between libraries, file without its role suffix, loose controller, missing ignore entry). Known findings are listed in `structure-allowlist.json` with owner and reason; only new findings fail.
- * Rules are in `structure.config.json`; the numbers B2, B3, B9, B15, G4 and G5 are those of Section 0 of the structure document.
+ * Structure checker of the back end. In plain words: reads the folders and the imports of `apps` and `libs` and fails when a rule of the structure document is broken (library without index.ts or module.ts, import against the layers, import cycle between libraries, repository folder of the wrong shape, a controller that imports a repository or the database, DTO outside an area folder, `process.env` outside config/, file without its role suffix, loose controller, missing ignore entry). Known findings are listed in `structure-allowlist.json` with owner and reason; only new findings fail.
+ * Rules are in `structure.config.json`; the numbers B2, B3, B4, B5, B8, B9, B12, B15, G4 and G5 are those of Section 0 of the structure document.
  *
  * @author  Deepmindz AMS team
  * @version 0.1.0
@@ -42,6 +42,17 @@ function walk(dir, out = []) {
   return out;
 }
 
+function walkDirs(dir, out = []) {
+  for (const n of list(dir)) {
+    const full = join(dir, n);
+    if (isDir(full)) {
+      out.push(full);
+      walkDirs(full, out);
+    }
+  }
+  return out;
+}
+
 /** Find the structure problems of a back-end folder. Returns { violations, warnings, allowed, stale }. */
 function checkStructure({ root, config, allowlist = [] }) {
   const R = resolve(root);
@@ -55,9 +66,11 @@ function checkStructure({ root, config, allowlist = [] }) {
 
   // B2 and B3: every library has a public door and a layer
   const libsDir = join(R, 'libs');
+  const appsDir = join(R, 'apps');
   const libs = list(libsDir).filter((n) => isDir(join(libsDir, n)));
   for (const lib of libs) {
     if (!existsSync(join(libsDir, lib, 'src', 'index.ts'))) add('B2', `libs/${lib}`, 'the library has no src/index.ts (its public door)');
+    if (!existsSync(join(libsDir, lib, 'src', 'module.ts'))) add('B2', `libs/${lib}/src/module.ts`, 'the library has no src/module.ts (its Nest module)');
     if (!layerOf.has(lib)) add('B3', `libs/${lib}`, 'the library is not in a layer of structure.config.json (a new module gets a new library and a layer)');
   }
 
@@ -108,13 +121,44 @@ function checkStructure({ root, config, allowlist = [] }) {
   }
 
   // B15: controllers grouped by module
-  const appsDir = join(R, 'apps');
   for (const app of list(appsDir)) {
     const cd = join(appsDir, app, 'src', 'controllers');
     if (!isDir(cd)) continue;
     const loose = list(cd).filter((n) => n.endsWith('.controller.ts'));
     const hasModules = list(cd).some((n) => isDir(join(cd, n)));
     if (hasModules || loose.length > 3) loose.forEach((n) => add('B15', rel(join(cd, n)), 'group the controllers of an app that serves several modules in controllers/<module>/'));
+  }
+
+  // B5: repository folders hold contract.ts, database.ts and index.ts; no loose repository file
+  for (const dir of walkDirs(libsDir)) {
+    if (!dir.endsWith(`${sep}repositories`)) continue;
+    for (const n of list(dir)) {
+      const full = join(dir, n);
+      if (isDir(full)) {
+        const miss = ['contract.ts', 'database.ts', 'index.ts'].filter((f) => !existsSync(join(full, f)));
+        if (miss.length) add('B5', rel(full), `a repository folder holds contract.ts, database.ts and index.ts (missing: ${miss.join(', ')})`);
+      } else if (n.endsWith('.ts') && n !== 'index.ts' && !TEST_FILE.test(n)) add('B5', rel(full), 'a repository sits in its own folder: repositories/<entity>/');
+    }
+  }
+
+  // B8: DTOs are in dtos/<area>/, not directly in dtos/
+  for (const app of list(appsDir)) {
+    const dd = join(appsDir, app, 'src', 'dtos');
+    for (const n of list(dd)) if (n.endsWith('.dto.ts') && !isDir(join(dd, n))) add('B8', rel(join(dd, n)), 'put the DTO in dtos/<area>/');
+  }
+
+  // B12: settings come from config/, not from process.env
+  for (const file of [...walk(appsDir), ...walk(libsDir)]) {
+    if (!file.endsWith('.ts') || TEST_FILE.test(file)) continue;
+    const text = readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+    if (/process\.env/.test(text)) add('B12', rel(file), 'read settings through config/ (ConfigService), not process.env');
+  }
+
+  // B4: controllers are thin: they import no repository and no database client
+  for (const file of walk(appsDir)) {
+    if (!file.endsWith('.controller.ts') || TEST_FILE.test(file)) continue;
+    const text = readFileSync(file, 'utf8');
+    if (/from '[^']*\/repositories\/[^']*'/.test(text) || /\bPrisma(Service|Client)\b/.test(text)) add('B4', rel(file), 'a controller imports a repository or the database client: call a service');
   }
 
   // G5: .gitkeep only in an empty folder

@@ -22,7 +22,7 @@ import { Logger } from '@nestjs/common';
 import { RealTemporaryPasswordMailer } from '@libs/users';
 import { LogMailTransport } from './log-mail-transport';
 import { Mailman } from './mailman.service';
-import { chooseTransport } from './mailman.module';
+import { chooseTransport } from './module';
 import { MailTransport } from './mail-transport';
 import { SmtpMailTransport } from './smtp-mail-transport';
 import { MailJob, MailTemplates, PreparedMail } from './mail.types';

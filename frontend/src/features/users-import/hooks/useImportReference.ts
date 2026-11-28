@@ -20,8 +20,7 @@
  * @status         built
  */
 
-import { useCompanies, useDepartments, useDesignations } from '@/features/users';
-import { useRoles } from '@/features/roles';
+import { useCompanies, useDepartments, useDesignations, useRoleOptions } from '@/features/directory';
 import type { Reference } from '../types/import.types';
 
 const isForbidden = (error: unknown): boolean => (error as { status?: number } | null)?.status === 403;
@@ -37,7 +36,7 @@ export function useImportReference(): { reference: Reference | null; isPending: 
   const departments = useDepartments();
   const designations = useDesignations();
   const companies = useCompanies();
-  const roles = useRoles({ status: 'ACTIVE' });
+  const roles = useRoleOptions({ status: 'ACTIVE' });
   const all = [departments, designations, companies, roles];
   const ready = departments.data && designations.data && companies.data && roles.data;
   return {

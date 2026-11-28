@@ -19,7 +19,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '@libs/core/redis';
+import { RedisService } from '@libs/infrastructure';
 
 /**
  * RateLimiterService.

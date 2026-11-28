@@ -25,7 +25,7 @@ import { RateLimitModule } from '@libs/security';
 import { SettingsModule } from '@libs/settings';
 import { MailmanModule } from '@libs/mailman';
 import { UsersModule } from '@libs/users';
-import { RedisModule } from '../redis';
+import { RedisModule } from '@libs/infrastructure';
 import { AccountLockPolicy } from './account-lock.policy';
 import { AuthCoreModule } from './auth-core.module';
 import { LocalSignInService } from './local-sign-in.service';

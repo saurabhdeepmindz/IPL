@@ -17,7 +17,7 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { RedisService } from '../redis';
+import { RedisService } from '@libs/infrastructure';
 
 /** How long an entry lives, in seconds (decision L-03). */
 const CACHE_SECONDS = 60;

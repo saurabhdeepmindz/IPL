@@ -22,8 +22,9 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { readContext, rememberContext, useMe, useSelectContext } from '@/features/auth';
-import { getCompanies } from '@/features/users';
+import { useMe, useSelectContext } from '../../hooks/useMe';
+import { readContext, rememberContext } from '../../utils/rememberChoices';
+import { getCompanies } from '@/features/directory';
 import { hf } from '@/hf/hf';
 import { HfIcon } from '@/hf/HfIcon';
 import { useSessionStore } from '@/store/session.store';

@@ -19,6 +19,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
+import { readEnv } from '@config';
 import { WorkflowPort } from './workflow.port';
 
 /**
@@ -42,6 +43,6 @@ export class WorkflowStandIn extends WorkflowPort {
 
   /** The workflow monitor address, from `WORKFLOW_MONITOR_URL` (a relative address when it is not set). */
   monitorUrl(): string {
-    return process.env.WORKFLOW_MONITOR_URL ?? '/workflow/monitor';
+    return readEnv('WORKFLOW_MONITOR_URL') ?? '/workflow/monitor';
   }
 }

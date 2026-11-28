@@ -20,6 +20,7 @@
 
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AuthApisModule } from './module';
 
@@ -32,11 +33,12 @@ export async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AuthApisModule);
   app.setGlobalPrefix('api/v1');
   app.set('trust proxy', 1);
+  const config = app.get(ConfigService);
   app.enableCors({
-    origin: (process.env.CORS_ORIGINS ?? 'http://localhost:3001').split(',').map((s) => s.trim()),
+    origin: config.get<string[]>('http.corsOrigins'),
     credentials: true,
   });
-  await app.listen(Number(process.env.AUTH_PORT ?? 3200));
+  await app.listen(config.get<number>('auth.port') ?? 3200);
 }
 
 void bootstrap();

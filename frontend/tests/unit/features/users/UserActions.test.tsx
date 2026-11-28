@@ -22,17 +22,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { listRoles } from '@/features/roles/services/roles.service';
+import { listRoleOptions } from '@/features/directory/services/directory.service';
 import { UserListPage } from '@/features/users/components/UserListPage';
-import { getCompanies, getDepartments } from '@/features/users/services/masters.service';
+import { getCompanies, getDepartments } from '@/features/directory/services/masters.service';
 import { listUsers, resendOneTimePassword, resetUserPassword, unlockUser } from '@/features/users/services/users.service';
 import type { UserList, UserListItem } from '@/features/users/types/user.types';
 import { ApiError } from '@/lib/errors';
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => '/users', useSearchParams: () => new URLSearchParams('') }));
 vi.mock('@/features/users/services/users.service', () => ({ listUsers: vi.fn(), unlockUser: vi.fn(), resetUserPassword: vi.fn(), resendOneTimePassword: vi.fn(), deactivateUser: vi.fn(), readHolds: vi.fn() }));
-vi.mock('@/features/users/services/masters.service', () => ({ getDepartments: vi.fn(), getCompanies: vi.fn(), getDesignations: vi.fn() }));
-vi.mock('@/features/roles/services/roles.service', () => ({ listRoles: vi.fn() }));
+vi.mock('@/features/directory/services/masters.service', () => ({ getDepartments: vi.fn(), getCompanies: vi.fn(), getDesignations: vi.fn() }));
+vi.mock('@/features/directory/services/directory.service', () => ({ listRoleOptions: vi.fn() }));
 
 const user = (n: number, over: Partial<UserListItem> = {}): UserListItem => ({
   employeeCode: String(10000 + n), name: `User ${n}`, email: `u${n}@example.invalid`, department: 'Finance', designation: 'Manager',
@@ -52,7 +52,7 @@ describe('US-ADM01-008 user actions (J01 to J03 and supporting)', () => {
     vi.mocked(listUsers).mockResolvedValue(page([user(1), user(2, { signIn: 'LOCAL' }), user(3, { status: 'LOCKED' }), user(4, { status: 'INACTIVE', signIn: 'LOCAL' })]));
     vi.mocked(getDepartments).mockResolvedValue([]);
     vi.mocked(getCompanies).mockResolvedValue({ items: [], canViewAll: false });
-    vi.mocked(listRoles).mockResolvedValue({ items: [] });
+    vi.mocked(listRoleOptions).mockResolvedValue({ items: [] });
   });
 
   /**

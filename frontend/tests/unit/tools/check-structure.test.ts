@@ -115,6 +115,29 @@ describe('structure checker (front end)', () => {
     const r = rules(tree({ ...GOOD, '.gitignore': 'node_modules\n.next\n' }));
     expect(r).toEqual(expect.arrayContaining(['G4 test-results', 'G4 rbac-out', 'G4 storybook-static']));
   });
+  it('F8: a component or a page that imports the HTTP client is named; a hook and a service may', () => {
+    const files = {
+      ...GOOD,
+      'src/features/users/components/UserForm/UserForm.tsx': "import { client } from '@/lib/api-client';\nexport const UserForm = () => null;\n",
+      'src/app/bad/page.tsx': "import axios from 'axios';\n",
+      'src/features/users/hooks/useUsersHttp.ts': "import { client } from '@/lib/api-client';\n",
+      'src/features/users/services/users.service.ts': "import { client } from '@/lib/api-client';\n",
+    };
+    const r = rules(tree(files));
+    expect(r).toContain('F8 src/features/users/components/UserForm/UserForm.tsx');
+    expect(r).toContain('F8 src/app/bad/page.tsx');
+    expect(r).not.toContain('F8 src/features/users/hooks/useUsersHttp.ts');
+    expect(r).not.toContain('F8 src/features/users/services/users.service.ts');
+  });
+  it('F13: a file in services/ that is not <thing>.service.ts is named', () => {
+    const files = { ...GOOD, 'src/features/users/services/users.service.ts': 'x\n', 'src/features/users/services/buildTemplate.ts': 'x\n' };
+    const r = rules(tree(files));
+    expect(r).toContain('F13 src/features/users/services/buildTemplate.ts');
+    expect(r).not.toContain('F13 src/features/users/services/users.service.ts');
+  });
+  it('F11: a CSS module is named', () => {
+    expect(rules(tree({ ...GOOD, 'src/features/users/components/UserForm/UserForm.module.css': '.a{}\n' }))).toContain('F11 src/features/users/components/UserForm/UserForm.module.css');
+  });
   it('an allow-list entry turns a known finding into a listed one; an unused entry is reported', () => {
     const root = tree({ ...GOOD, 'src/features/users/landing.map.ts': 'x\n' });
     const res = checkStructure({ root, config: CONFIG, allowlist: [{ rule: 'F14', key: 'src/features/users/landing.map.ts', owner: 'o', reason: 'r' }, { rule: 'F2', key: 'gone', owner: 'o', reason: 'r' }] });

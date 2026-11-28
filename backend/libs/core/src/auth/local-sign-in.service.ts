@@ -28,7 +28,7 @@ import { AccountLockPolicy } from './account-lock.policy';
 import { SessionService } from './session.service';
 import { SignInAuditWriter } from './sign-in-audit.writer';
 import { SignInResult } from './sign-in.types';
-import { AccountInactiveException, AccountLockedException, InvalidCredentialsException, RateLimitedException } from './errors/auth-errors';
+import { AccountInactiveException, AccountLockedException, InvalidCredentialsException, RateLimitedException } from './errors';
 
 
 /**

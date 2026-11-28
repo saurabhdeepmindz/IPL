@@ -11,11 +11,13 @@
  * @version 0.2.0
  * @since   2026-11-26
  *
- * @story          US-ADM01-012
- * @subtask        ST-ADM01-012-FE-02
- * @lld            LLD-EPIC-ADM-01 v0.30 §6
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @hf             HF-ADM-02 #list
+ * @story         US-ADM01-012
+ * @subtask       ST-ADM01-012-FE-02
+ * @lld           LLD-EPIC-ADM-01 v0.30 §6.5
+ * @lld-file      docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
+ * @pseudo-source docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/roles/components/RoleTable.tsx
+ * @lld-synced    v0.30
  * @status         built
  */
 

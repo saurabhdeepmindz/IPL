@@ -15,6 +15,7 @@
 
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AmsApisModule } from './module';
 
 /**
@@ -27,11 +28,12 @@ import { AmsApisModule } from './module';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AmsApisModule);
   app.setGlobalPrefix('api/v1');
+  const config = app.get(ConfigService);
   app.enableCors({
-    origin: (process.env.CORS_ORIGINS ?? 'http://localhost:3001').split(',').map((s) => s.trim()),
+    origin: config.get<string[]>('http.corsOrigins'),
     credentials: true,
   });
-  await app.listen(Number(process.env.APP_PORT ?? 3000));
+  await app.listen(config.get<number>('app.port') ?? 3000);
 }
 
 void bootstrap();

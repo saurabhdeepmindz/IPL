@@ -28,7 +28,7 @@ import type { Request, Response } from 'express';
 import { okResponse } from '@libs/common';
 import { IdentityProviderUnavailableException, LocalSignInService, NextStep, SessionService, SsoSignInService } from '@libs/core';
 import { SettingsService } from '@libs/settings';
-import { SignInDto } from '../dtos/sign-in.dto';
+import { SignInDto } from '../dtos/sign-in/sign-in.dto';
 import { PublicConfigTransformer } from '../transformer/public-config.transformer';
 import { SignInResponseTransformer } from '../transformer/sign-in-response.transformer';
 import { clearRefreshCookie, readRefreshCookie, setRefreshCookie } from '../utils/session-cookie.util';

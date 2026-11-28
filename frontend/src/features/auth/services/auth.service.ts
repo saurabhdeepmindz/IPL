@@ -9,12 +9,12 @@
  * @version 0.1.0
  * @since   2026-11-25
  *
- * @story          US-ADM01-012
- * @subtask        ST-ADM01-012-FE-04
- * @lld            LLD-EPIC-ADM-01 v0.30 §6.5
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
- * @pseudo-source  docs/modules/ADM-A1/lld/EPIC-ADM-01/pseudo-code/src/features/auth/services/auth.service.ts
- * @lld-synced     v0.30
+ * @story         US-LGN01-005
+ * @subtask       ST-LGN01-005-FE-01
+ * @lld           LLD-EPIC-LGN-01 v0.5 §6.4
+ * @lld-file      docs/modules/LGN/lld/EPIC-LGN-01/LLD-EPIC-LGN-01-Sign-in-v0.5.md
+ * @pseudo-source docs/modules/LGN/lld/EPIC-LGN-01/pseudo-code/src/features/auth/services/auth.service.ts
+ * @lld-synced    v0.5
  * @status         built
  */
 import axios from 'axios';
@@ -28,13 +28,13 @@ import { setAccessToken } from '@/lib/token';
  * Development sign-in. In plain words: signs in with an employee code and a company through `POST /dev/sign-in` (the API exists only in dev and test), keeps the token in memory and reads the session user from `GET /dev/whoami`.
  *
  * @epic      EPIC-ADM-01
- * @story     US-ADM01-012
- * @subtask   ST-ADM01-012-FE-04
+ * @story     US-LGN01-005
+ * @subtask   ST-LGN01-005-FE-01
  * @frd       FR-043.1, FR-043.2, FR-043.3, FR-043.5, FR-042.5, FR-043.4
  * @workflow  AD-03
  * @screen    ADM-02
  * @ac        AC-US012-01
- * @lld       LLD-EPIC-ADM-01 v0.30 §6.5
+ * @lld       LLD-EPIC-LGN-01 v0.5 §6.4
  * @status    built
  *
  * @dependencies api, setAccessToken

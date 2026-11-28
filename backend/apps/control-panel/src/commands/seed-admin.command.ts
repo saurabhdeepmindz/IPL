@@ -16,6 +16,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@libs/database';
+import { processEnv } from '@config';
 
 /**
  * seed:admin.
@@ -39,12 +40,12 @@ export class SeedAdminCommand {
    *
    * In plain words: stops with a clear message when a variable is missing; otherwise adds the user and the role, once.
    *
-   * @param env The environment (process.env by default)
+   * @param env The environment (the process environment by default)
    * @returns The employee code of the Administrator
    * @throws Error naming the missing variables, or the missing role or company (run seed:roles and seed:masters first)
    * @dependencies PrismaService.raw
    */
-  async run(env: NodeJS.ProcessEnv = process.env): Promise<{ employeeCode: string }> {
+  async run(env: NodeJS.ProcessEnv = processEnv()): Promise<{ employeeCode: string }> {
     const code = env.SEED_ADMIN_EMPLOYEE_CODE;
     const email = env.SEED_ADMIN_EMAIL;
     const missing = [!code && 'SEED_ADMIN_EMPLOYEE_CODE', !email && 'SEED_ADMIN_EMAIL'].filter(Boolean);

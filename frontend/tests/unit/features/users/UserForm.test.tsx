@@ -22,17 +22,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { listRoles } from '@/features/roles/services/roles.service';
+import { listRoleOptions } from '@/features/directory/services/directory.service';
 import { UserForm } from '@/features/users/components/UserForm';
-import { getCompanies, getDepartments, getDesignations } from '@/features/users/services/masters.service';
+import { getCompanies, getDepartments, getDesignations } from '@/features/directory/services/masters.service';
 import { createUser, getUser, listUsers, updateUser } from '@/features/users/services/users.service';
 import { ApiError } from '@/lib/errors';
 
 const push = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push }), usePathname: () => '/users/new', useSearchParams: () => new URLSearchParams('') }));
 vi.mock('@/features/users/services/users.service', () => ({ listUsers: vi.fn(), getUser: vi.fn(), createUser: vi.fn(), updateUser: vi.fn() }));
-vi.mock('@/features/users/services/masters.service', () => ({ getDepartments: vi.fn(), getDesignations: vi.fn(), getCompanies: vi.fn() }));
-vi.mock('@/features/roles/services/roles.service', () => ({ listRoles: vi.fn() }));
+vi.mock('@/features/directory/services/masters.service', () => ({ getDepartments: vi.fn(), getDesignations: vi.fn(), getCompanies: vi.fn() }));
+vi.mock('@/features/directory/services/directory.service', () => ({ listRoleOptions: vi.fn() }));
 
 const role = (roleId: string, name: string) => ({ roleId, name, description: '', type: 'STANDARD' as const, userCount: 0, lastChanged: '2026-01-01T00:00:00Z', status: 'ACTIVE' as const });
 const renderForm = (code?: string) => render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } })}><UserForm employeeCode={code} /></QueryClientProvider>);
@@ -59,7 +59,7 @@ describe('UserForm (J01 to J05)', () => {
     vi.mocked(getDepartments).mockResolvedValue([{ id: 'd1', code: 'FIN', name: 'Finance' }]);
     vi.mocked(getDesignations).mockResolvedValue([{ id: 'g1', code: 'MGR', name: 'Manager', isHighest: false }, { id: 'g2', code: 'AGM', name: 'AGM', isHighest: true }]);
     vi.mocked(getCompanies).mockResolvedValue({ items: [{ code: 'IPL', name: 'IPL' }, { code: 'IPLFB', name: 'IPL Fertilisers' }], canViewAll: false });
-    vi.mocked(listRoles).mockResolvedValue({ items: [role('r1', 'Initiator'), role('r2', 'Auditor')] });
+    vi.mocked(listRoleOptions).mockResolvedValue({ items: [role('r1', 'Initiator'), role('r2', 'Auditor')] });
     vi.mocked(listUsers).mockResolvedValue({ items: [{ employeeCode: '10050', name: 'A Manager', email: 'm@example.invalid', department: null, designation: null, companies: [], signIn: 'SSO', status: 'ACTIVE', lastSignIn: null }], counts: { all: 1, active: 1, inactive: 0, locked: 0 }, page: 1, pageSize: 100, total: 1 });
   });
 

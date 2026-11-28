@@ -22,7 +22,7 @@ import { AuditModule } from '@libs/audit';
 import { OrganisationModule } from '@libs/organisation';
 import { RolesAndPermissionsModule } from '@libs/roles-and-permissions';
 import { AuthCoreModule, JwtAuthGuard } from '../auth';
-import { RedisModule } from '../redis';
+import { RedisModule } from '@libs/infrastructure';
 import { CompanyGuard } from './company.guard';
 import { DataScopeFilter } from './data-scope.filter';
 import { PermissionCache } from './permission.cache';

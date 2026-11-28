@@ -11,9 +11,8 @@
  *
  * @story          US-ADM01-017
  * @subtask        ST-ADM01-017-FE-01
- * @lld            LLD-EPIC-ADM-01 v0.30 §6
- * @lld-file       docs/modules/ADM-A1/lld/EPIC-ADM-01/LLD-EPIC-ADM-01-Users-Roles-and-Permissions-v0.30.md
  * @hf             Coming soon (any HF screen of a later release)
+ * @source         built outside the LLD (a placeholder screen of a later release)
  * @status         built
  */
 

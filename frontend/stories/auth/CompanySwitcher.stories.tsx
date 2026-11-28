@@ -15,11 +15,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { expect, within } from 'storybook/test';
-import { CompanySwitcher } from '@/components/layout/CompanySwitcher';
+import { CompanySwitcher } from '@/features/auth/components/CompanySwitcher';
 import { useSessionStore } from '@/store/session.store';
 
 const meta = {
-  title: 'Layout/CompanySwitcher',
+  title: 'Auth/CompanySwitcher',
   component: CompanySwitcher,
   parameters: { layout: 'padded', nextjs: { appDirectory: true } },
   decorators: [

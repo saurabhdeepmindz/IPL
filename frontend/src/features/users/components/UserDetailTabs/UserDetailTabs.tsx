@@ -24,7 +24,7 @@ import Link from 'next/link';
 import { hf } from '@/hf/hf';
 import { HfIcon } from '@/hf/HfIcon';
 import { formatDay } from '@/lib/utils';
-import { useCompanies } from '../../hooks/useMasters';
+import { useCompanies } from '@/features/directory';
 import { useUser } from '../../hooks/useUser';
 import type { UserDetails } from '../../types/user.types';
 

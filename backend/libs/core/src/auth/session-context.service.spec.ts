@@ -20,7 +20,7 @@
  */
 
 import { JwtService } from '@nestjs/jwt';
-import { SessionEndedException } from './errors/auth-errors';
+import { SessionEndedException } from './errors';
 import { FakeRedis, fakeAuditService } from './auth.fakes';
 import { SessionContextService } from './session-context.service';
 import { SessionService } from './session.service';

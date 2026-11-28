@@ -18,7 +18,7 @@
  * @status         built
  */
 import { api } from '@/lib/api-client';
-import type { CompanyItem, MasterItem } from '../types/user.types';
+import type { CompanyItem, MasterItem } from '../types/directory.types';
 
 /**
  * Departments. In plain words: all departments by name.

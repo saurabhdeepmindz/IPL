@@ -21,7 +21,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { RedisService } from '@libs/core';
+import { RedisService } from '@libs/infrastructure';
 import { PrismaService } from '@libs/database';
 import { AmsApisModule } from '@app/ams-apis/module';
 

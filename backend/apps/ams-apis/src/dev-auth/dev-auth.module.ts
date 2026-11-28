@@ -16,6 +16,7 @@
 
 import { DynamicModule, Module } from '@nestjs/common';
 import { AuthCoreModule, AuthorizationModule } from '@libs/core';
+import { readEnv } from '@config';
 import { DevProbeController } from '../controllers/dev/dev-probe.controller';
 import { DevAuthController } from '../controllers/dev/dev-auth.controller';
 
@@ -45,7 +46,7 @@ export class DevAuthModule {
    * @returns A module with the controller, or an empty one
    * @dependencies none
    */
-  static register(appEnv: string = process.env.APP_ENV ?? 'dev'): DynamicModule {
+  static register(appEnv: string = readEnv('APP_ENV', 'dev') ?? 'dev'): DynamicModule {
     if (!['dev', 'test'].includes(appEnv)) return { module: DevAuthModule };
     return { module: DevAuthModule, imports: [AuthCoreModule, AuthorizationModule], controllers: [DevAuthController, DevProbeController] };
   }

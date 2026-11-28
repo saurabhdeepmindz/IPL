@@ -20,9 +20,9 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis';
+import { RedisService } from '@libs/infrastructure';
 import { SessionUser } from '../authorization/session-user.interface';
-import { SessionEndedException } from './errors/auth-errors';
+import { SessionEndedException } from './errors';
 import { REFRESH_SECONDS, SessionRecord } from './session.service';
 import { TokenService } from './token.service';
 

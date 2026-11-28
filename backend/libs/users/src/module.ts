@@ -25,7 +25,7 @@ import { UserFormDatabaseRepository, UserFormRepository } from './repositories/u
 import { UserPasswordWrites, UserWriteDatabaseRepository, UserWriteRepository } from './repositories/user-write';
 import { DelegationPort } from './ports/delegation.port';
 import { DelegationStandIn } from './ports/delegation.stand-in';
-import { MastersPort } from './ports/masters.port';
+import { MastersPort } from '@libs/organisation';
 import { SessionRevocationPort } from './ports/session-revocation.port';
 import { SessionRevocationStandIn } from './ports/session-revocation.stand-in';
 import { WorkflowPort } from './ports/workflow.port';

@@ -22,5 +22,5 @@ export * from './identity/identity-provider.port';
 export * from './identity/test-identity-provider';
 export * from './identity/saml-identity-provider';
 export * from './identity/oidc-identity-provider';
-export * from './identity/identity.module';
+export * from './module';
 export * from './identity/identity-errors';

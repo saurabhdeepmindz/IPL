@@ -21,7 +21,7 @@
 import { api } from '@/lib/api-client';
 import type { ApiError } from '@/lib/errors';
 import { GROUP_SIZE, type CheckAnswer, type ImportAnswer, type ImportRow, type Problem, type ServerProblem } from '../types/import.types';
-import { problemsFromServer } from './mapUsersRows';
+import { problemsFromServer } from '../utils/mapUsersRows';
 
 /** The problems of a group with no valid row: the server names them `rows.<n>.<field>`. */
 function reportOf(error: ApiError): ServerProblem[] {
