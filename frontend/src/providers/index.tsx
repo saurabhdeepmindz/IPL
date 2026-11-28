@@ -15,7 +15,7 @@
 
 import { type ReactNode } from 'react';
 import { ThemeProvider } from 'next-themes';
-import { MustChangeRedirect } from '@/features/auth/components/MustChangeRedirect';
+import { MustChangeRedirect } from '@/features/auth';
 import { QueryProvider } from '@/providers/QueryProvider';
 
 interface AppProvidersProps {

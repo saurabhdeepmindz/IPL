@@ -23,3 +23,7 @@ export { UserForm } from './components/UserForm';
 export { UserDetailPage } from './components/UserDetailPage';
 export { useCompanies, useDepartments, useDesignations } from './hooks/useMasters';
 export { usersKeys } from './hooks/users.keys';
+export { UserDetailRoute } from './components/UserDetailRoute';
+export { UserEditRoute } from './components/UserEditRoute';
+export { getCompanies } from './services/masters.service';
+export type { CompanyItem, MasterItem, UserFormData } from './types/user.types';

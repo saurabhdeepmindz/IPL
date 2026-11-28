@@ -49,3 +49,6 @@ storybook-static/
 # storybook and test output
 /storybook-static
 /test-results
+
+# output of the RBAC test run
+/rbac-out/

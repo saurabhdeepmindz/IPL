@@ -17,7 +17,7 @@
  * @lld-synced     v0.30
  * @status         built
  */
-import { RoleForm } from '@/features/roles';
+import { RoleForm } from '@/features/roles/components/RoleForm';
 import { AdminShell } from '@/components/layout/AdminShell';
 
 /**

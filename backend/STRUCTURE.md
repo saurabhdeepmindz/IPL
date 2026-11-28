@@ -7,7 +7,7 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 ## Differences from the team's structure document
 | Item in the team document | Here | Why |
 |---|---|---|
-| `apps/starter-apis` and `apps/auth-apis` | One application `apps/ams-apis` (sign-in is added to it by the sign-in epic) | Decision of 24 Nov 2026 and Standard §7.1 |
+| `apps/starter-apis` and `apps/auth-apis` | Two applications: `apps/ams-apis` (users, roles, permissions, masters) and `apps/auth-apis` (sign-in, tokens, passwords). The 24 Nov 2026 plan was one application; the sign-in epic built the second (rule B10 of the structure document, 28 Nov 2026) | Standard §7.1; the code |
 | `database/` (Knex migrations), `knexfile.js`, Objection `baseModel.ts` and `queryBuilder.ts` | Left out | Prisma is the only ORM and migration tool |
 | `libs/users` models folder | Left out | Prisma generates the models |
 | `libs/audit`, `libs/organisation` | Added | Needed by EPIC-ADM-01 (Foundation §2.2) |
@@ -89,3 +89,16 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `storage` | Local runtime file storage (not committed) |
 | `tests/api` | pytest API and contract tests |
 | `tests/e2e` | Playwright end-to-end tests |
+
+## Structure rules of 28 Nov 2026 (release R16)
+
+The team agreed on 28 Nov 2026 to follow `ProjectStructure/28-Nov-2026/IPL_AMS_Project-Structure-v0.4` and `docs/standards/BACKEND-STRUCTURE-v0.3`. In short:
+
+| Rule | Meaning |
+|---|---|
+| Layers (B3), as built | base `common` < technical (`database`, `infrastructure`, `mailman`, `queues`, `settings`, `audit`, `dmz`, `integrations`) < domain (`organisation`, `users`, `roles-and-permissions`, and the planned modules) < application core (`core`, `security`); a library imports its own layer or a lower one. Listed exceptions: `organisation`/`users`, `core`/`security` |
+| New module, new library (B14) | `proposals`, `approvals`, `finance`, `awi`, `delegation`, `reports`, `workflow`, `masters`, `documents`, `signature`, `notifications` are created only when the module's first story is built |
+| Controllers by module (B15) | `controllers/<module>/` once an app serves more than one module; done in R16 S33 (PS-30) |
+| Prisma only (B6) | Kysely only later, for a complex report query, with the team's agreement |
+
+**Status (28 Nov 2026):** the 11 controllers of `ams-apis` are in 7 module folders (R16 S33, PS-30); `npm run lint` runs the structure check (`scripts/check-structure.js`, rules in `structure.config.json`, known findings in `structure-allowlist.json`).

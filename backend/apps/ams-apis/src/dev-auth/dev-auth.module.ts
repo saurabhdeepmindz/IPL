@@ -16,8 +16,8 @@
 
 import { DynamicModule, Module } from '@nestjs/common';
 import { AuthCoreModule, AuthorizationModule } from '@libs/core';
-import { DevProbeController } from '../controllers/dev-probe.controller';
-import { DevAuthController } from '../controllers/dev-auth.controller';
+import { DevProbeController } from '../controllers/dev/dev-probe.controller';
+import { DevAuthController } from '../controllers/dev/dev-auth.controller';
 
 /**
  * Development auth module.

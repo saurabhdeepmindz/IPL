@@ -1,0 +1,8 @@
+{
+  "featureDirs": ["components", "hooks", "services", "schemas", "types", "utils", "constants", "store"],
+  "componentAreas": ["src/components/ui", "src/components/layout", "src/components/ams", "src/components/dashboard"],
+  "appMayImport": ["components", "utils"],
+  "lowLayers": ["src/lib", "src/hf", "src/store", "src/constants", "src/types", "src/providers"],
+  "ignoreFiles": [".gitignore", "../.gitignore"],
+  "g4": ["node_modules", ".next", "storybook-static", "test-results", "rbac-out", "*.tsbuildinfo", ".env"]
+}

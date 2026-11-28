@@ -1,0 +1,20 @@
+[
+  {
+    "rule": "F7-cycle",
+    "key": "roles,users",
+    "owner": "Saurabh",
+    "reason": "users uses useRoles and roles uses useUserSearch through their doors; harmless at run time; a shared lookup place is a later design change (R16 S33-D1)"
+  },
+  {
+    "rule": "G3",
+    "key": "src/components/layout/CompanySwitcher/CompanySwitcher.tsx",
+    "owner": "Saurabh",
+    "reason": "the company box of the header reads the profile (auth) and the company list (users); moving it to features/auth is a later change (R16 S33-D1)"
+  },
+  {
+    "rule": "G3",
+    "key": "src/providers/index.tsx",
+    "owner": "Saurabh",
+    "reason": "the provider mounts MustChangeRedirect of auth; moving it is a later change (R16 S33-D1)"
+  }
+]

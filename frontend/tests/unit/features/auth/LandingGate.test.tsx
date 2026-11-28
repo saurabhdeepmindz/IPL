@@ -26,7 +26,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CompanySwitcher } from '@/components/layout/CompanySwitcher';
 import { LandingGate } from '@/features/auth/components/LandingGate';
 import { RoleDashboardPlaceholder } from '@/features/auth/components/RoleDashboardPlaceholder';
-import { LANDING_ROUTES, NEUTRAL_LANDING, dashboardName, isBuilt } from '@/features/auth/landing.map';
+import { LANDING_ROUTES, NEUTRAL_LANDING, dashboardName, isBuilt } from '@/features/auth/utils/landing.map';
 import { authHttp } from '@/features/auth/services/auth.service';
 import { api } from '@/lib/api-client';
 import { clearAccessToken, setAccessToken } from '@/lib/token';

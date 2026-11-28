@@ -18,7 +18,7 @@
  */
 
 import { AdminShell } from '@/components/layout/AdminShell';
-import { ComingSoon } from '@/features/coming-soon/ComingSoon';
+import { ComingSoon } from '@/features/coming-soon/components/ComingSoon';
 
 interface PageProps {
   searchParams: Promise<{ feature?: string }>;

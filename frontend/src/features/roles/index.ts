@@ -21,3 +21,5 @@ export { RoleListPage } from './components/RoleListPage';
 export { RoleForm } from './components/RoleForm';
 export { RoleDetailPage } from './components/RoleDetailPage';
 export { useRoles } from './hooks/useRoles';
+export { RoleDetailRoute } from './components/RoleDetailRoute';
+export { RoleEditRoute } from './components/RoleEditRoute';

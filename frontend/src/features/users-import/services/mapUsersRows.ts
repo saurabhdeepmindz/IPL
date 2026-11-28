@@ -18,7 +18,7 @@
  * @status         built
  */
 
-import type { UserFormData } from '@/features/users/types/user.types';
+import type { UserFormData } from '@/features/users';
 import type { Column, ImportRow, MappedFile, Problem, RawRow, Reference, ServerProblem } from '../types/import.types';
 
 const FIELD_COLUMN: Record<string, Column> = {

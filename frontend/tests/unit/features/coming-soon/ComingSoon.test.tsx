@@ -16,7 +16,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { ComingSoon } from '@/features/coming-soon/ComingSoon';
+import { ComingSoon } from '@/features/coming-soon';
 
 describe('Coming soon placeholder', () => {
   it('names the feature, says it is coming and offers the way back (default: the dashboard)', () => {

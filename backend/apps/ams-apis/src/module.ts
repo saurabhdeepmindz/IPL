@@ -24,18 +24,18 @@ import { DatabaseModule } from '@libs/database';
 import { DevAuthModule } from './dev-auth/dev-auth.module';
 import { PermissionMatrixModule, RoleAssignmentModule, RolesAndPermissionsModule } from '@libs/roles-and-permissions';
 import { UsersModule } from '@libs/users';
-import { HealthController } from './controllers/health.controller';
-import { PermissionMatrixController } from './controllers/permission-matrix.controller';
+import { HealthController } from './controllers/health/health.controller';
+import { PermissionMatrixController } from './controllers/permissions/permission-matrix.controller';
 import { PermissionCacheBridgeModule } from './permission-cache-bridge.module';
-import { RoleAssignmentController } from './controllers/role-assignment.controller';
-import { UsersController } from './controllers/users.controller';
-import { UsersImportController } from './controllers/users-import.controller';
-import { UsersLifecycleController } from './controllers/users-lifecycle.controller';
-import { MastersController } from './controllers/masters.controller';
-import { MeController } from './controllers/me.controller';
+import { RoleAssignmentController } from './controllers/roles/role-assignment.controller';
+import { UsersController } from './controllers/users/users.controller';
+import { UsersImportController } from './controllers/users/users-import.controller';
+import { UsersLifecycleController } from './controllers/users/users-lifecycle.controller';
+import { MastersController } from './controllers/masters/masters.controller';
+import { MeController } from './controllers/me/me.controller';
 import { MeProfileTransformer } from './transformer/me-profile.transformer';
 import { OrganisationModule } from '@libs/organisation';
-import { RolesController } from './controllers/roles.controller';
+import { RolesController } from './controllers/roles/roles.controller';
 
 
 /**

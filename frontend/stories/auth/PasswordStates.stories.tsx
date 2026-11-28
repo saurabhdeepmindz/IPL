@@ -27,7 +27,7 @@ import { PasswordRules } from '@/features/auth/components/PasswordRules';
 import { SetPasswordPage } from '@/features/auth/components/SetPasswordPage';
 import { StrengthBar } from '@/features/auth/components/StrengthBar';
 import type { PublicConfig } from '@/features/auth/types/auth.types';
-import { HF_SCOPE } from '@/features/auth/hf/hf';
+import { HF_SCOPE } from '@/hf/hf';
 import '@/styles/hf-auth.css';
 import '@/styles/hf-overrides.css';
 

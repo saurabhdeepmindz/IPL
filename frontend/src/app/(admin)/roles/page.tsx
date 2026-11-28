@@ -17,7 +17,7 @@
  * @lld-synced     v0.30
  * @status         built
  */
-import { RoleListPage } from '@/features/roles';
+import { RoleListPage } from '@/features/roles/components/RoleListPage';
 import { AdminShell } from '@/components/layout/AdminShell';
 
 /**

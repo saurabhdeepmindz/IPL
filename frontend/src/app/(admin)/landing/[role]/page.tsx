@@ -22,7 +22,7 @@
 import { notFound } from 'next/navigation';
 import { AdminShell } from '@/components/layout/AdminShell';
 import { RoleDashboardPlaceholder } from '@/features/auth/components/RoleDashboardPlaceholder';
-import { dashboardName } from '@/features/auth/landing.map';
+import { dashboardName } from '@/features/auth/utils/landing.map';
 
 const PAGES = ['finance', 'initiator', 'inbox', 'reports', 'home'];
 

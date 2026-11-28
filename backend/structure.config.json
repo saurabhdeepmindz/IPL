@@ -1,0 +1,18 @@
+{
+  "layers": [
+    ["common"],
+    ["database", "infrastructure", "mailman", "queues", "settings", "audit", "dmz", "integrations"],
+    ["organisation", "users", "roles-and-permissions"],
+    ["core", "security"]
+  ],
+  "suffixes": {
+    "controllers": ".controller.ts",
+    "dtos": ".dto.ts",
+    "guards": ".guard.ts",
+    "interceptors": ".interceptor.ts",
+    "transformer": ".transformer.ts",
+    "errors": ".exception.ts"
+  },
+  "ignoreFiles": [".gitignore", "../.gitignore"],
+  "g4": ["node_modules", "dist", ".env", "rbac-out", "__pycache__", ".pytest_cache", "storage"]
+}

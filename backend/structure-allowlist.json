@@ -1,0 +1,32 @@
+[
+  {
+    "rule": "B3-cycle",
+    "key": "core,security",
+    "owner": "Saurabh",
+    "reason": "core uses the rate limiter of security and security uses a core type; same layer; splitting them is a later design change (R16 S33-D1)"
+  },
+  {
+    "rule": "B3-cycle",
+    "key": "organisation,users",
+    "owner": "Saurabh",
+    "reason": "users reads companies and departments of organisation and organisation reads one user type; same layer; a later design change (R16 S33-D1)"
+  },
+  {
+    "rule": "B9",
+    "key": "libs/core/src/auth/errors/auth-errors.ts",
+    "owner": "Saurabh",
+    "reason": "one file holds the several exceptions of one flow; renaming to .exception.ts or splitting is a later change (R16 S33-D1)"
+  },
+  {
+    "rule": "B9",
+    "key": "libs/core/src/auth/errors/context-errors.ts",
+    "owner": "Saurabh",
+    "reason": "one file holds the several exceptions of one flow; renaming to .exception.ts or splitting is a later change (R16 S33-D1)"
+  },
+  {
+    "rule": "B9",
+    "key": "libs/core/src/auth/errors/password-errors.ts",
+    "owner": "Saurabh",
+    "reason": "one file holds the several exceptions of one flow; renaming to .exception.ts or splitting is a later change (R16 S33-D1)"
+  }
+]

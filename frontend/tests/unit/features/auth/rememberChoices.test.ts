@@ -19,7 +19,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { readContext, readEmployeeCode, rememberContext, rememberEmployeeCode } from '@/features/auth/rememberChoices';
+import { readContext, readEmployeeCode, rememberContext, rememberEmployeeCode } from '@/features/auth/utils/rememberChoices';
 
 describe('Browser remembers the employee code and the last company and year (US-LGN03-006)', () => {
   beforeEach(() => localStorage.clear());

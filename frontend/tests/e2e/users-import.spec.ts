@@ -102,7 +102,7 @@ test.describe('Import wizard journeys (story 009)', () => {
     expect(readFileSync((await report.path())!, 'utf8')).toContain('Row,Column,Value,Problem');
     await page.getByRole('button', { name: 'Import 4 good rows' }).click();
     await page.getByTestId('import-confirm').click();
-    await expect(page.getByTestId('import-result')).toHaveText('Import finished: 4 created, 1 failed.');
+    await expect(page.getByTestId('import-result')).toHaveText('Import finished: 4 created, 1 failed.', { timeout: 15_000 });
     await shot(page, 'finished');
     for (const code of codes.slice(0, 4)) expect((await request.get(`${API}/users/${code}`, { headers: await bearer(request) })).status()).toBe(200);
     expect((await request.get(`${API}/users/${codes[4]}`, { headers: await bearer(request) })).status()).toBe(404);

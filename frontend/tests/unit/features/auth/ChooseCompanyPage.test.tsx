@@ -25,7 +25,7 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChooseCompanyPage } from '@/features/auth/components/ChooseCompanyPage';
 import { useMe, useSelectContext } from '@/features/auth/hooks/useMe';
-import { readContext } from '@/features/auth/rememberChoices';
+import { readContext } from '@/features/auth/utils/rememberChoices';
 import { authHttp } from '@/features/auth/services/auth.service';
 import { getMe, selectContext } from '@/features/auth/services/me.service';
 import { api } from '@/lib/api-client';

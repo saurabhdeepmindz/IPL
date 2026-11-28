@@ -29,3 +29,6 @@ export function hf(...names: (string | false | undefined | null)[]): string {
 
 /** Classes of the element that carries the ported tokens and rules (a page of the application, not the login frame). */
 export const HF_SCOPE_PAGE = 'hf-admin';
+
+/** The element that carries the ported tokens and rules on the Login pages (the sign-in family frame). */
+export const HF_SCOPE = 'hf-scope hf-auth-body';

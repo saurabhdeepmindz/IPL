@@ -107,7 +107,7 @@ def test_inventory_is_complete():
     """
     assert CONTROLLERS.is_dir(), f"no controllers at {CONTROLLERS}"
     in_code: Counter = Counter()
-    for f in sorted(CONTROLLERS.glob("*.controller.ts")):
+    for f in sorted(CONTROLLERS.rglob("*.controller.ts")):
         if f.name == "dev-probe.controller.ts":
             continue
         in_code.update(re.findall(r"@RequirePermission\('([a-z.\-]+)'\)", f.read_text(encoding="utf-8")))

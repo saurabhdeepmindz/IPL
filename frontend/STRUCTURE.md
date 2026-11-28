@@ -64,3 +64,22 @@ Created 25 Nov 2026 as an empty folder skeleton (each folder holds a `.gitkeep`)
 | `tests/unit` | Vitest setup and shared test helpers |
 | `tests/visual` | Visual token tests |
 | `tokens` | brand.json and mapping.ts (the only token files edited by hand) |
+
+## Structure rules of 28 Nov 2026 (release R16)
+
+The team agreed on 28 Nov 2026 to follow `ProjectStructure/28-Nov-2026/IPL_AMS_Project-Structure-v0.4` and `docs/standards/FRONTEND-STRUCTURE-v0.3`. In short:
+
+| Rule | Meaning |
+|---|---|
+| One folder per component (F2) | `components/<Name>/<Name>.tsx` and `index.ts`; a whole screen is `<Thing>Page`, a URL-reading wrapper `<Thing>Route` |
+| No loose files in a feature root (F14) | Helpers go to `utils/` or `constants/`; the root holds only `index.ts` |
+| Component placement (F5) | Used by one feature: in that feature; by two or more: in `src/components/` (`ui`, `layout`, `ams`) |
+| Route groups (F16) | `(public)`, `(admin)`, and `(workspace)` for business users when the first business screen is built |
+| Features are named by module (F17) | `proposals`, `approvals` and so on, not by role |
+
+**Status of the move (28 Nov 2026):** done. Every component is in its own folder with an `index.ts` (R16 S31 and S32); every feature has an `index.ts`. A page in `src/app` is a server component: it imports the component folder it renders, not the feature door (exception to F7). `npm run lint` runs the structure check (`scripts/check-structure.mjs`, rules in `structure.config.json`, known findings in `structure-allowlist.json`).
+
+| Folder added | Purpose |
+|---|---|
+| `src/features/auth/utils` | Landing map and the remembered employee code and company |
+| `src/features/auth/components/<Name>` | One folder per Login component, each with `index.ts` |
